@@ -1,5 +1,7 @@
 # Set Up a Kubernetes Monitoring Stack for SAS Event Stream Processing
  
+ <img src="https://img.shields.io/badge/Category-Monitoring-blue"> <img src="https://img.shields.io/badge/Sub--Category-Kubernetes-yellowgreen"> <img src="https://img.shields.io/badge/Difficulty-intermediate-yellow"> <img src="https://img.shields.io/badge/Updated-Jun%202020-orange">
+ 
 ## Table of Contents
 
 * [Overview](#overview)
