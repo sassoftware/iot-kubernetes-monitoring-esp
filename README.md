@@ -4,8 +4,8 @@
 # <ins>_Monitoring SAS Event Stream Processing on Kubernetes</ins>_
 
 <img src="Images/Viya_on_Cloud.jpeg" align="right" width="1000" height="530">
-
-A tutorial that introduces Viya_Manager, an interface to simplify the administration and management of Viya 4 environments on the Cloud.
+<b></b>
+A tutorial about a solution to monitor SAS Event Processing projects.
 
 ## Table of Contents
 
@@ -44,7 +44,7 @@ A tutorial that introduces Viya_Manager, an interface to simplify the administra
 
 The current Viya4 monitoring solution provides system administrators with a powerful tool to monitor installations as a whole. Resource oversight, coupled with the ability to aggregate log information and generate alerts make it easier to admnister deployments regardless of their complexity. While this is helpful at a high level, within Viya, smaller ecosystems like the SAS Event Stream Processing (SAS ESP) require a more specialized approach to  both real time and historical monitoring of projects.
 
-The monitoring stack for SAS ESP was developed to help customers address this need. It can be considered as an extended version of the Viya4 monitoring solution, as it shares the same code base and allows for the installation of the same components in addition to SAS ESP-specific ones. The main difference is that the SAS ESP stack doesn't require the deployment of the Viya4 logging component as it uses Loki instead for log aggregation.
+The monitoring stack for SAS ESP was developed to help customers address this need. It can be considered as an extended version of the [Viya4 Monitoring](https://github.com/sassoftware/viya4-monitoring-kubernetes) solution, as it shares the same code base and allows for the installation of the same components in addition to SAS ESP-specific ones. The main difference is that the SAS ESP stack doesn't require the deployment of the Viya4 logging component as it uses Loki instead for log aggregation.
 
 A Grafana Lab product, Loki is a horizontally-scalable, highly-available, multi-tenant log aggregation system inspired by Prometheus, designed to be cost effective and easy to operate. Compared to other log aggregation systems, Loki:
 
