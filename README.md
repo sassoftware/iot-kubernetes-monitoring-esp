@@ -3,7 +3,7 @@
 
 # <ins>_Monitoring SAS Event Stream Processing on Kubernetes</ins>_
 
-<img src="Images/Viya_on_Cloud.jpeg" align="right">
+<img src="Images/Viya_on_Cloud.jpeg" align="right" width="1000" height="530">
 
 A tutorial that introduces Viya_Manager, an interface to simplify the administration and management of Viya 4 environments on the Cloud.
 
@@ -87,7 +87,7 @@ The SAS ESP Monitoring stack can be deployed from Unix platforms only. The follo
 [&#11014;](#top) Top
 ### Installation
  
-Download the tarred ZIP [<ins>file</ins>](Code/ESP_Monitoring.tar.gz) containing the SAS ESP monitoring stack on a Unix server, and unpack it on your home folder using the following command:
+Download the tarred ZIP [<ins>file</ins>](Code/ESP_Monitoring.tar.gz) containing the SAS ESP monitoring stack on a Unix server, and unpack it in a folder of your choice using the following command:
 
 **tar -xzv ESP_Monitor.tar.gz --dir=${HOME}**
 
@@ -187,12 +187,16 @@ Where:
 
 - **customizations** is the folder that contains the Loki/Promtail artifacts, the sample Grafana dashboards for ESP, the Kubernetes ingress definitions for the monitoring components, and the **user.env** with custom install options settings:
 	- **user.env** contains custom option settings for the deployment of the monitoring components. If necessary, review and modify the settings before deploying. A couple of considerations apply:
-		- **LOKI_ENABLED** must be set to "True" for SAS ESP project logs to be monitored;
-		- **LOKI_LOGFMT** must be set according to the format used by Kubernetes to write logs. As of the writing of this document, the format is "cri" for Azure, and "docker" for other providers like AWS.
+		- **LOKI_ENABLED** must be set to **True** for SAS ESP project logs to be monitored;
+		- **LOKI_LOGFMT** must be set according to the format used by Kubernetes to write logs. As of the writing of this document, the format is **cri** for Azure, and **docker** for other providers like AWS.
 	- **user-values-prom-operator-host/path-based.yaml.sample** contain sample settings for host or path-based access to the monitoring components. Path-based access is used for cloud-based deployments. When installing, copy the appropriate sample file to **user-values-prom-operator.yaml** in the same folder and customize it according to your needs.
+	- **dashboards** contains the sample Grafana dashboards.
+	- **loki** stores the artifacts used to install Loki/Promtail.
+	- **monitors** contains the service monitor definition for Loki/Promtail
 - **Management** is the folder that stores the Viya_Manager code. The following are found inside it:
 	- **Viya_Manager**;
-	- A **Deployment** subfolder containing a **Manual** and an **Operator** directory, each holding a set of scripts for the manual and automated deployment of Viya (through the Deployment Operator).
+- **github** is an optional placeholder for the binaries for the ESP monitoring stack.
+- **viya4-monitoring-kubernetes-main** is the folder created by untarring the monitoring stack binaries. It contains configuration files and scripts for both the monitoring and logging components of Viya. The content of this folder should never be modified.
 
 </p>
 </details>
