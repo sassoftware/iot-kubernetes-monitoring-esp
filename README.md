@@ -515,6 +515,11 @@ On the **SAS ESP CPU, Memory, and Logs Usage** dashboard, the **Current CPU Usag
 </td></tr></table>
 
 [&#11014;](#top) Top
+### Troubleshooting
+
+For Viya_Manager to run without errors, the entire list of prerequisites must be satisfied. Make sure to go through each one of them before attempting to create and/or manage a Viya 4 installation. Once the requirements are in place, in the event any of the infrastructure or deployment tasks fail, they can be executed again as the execution will resume from the last checkpoint. If the failure persists, it is recommended to investigate the problem using the Cloud provider console if the issues relates to infrastructure, or by opening a ticket with the SAS Technical Support if the problem shows during the installation of Viya. To troubleshoot problems with the Kubernetes cluster, it is recommended that you use a tool like Lens, or ask someone to help you do the same if you are not familiar with Kubernetes. Fianlly, even tough the Viya_Manager code is provided in clear, it is recommended not to make modifications to it to avoid problems that could lead to the incorrect execution of its tasks.
+
+[&#11014;](#top) Top
 ## Conclusion
 
 Ad-hoc monitoring of Viya4 SAS ESP resources can be tedious and time consuming. This tutorial shows how this task can be eased through the installation of the SAS ESP Monitoring stack, an add-on to the Viya4 Monitoring solution SAS provides for the monitoring of the whole Viya system. The SAS ESP stack gives system administrators metrics to accurately measure CPU usage and memory consumption. Real-time and historical log information is also made available at the individual project level to help debug any issues a project might encounter during its execution. The result is a faster monitoring of SAS ESP resources to help troubleshoot issues before they reach the potential to negatively affect the overall performance of the environment.
