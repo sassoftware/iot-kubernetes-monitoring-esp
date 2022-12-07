@@ -3,6 +3,8 @@
 
 # <ins>_Monitoring SAS Event Stream Processing on Kubernetes</ins>_
 
+<img src="Images/Viya_on_Cloud.jpeg" align="right">
+
 A tutorial that introduces Viya_Manager, an interface to simplify the administration and management of Viya 4 environments on the Cloud.
 
 ## Table of Contents
@@ -44,13 +46,13 @@ The current Viya4 monitoring solution provides system administrators with a powe
 
 The monitoring stack for SAS ESP was developed to help customers address this need. It can be considered as an extended version of the Viya4 monitoring solution, as it shares the same code base and allows for the installation of the same components in addition to SAS ESP-specific ones. The main difference is that the SAS ESP stack doesn't require the deployment of the Viya4 logging component as it uses Loki instead for log aggregation.
 
-Loki is a horizontally-scalable, highly-available, multi-tenant log aggregation system inspired by Prometheus, designed to be cost effective and easy to operate. Compared to other log aggregation systems, Loki:
+Made by Grafan, Loki is a horizontally-scalable, highly-available, multi-tenant log aggregation system inspired by Prometheus, designed to be cost effective and easy to operate. Compared to other log aggregation systems, Loki:
 
 ```
-1. does not index the contents of the logs, but accesses log streams through a set of predefined or user-defined labels.
-2. indexes and groups log streams using the same labels as Prometheus, enabling users to seamlessly switch between metrics and logs.
-3. is an especially good fit for storing Kubernetes Pod logs. Metadata such as Pod labels is automatically scraped and indexed.
-4. has native support in Grafana, which means that Prometheus and Loki panels can coexist on the same dashboard.
+- does not index the contents of the logs, but accesses log streams through a set of predefined or user-defined labels.
+- indexes and groups log streams using the same labels as Prometheus, enabling users to seamlessly switch between metrics and logs.
+- is an especially good fit for storing Kubernetes logs. Metadata labels are automatically scraped and indexed.
+- has native support in Grafana, which means that Prometheus and Loki panels can coexist on the same dashboards.
 ```
 
 A Loki-based stack consists of 3 components:
@@ -58,8 +60,6 @@ A Loki-based stack consists of 3 components:
 - Promtail, the agent responsible for gathering logs and sending them to Loki.
 - The Loki server, responsible for storing logs and processing queries.
 - Grafana, for querying and displaying the logs.
-
-<img src="Images/Viya_on_Cloud.jpeg" align="right" width="650" height="360">
 
 [&#11014;](#top) Top
 ## Getting Started
@@ -69,7 +69,7 @@ Before deploying the SAS ESP monitoring stack, make sure to review the list of p
 [&#11014;](#top) Top
 ### Prerequisites
 
-Viya_Manager runs on Unix platforms only. The following prerequisites must be met before it can be used:
+The SAS ESP Monitoring stack can be deployed from Unix platforms only. The following prerequisites must be met before it can be used:
 
 - The **kubectl** utility must be installed on the server where the monitoring stack will be installed;
 - A local instance of **Helm** is required for the deployment of the monitoring components.
@@ -185,39 +185,14 @@ Monitoring
 ```
 Where:
 
-- **Cloud-Providers** holds a subfolder for each supported Cloud provider (**AWS**, **Azure**, and **GCP**). Each subfolder stores three additional entries, **Clusters**, **Credentials**, and **Templates**:
-	- **Clusters** contains an entry for every cluster created through Viya_Manager for that specific provider. It can also contain a folder called **Customizations** which holds customized Kubernetes manifests for Viya components. The following list of files and directories are located inside each cluster's folder:
-		- Configuration files for the cluster's infrastructure and for the Viya deployment;
-		- The KUBECONFIG file to access the cluster;
-		- An optional **Keys** folder with the identity key to access the Jump and/or NFS servers if a public IP address was configured for them;
-		- A **License-and-certificates** folder containing the license and certificates files for the SAS software order;
-		- An **Order** directory storing the asset file for the software order;
-		- A **sas-viya-deployment** folder storing the Kubernetes manifests for Viya;
-		- An optional **sas-deployment-operator** folder storing the manifests for the Deployment Operator, if installed;
-		- An optional file called **sas-viya-sasdeployment.yaml** representing the manifest generated for the Deployment Operator when Viya is deployed using that tool.
-	- **Credentials** contains:
-		- One or more credential files to access individual subscriptions for the Cloud provider;
-		- One or more files containing tenant IDs and optional passwords for their **sasprovider** user when installing Viya in multi-tenant mode;
-		- A credential file to access the SAS API portal;
-	- **Templates** stores:
-		- A Cloud provider configuration template used by the SAS Viya4 Infrastructure as Code tool;
-		- A Viya configuration template used by the SAS Viya4 Deployment tool;
-		- A file containing the list of regions for the Cloud provider where a cluster can be created.
+- **customizations** is the folder that contains the Loki/Promtail artifacts, the sample Grafana dashboards for ESP, the Kubernetes ingress definitions for the monitoring components, and the **user.env** with custom install options settings:
+	- **user.env** contains custom option settings for the deployment of the monitoring components. If necessary, review and modify the settings before deploying. A couple of considerations apply:
+		- **LOKI_ENABLED** must be set to "True" for SAS ESP project logs to be monitored;
+		- **LOKI_LOGFMT** must be set according to the format used by Kubernetes to write logs. As of the writing of this document, the format is "cri" for Azure, and "docker" for other providers like AWS.
+	- **user-values-prom-operator-host/path-based.yaml.sample** contain sample settings for host or path-based access to the monitoring components. Path-based access is used for cloud-based deployments. When installing, copy the appropriate sample file to **user-values-prom-operator.yaml** in the same folder and customize it according to your needs.
 - **Management** is the folder that stores the Viya_Manager code. The following are found inside it:
 	- **Viya_Manager**;
 	- A **Deployment** subfolder containing a **Manual** and an **Operator** directory, each holding a set of scripts for the manual and automated deployment of Viya (through the Deployment Operator).
-- **Optional-Components** which contains instructions for the installation of extra components. Following is the default list of tools and utilities that comes with Viya_Manager:
-	- Microsoft SQL Server;
-	- MySQL;
-	- PostgreSQL;
-	- Filebrowser utility;
-	- Jupyter.
-- **Viya4-Github-Projects** contains a subfolder for each of the tools that are required to support the deployment and removal of Cloud resources:
- 	- **viya4-deployment** stores a README.md file with step-by-step instructions on how to install SAS Viya4 Deployment on Docker;
-	- **viya4-iac-aws** stores a README.md file with step-by-step instructions on how to install SAS Viya4 IaC for AWS on Docker;
-	- **viya4-iac-azure** stores a README.md file with step-by-step instructions on how to install SAS Viya4 IaC for Azure on Docker;
-	- **viya4-iac-gcp** stores a README.md file with step-by-step instructions on how to install SAS Viya4 IaC for GCP on Docker;
-	- **viya4-orders-cli** stores a README.md file with step-by-step instructions on how to install SAS Viya4 Orders CLI on Docker.
 
 </p>
 </details>
