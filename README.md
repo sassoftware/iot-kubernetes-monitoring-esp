@@ -3,7 +3,7 @@
 
 # <ins>_Monitoring SAS Event Stream Processing on Kubernetes</ins>_
 
-_A tutorial about the monitoring of SAS Event Processing resources._
+_A tutorial on monitoring SAS Event Processing resources._
 
 <table align="center"><tr><td align="center" width="9999">
 <img src="Images/Viya_on_Cloud.jpeg" align="center" width="9999">
@@ -17,9 +17,6 @@ _A tutorial about the monitoring of SAS Event Processing resources._
 	* [Prerequisites](#prerequisites)
 	* [Installation](#installation)
   	* [Accessing the Dashboards](#accessing-the-dashboards)
-		* [Cloud Provider Credentials](#cloud-providers-credentials)
-		* [SAS API Portal Credentials](#sas-api-portal-credentials)
-	* [Examples](#examples)
 	* [Troubleshooting](#troubleshooting)
 * [Conclusion](#conclusion)
 * [Contributing](#contributing)
@@ -516,3 +513,29 @@ On the **SAS ESP CPU, Memory, and Logs Usage** dashboard, the **Current CPU Usag
 <table align="center"><tr><td align="center" width="9999">
 <img src="Images/Compute_Resources_Pod.png" align="center" width="9999">
 </td></tr></table>
+
+[&#11014;](#top) Top
+# Conclusion
+
+Creating and managing Viya 4 environments can present some challenges, especially when they require to be installed and configured across a variety of Cloud providers. This tutorial shows how this task can be eased through the use of Viya_Manager, a tool designed to shield administrators from the complexities that come from having to deal with unique proprietary infrastructures. By using templates, Viya_Manager allows for each installation to be customized to meet different kinds of requirements. Moreover, Viya_Manager provides a central point of administration that makes it easier to apply changes to both the cloud infrastructure and the Viya software that runs on it. The result is the ability to stand up Viya 4 environments using a fraction of the time they required in the past thanks to the flexibility offered by this solution.
+
+[&#11014;](#top) Top
+# Contributing
+
+This project does not accept contributions.
+
+[&#11014;](#top) Top
+# License
+
+This project uses the SAS License Agreement for Corrective Code or Additional Functionality.  Please see license file for additional detail.
+
+[&#11014;](#top) Top
+# Additional Resources
+
+* [SAS Viya Orders CLI](https://github.com/sassoftware/viya4-orders-cli)
+* [SAS Viya 4 Deployment](https://github.com/sassoftware/viya4-deployment)
+* [SAS Viya 4 Infrastructure as Code for AWS](https://github.com/sassoftware/viya4-iac-aws)
+* [SAS Viya 4 Infrastructure as Code for Azure](https://github.com/sassoftware/viya4-iac-azure)
+* [SAS Viya 4 Infrastructure as Code for GCP](https://github.com/sassoftware/viya4-iac-gcp)
+* [SAS Viya Install Center](https://support.sas.com/en/documentation/install-center/viya.html)
+* [SAS API Portal](https://apiportal.sas.com/)
