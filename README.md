@@ -1,11 +1,12 @@
 <a name="top"></a>
-![](https://visitor-badge-reloaded.herokuapp.com/badge?page_id=page.id=@user_name.iot-kubernetes-monitoring-esp&color=55acb7&style=for-the-badge&logo=Github&left_text=Visitors)
+![](https://vbr.wocr.tk/badge?page_id=page.id=@user_name.iot-kubernetes-monitoring-esp&color=55acb7&style=for-the-badge&logo=Github&left_text=Visitors)
 
 # <ins>_Monitoring SAS Event Stream Processing on Kubernetes</ins>_
 
-<img src="Images/Viya_on_Cloud.jpeg" align="right" width="1000" height="530">
-<b></b>
-A tutorial about a solution to monitor SAS Event Processing projects.
+_A tutorial about the monitoring of SAS Event Processing resources._
+
+<img src="Images/Viya_on_Cloud.jpeg" align="right" width="1000" height="530" margin="10">
+
 
 ## Table of Contents
 
@@ -44,7 +45,7 @@ A tutorial about a solution to monitor SAS Event Processing projects.
 
 The current Viya4 monitoring solution provides system administrators with a powerful tool to monitor installations as a whole. Resource oversight, coupled with the ability to aggregate log information and generate alerts make it easier to admnister deployments regardless of their complexity. While this is helpful at a high level, within Viya, smaller ecosystems like the SAS Event Stream Processing (SAS ESP) require a more specialized approach to  both real time and historical monitoring of projects.
 
-The monitoring stack for SAS ESP was developed to help customers address this need. It can be considered as an extended version of the [Viya4 Monitoring](https://github.com/sassoftware/viya4-monitoring-kubernetes) solution, as it shares the same code base and allows for the installation of the same components in addition to SAS ESP-specific ones. The main difference is that the SAS ESP stack doesn't require the deployment of the Viya4 logging component as it uses Loki instead for log aggregation.
+The monitoring stack for SAS ESP was developed to help customers address this need. It can be considered as an extended version of the [Viya4 Monitoring](https://github.com/sassoftware/viya4-monitoring-kubernetes) solution, as it shares the same code base and allows for the installation of the same components in addition to the SAS ESP-specific ones. The main difference is that the SAS ESP stack doesn't require the deployment of the Viya4 logging layer as it uses Loki instead for log aggregation.
 
 A Grafana Lab product, Loki is a horizontally-scalable, highly-available, multi-tenant log aggregation system inspired by Prometheus, designed to be cost effective and easy to operate. Compared to other log aggregation systems, Loki:
 
@@ -203,13 +204,13 @@ Proceed with the install as follows:
 - Replace/update the content of the **user-values-prom-operator.yaml** file based on whether you need host or path-based ingresses for the monitoring components. The latter are normally used for cloud deployments;
 - Review the content of the **user.env** file and customize it as needed. For a description of the options, please refer to the [Viya4 Monitoring for Kubernetes](https://github.com/sassoftware/viya4-monitoring-kubernetes) page;
 - Set the USER_DIR= environment variable to the full path of the **customization** folder and export it as shown in the following example:
-
+```
   export USER_DIR=/root/Monitoring/customizations
- 
+```
 - Navigate to the **<monitoring stack root folder>/viya4-monitoring-kubernetes-main/monitoring/bin** folder, and install the monitoring stack using the following command:
-
+```
   ./deploy_monitoring_cluster
-
+```
 <details><summary><b><i>Click</i></b> to view the a sample installation log:</summary>
 <p>
 User root   Host myserver   Current directory /root/Viya_Manager/Optional-Components/Monitoring/viya4-monitoring-kubernetes-main/monitoring/bin
