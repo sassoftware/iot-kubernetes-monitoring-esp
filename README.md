@@ -515,22 +515,22 @@ On the **SAS ESP CPU, Memory, and Logs Usage** dashboard, the **Current CPU Usag
 </td></tr></table>
 
 [&#11014;](#top) Top
-# Conclusion
+## Conclusion
 
-Creating and managing Viya 4 environments can present some challenges, especially when they require to be installed and configured across a variety of Cloud providers. This tutorial shows how this task can be eased through the use of Viya_Manager, a tool designed to shield administrators from the complexities that come from having to deal with unique proprietary infrastructures. By using templates, Viya_Manager allows for each installation to be customized to meet different kinds of requirements. Moreover, Viya_Manager provides a central point of administration that makes it easier to apply changes to both the cloud infrastructure and the Viya software that runs on it. The result is the ability to stand up Viya 4 environments using a fraction of the time they required in the past thanks to the flexibility offered by this solution.
+Ad-hoc monitoring of Viya4 SAS ESP resources can be tedious and time consuming. This tutorial shows how this task can be eased through the installation of the SAS ESP Monitoring stack, an add-on to the Viya4 Monitoring solution SAS provides for the monitoring of the whole Viya system. The SAS ESP stack gives system administrators metrics to accurately measure CPU usage and memory consumption. Real-time and historical log information is also made available at the individual project level to help debug any issues a project might encounter during its execution. The result is a faster monitoring of SAS ESP resources to help troubleshoot issues before they reach the potential to negatively affect the overall performance of the environment.
 
 [&#11014;](#top) Top
-# Contributing
+## Contributing
 
 This project does not accept contributions.
 
 [&#11014;](#top) Top
-# License
+## License
 
 This project uses the SAS License Agreement for Corrective Code or Additional Functionality.  Please see license file for additional detail.
 
 [&#11014;](#top) Top
-# Additional Resources
+## Additional Resources
 
 * [SAS Viya Orders CLI](https://github.com/sassoftware/viya4-orders-cli)
 * [SAS Viya 4 Deployment](https://github.com/sassoftware/viya4-deployment)
