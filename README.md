@@ -532,10 +532,8 @@ This project uses the SAS License Agreement for Corrective Code or Additional Fu
 [&#11014;](#top) Top
 ## Additional Resources
 
-* [SAS Viya Orders CLI](https://github.com/sassoftware/viya4-orders-cli)
-* [SAS Viya 4 Deployment](https://github.com/sassoftware/viya4-deployment)
-* [SAS Viya 4 Infrastructure as Code for AWS](https://github.com/sassoftware/viya4-iac-aws)
-* [SAS Viya 4 Infrastructure as Code for Azure](https://github.com/sassoftware/viya4-iac-azure)
-* [SAS Viya 4 Infrastructure as Code for GCP](https://github.com/sassoftware/viya4-iac-gcp)
-* [SAS Viya Install Center](https://support.sas.com/en/documentation/install-center/viya.html)
-* [SAS API Portal](https://apiportal.sas.com/)
+* [SAS ESP Monitoring Events, Alerts, and Health Documentation](https://go.documentation.sas.com/doc/en/espcdc/v_030/espex/p0rwojd7hnzcymn117e1ilapqgqm.htm)
+* [SAS Viya 4 Monitorng for Kubernetes](https://github.com/sassoftware/viya4-monitoring-kubernetes)
+* [Prometheus](https://prometheus.io/)
+* [Grafana](https://grafana.com/)
+* [Grafana Loki](https://grafana.com/oss/loki/#:~:text=Loki%20is%20a%20horizontally%20scalable,labels%20for%20each%20log%20stream.)
