@@ -26,9 +26,9 @@ _A tutorial on monitoring SAS Event Processing resources._
 [&#11014;](#top) Top
 ## Overview
 
-The current Viya4 monitoring solution provides system administrators with a powerful tool to monitor installations as a whole. Resource oversight, coupled with the ability to aggregate log information and generate alerts make it easier to admnister deployments regardless of their complexity. While this is helpful at a high level, within Viya, smaller ecosystems like the SAS Event Stream Processing (SAS ESP) require a more specialized approach to  both real time and historical monitoring of projects.
+The current Viya 4 monitoring solution provides system administrators with a powerful tool to monitor installations as a whole. Resource oversight, coupled with the ability to aggregate log information and generate alerts make it easier to admnister deployments regardless of their complexity. While this is helpful at a high level, within Viya, smaller ecosystems like the SAS Event Stream Processing (SAS ESP) require a more specialized approach to  both real time and historical monitoring of projects.
 
-The monitoring stack for SAS ESP was developed to help customers address this need. It can be considered as an extended version of the [Viya4 Monitoring](https://github.com/sassoftware/viya4-monitoring-kubernetes) solution, as it shares the same code base and allows for the installation of the same components in addition to the SAS ESP-specific ones. The main difference is that the SAS ESP stack doesn't require the deployment of the Viya4 logging layer as it uses Loki instead for log aggregation.
+The monitoring stack for SAS ESP was developed to help customers address this need. It can be considered as an extended version of the [Viya 4 Monitoring](https://github.com/sassoftware/viya4-monitoring-kubernetes) solution, as it shares the same code base and allows for the installation of the same components in addition to the SAS ESP-specific ones. The main difference is that the SAS ESP stack doesn't require the deployment of the Viya 4 logging layer as it uses Loki instead for log aggregation.
 
 A Grafana Lab product, Loki is a horizontally-scalable, highly-available, multi-tenant log aggregation system inspired by Prometheus, designed to be cost effective and easy to operate. Compared to other log aggregation systems, Loki:
 
@@ -185,7 +185,7 @@ Proceed with the install as follows:
 
 - Navigate to the "customization/monitoring" folder created by the unpacking of the binaries;
 - Replace/update the content of the **user-values-prom-operator.yaml** file based on whether you need host or path-based ingresses for the monitoring components. The latter are normally used for cloud deployments;
-- Review the content of the **user.env** file and customize it as needed. For a description of the options, please refer to the [Viya4 Monitoring for Kubernetes](https://github.com/sassoftware/viya4-monitoring-kubernetes) page;
+- Review the content of the **user.env** file and customize it as needed. For a description of the options, please refer to the [Viya 4 Monitoring for Kubernetes](https://github.com/sassoftware/viya4-monitoring-kubernetes) page;
 - Set the USER_DIR= environment variable to the full path of the **customization** folder and export it as shown in the following example:
 ```
   export USER_DIR=/root/Monitoring/customizations
@@ -424,7 +424,7 @@ GRAFANA:
 </p>
 </details>
 
-- Optionally, perform the following steps to deploy the Viya4 dashboards:
+- Optionally, perform the following steps to deploy the Viya 4 dashboards:
 ```
 User root   Host myserver   Current directory /root/Viya_Manager/Optional-Components/Monitoring/viya4-monitoring-kubernetes-main/monitoring/bin
 > export VIYA_NS=sas-viya <-- Replace as needed with the name of the Viya namespace
@@ -484,6 +484,8 @@ Monitoring components successfully deployed into the [sas-viya] namespace
 </p>
 </details>
 
+For more information on the installation of the Viya 4 monitoring layer as well as on the optional logging component for non-SAS ESP logs, please refer to the [Viya 4 Monitoring for Kubernetes](https://github.com/sassoftware/viya4-monitoring-kubernetes) GitHub page.
+	
 [&#11014;](#top) Top
 ### Accessing the Dashboards
  
@@ -517,12 +519,12 @@ On the **SAS ESP CPU, Memory, and Logs Usage** dashboard, the **Current CPU Usag
 [&#11014;](#top) Top
 ### Troubleshooting
 
-For Viya_Manager to run without errors, the entire list of prerequisites must be satisfied. Make sure to go through each one of them before attempting to create and/or manage a Viya 4 installation. Once the requirements are in place, in the event any of the infrastructure or deployment tasks fail, they can be executed again as the execution will resume from the last checkpoint. If the failure persists, it is recommended to investigate the problem using the Cloud provider console if the issues relates to infrastructure, or by opening a ticket with the SAS Technical Support if the problem shows during the installation of Viya. To troubleshoot problems with the Kubernetes cluster, it is recommended that you use a tool like Lens, or ask someone to help you do the same if you are not familiar with Kubernetes. Fianlly, even tough the Viya_Manager code is provided in clear, it is recommended not to make modifications to it to avoid problems that could lead to the incorrect execution of its tasks.
+For the SAS ESP Monitoring stack to install without errors, the entire list of prerequisites must be satisfied. Make sure to go through each one of them before attempting to deploy. Once the requirements are in place, in the event any of the deployment tasks fail, it is recommended to remove the software before attemping execution again. To troubleshoot problems with the Kubernetes cluster, it is recommended that you use a tool like Lens, or ask someone to help you do the same if you are not familiar with Kubernetes. Finally, always consult the documentaion for the Viya 4 Monitoring solution before applying any configuration changes that could lead to deployment errors.
 
 [&#11014;](#top) Top
 ## Conclusion
 
-Ad-hoc monitoring of Viya4 SAS ESP resources can be tedious and time consuming. This tutorial shows how this task can be eased through the installation of the SAS ESP Monitoring stack, an add-on to the Viya4 Monitoring solution SAS provides for the monitoring of the whole Viya system. The SAS ESP stack gives system administrators metrics to accurately measure CPU usage and memory consumption. Real-time and historical log information is also made available at the individual project level to help debug any issues a project might encounter during its execution. The result is a faster monitoring of SAS ESP resources to help troubleshoot issues before they reach the potential to negatively affect the overall performance of the environment.
+Ad-hoc monitoring of Viya 4 SAS ESP resources can be tedious and time consuming. This tutorial shows how this task can be eased through the installation of the SAS ESP Monitoring stack, an add-on to the Viya 4 Monitoring solution SAS provides for the monitoring of the whole Viya system. The SAS ESP stack gives system administrators metrics to accurately measure CPU usage and memory consumption. Real-time and historical log information is also made available at the individual project level to help debug any issues a project might encounter during its execution. The result is a faster monitoring of SAS ESP resources to help troubleshoot issues before they reach the potential to negatively affect the overall performance of the environment.
 
 [&#11014;](#top) Top
 ## Contributing
