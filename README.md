@@ -18,6 +18,7 @@ _A tutorial on monitoring SAS Event Processing resources._
 	* [Installation](#installation)
 	* [Removal](#removal)
   	* [Accessing the Dashboards](#accessing-the-dashboards)
+  	* [Deploying Custom Dashboards](#deploying-custom-dashboards)
 	* [Troubleshooting](#troubleshooting)
 * [Conclusion](#conclusion)
 * [Contributing](#contributing)
@@ -554,6 +555,19 @@ On the **SAS ESP CPU, Memory, and Logs Usage** dashboard, the **Current CPU Usag
 <table align="center"><tr><td align="center" width="9999">
 <img src="Images/Compute_Resources_Pod.png" align="center" width="9999">
 </td></tr></table>
+
+[&#11014;](#top) Top
+### Deploying Custom Dashboards
+ 
+The dashboards installed with the SAS ESP Monitoring stack are meant to be used as an example of the kind of monitoring that can be done through Grafana. Since the dashboards are provisioned as part of the installation, they cannot be modified directly in Grafana. Therefore it is recommended to either change their source code, or to create copies to work on. They can be cloned and modified to create even more sophisticated dashboards to, for instance, target different metrics or trigger alerts. The source code for the sample dashboards can be found in the **$USER_DIR/monitoring/dashboards** folder. Whether you decide to modify the existing dashboard or create new ones in the same folder, they can be deploy into an existing stack by running the following commands:
+```
+User root   Host myserver   Current directory /root/Viya_Manager/Optional-Components/Monitoring/viya4-monitoring-kubernetes-main/monitoring/bin
+> export USER_DIR=/root/Viya_Manager/Optional-Components/Monitoring/customizations
+
+User root   Host myserver   Current directory /root/Viya_Manager/Optional-Components/Monitoring/viya4-monitoring-kubernetes-main/monitoring/bin
+> ./deploy_dashboards.sh
+```
+Alternatively, dashboards can be created or cloned in Grafana, with no deployment needed once the dashboards are ready. Either way, it is recommended to consult the Grafana documentation for best practices on how to develop dashboards.
 
 [&#11014;](#top) Top
 ### Troubleshooting
