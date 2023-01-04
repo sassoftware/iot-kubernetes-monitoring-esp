@@ -28,7 +28,7 @@ _A tutorial on monitoring SAS Event Processing resources._
 [&#11014;](#top) Top
 ## Overview
 
-The current Viya 4 monitoring solution provides system administrators with a powerful tool to monitor installations as a whole. Resource oversight, coupled with the ability to aggregate log information and generate alerts make it easier to admnister deployments regardless of their complexity. While this is helpful at a high level, within Viya, smaller ecosystems like the SAS Event Stream Processing (SAS ESP) require a more specialized approach to  both real time and historical monitoring of projects.
+The current Viya 4 monitoring solution provides system administrators with a powerful tool to monitor installations as a whole. Resource oversight, coupled with the ability to aggregate log information and generate alerts make it easier to administer deployments regardless of their complexity. While this is helpful at a high level, within Viya, smaller ecosystems like the SAS Event Stream Processing (SAS ESP) require a more specialized approach to  both real time and historical monitoring of projects.
 
 The monitoring stack for SAS ESP was developed to help customers address this need. It can be considered as an extended version of the [Viya 4 Monitoring](https://github.com/sassoftware/viya4-monitoring-kubernetes) solution, as it shares the same code base and allows for the installation of the same components in addition to the SAS ESP-specific ones. The main difference is that the SAS ESP stack doesn't require the deployment of the Viya 4 logging layer as it uses Loki instead for log aggregation.
 
