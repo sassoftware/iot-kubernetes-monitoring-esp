@@ -197,81 +197,82 @@ Proceed with the install as follows:
   ./deploy_monitoring_cluster
 ```
 
-<details><summary><b><i>Click</i></b> to view the deploy_monitoring_cluster installation log:</summary>
-<p>
-User root   Host myserver   Current directory /root/Viya_Manager/Optional-Components/Monitoring/viya4-monitoring-kubernetes-main/monitoring/bin
-> export USER_DIR=/root/Viya_Manager/Optional-Components/Monitoring/customizations
+<details open>
+<summary><b><i>Click</i></b> to view the deploy_monitoring_cluster installation log:</summary>
 
-User root   Host myserver   Current directory /root/Viya_Manager/Optional-Components/Monitoring/viya4-monitoring-kubernetes-main/monitoring/bin
-> ./deploy_monitoring_cluster.sh
-INFO User directory: /root/Viya_Manager/Optional-Components/Monitoring/customizations
-INFO Helm client version: 3.7.1
-INFO Kubernetes client version: v1.23.8
-INFO Kubernetes server version: v1.23.8
+\> User root   Host myserver   Current directory /root/Viya_Manager/Optional-Components/Monitoring/viya4-monitoring-kubernetes-main/monitoring/bin
+export USER_DIR=/root/Viya_Manager/Optional-Components/Monitoring/customizations
+
+\> User root   Host myserver   Current directory /root/Viya_Manager/Optional-Components/Monitoring/viya4-monitoring-kubernetes-main/monitoring/bin
+\> ./deploy_monitoring_cluster.sh\
+INFO User directory: /root/Viya_Manager/Optional-Components/Monitoring/customizations\
+INFO Helm client version: 3.7.1\
+INFO Kubernetes client version: v1.23.8\
+INFO Kubernetes server version: v1.23.8\
 INFO Loading user environment file: /root/Viya_Manager/Optional-Components/Monitoring/customizations/monitoring/user.env
 
-namespace/monitoring created
-Deploying monitoring to the [monitoring] namespace...
-"prometheus-community" already exists with the same configuration, skipping
-Hang tight while we grab the latest from your chart repositories...
-...Successfully got an update from the "nfs" chart repository
-...Successfully got an update from the "opensearch" chart repository
-...Successfully got an update from the "fluent" chart repository
-...Successfully got an update from the "jetstack" chart repository
-...Successfully got an update from the "jupyterhub" chart repository
-...Successfully got an update from the "gitlab" chart repository
-...Successfully got an update from the "grafana" chart repository
-...Successfully got an update from the "prometheus-community" chart repository
-...Successfully got an update from the "nginx" chart repository
-Update Complete. ⎈Happy Helming!⎈
-INFO Updating Prometheus Operator custom resource definitions
-customresourcedefinition.apiextensions.k8s.io/alertmanagerconfigs.monitoring.coreos.com replaced
-customresourcedefinition.apiextensions.k8s.io/alertmanagers.monitoring.coreos.com replaced
-customresourcedefinition.apiextensions.k8s.io/prometheuses.monitoring.coreos.com replaced
-customresourcedefinition.apiextensions.k8s.io/prometheusrules.monitoring.coreos.com replaced
-customresourcedefinition.apiextensions.k8s.io/podmonitors.monitoring.coreos.com replaced
-customresourcedefinition.apiextensions.k8s.io/servicemonitors.monitoring.coreos.com replaced
-customresourcedefinition.apiextensions.k8s.io/thanosrulers.monitoring.coreos.com replaced
-customresourcedefinition.apiextensions.k8s.io/probes.monitoring.coreos.com replaced
-No resources found
-INFO Enabling monitoring components for workload node placement
-INFO User response file: [/root/Viya_Manager/Optional-Components/Monitoring/customizations/monitoring/user-values-prom-operator.yaml]
-INFO Deploying the kube-prometheus stack. This may take a few minutes ...
-INFO Installing via Helm (Wed Dec 7 12:53:50 UTC 2022 - timeout 20m)
-Release "v4m-prometheus-operator" does not exist. Installing it now.
-NAME: v4m-prometheus-operator
-LAST DEPLOYED: Wed Dec  7 12:53:53 2022
-NAMESPACE: monitoring
-STATUS: deployed
-REVISION: 1
-NOTES:
-kube-prometheus-stack has been installed. Check its status by running:
+namespace/monitoring created\
+Deploying monitoring to the [monitoring] namespace...\
+"prometheus-community" already exists with the same configuration, skipping\
+Hang tight while we grab the latest from your chart repositories...\
+...Successfully got an update from the "nfs" chart repository\
+...Successfully got an update from the "opensearch" chart repository\
+...Successfully got an update from the "fluent" chart repository\
+...Successfully got an update from the "jetstack" chart repository\
+...Successfully got an update from the "jupyterhub" chart repository\
+...Successfully got an update from the "gitlab" chart repository\
+...Successfully got an update from the "grafana" chart repository\
+...Successfully got an update from the "prometheus-community" chart repository\
+...Successfully got an update from the "nginx" chart repository\
+Update Complete. ⎈Happy Helming!⎈\
+INFO Updating Prometheus Operator custom resource definitions\
+customresourcedefinition.apiextensions.k8s.io/alertmanagerconfigs.monitoring.coreos.com replaced\
+customresourcedefinition.apiextensions.k8s.io/alertmanagers.monitoring.coreos.com replaced\
+customresourcedefinition.apiextensions.k8s.io/prometheuses.monitoring.coreos.com replaced\
+customresourcedefinition.apiextensions.k8s.io/prometheusrules.monitoring.coreos.com replaced\
+customresourcedefinition.apiextensions.k8s.io/podmonitors.monitoring.coreos.com replaced\
+customresourcedefinition.apiextensions.k8s.io/servicemonitors.monitoring.coreos.com replaced\
+customresourcedefinition.apiextensions.k8s.io/thanosrulers.monitoring.coreos.com replaced\
+customresourcedefinition.apiextensions.k8s.io/probes.monitoring.coreos.com replaced\
+No resources found\
+INFO Enabling monitoring components for workload node placement\
+INFO User response file: [/root/Viya_Manager/Optional-Components/Monitoring/customizations/monitoring/user-values-prom-operator.yaml]\
+INFO Deploying the kube-prometheus stack. This may take a few minutes ...\
+INFO Installing via Helm (Wed Dec 7 12:53:50 UTC 2022 - timeout 20m)\
+Release "v4m-prometheus-operator" does not exist. Installing it now.\
+NAME: v4m-prometheus-operator\
+LAST DEPLOYED: Wed Dec  7 12:53:53 2022\
+NAMESPACE: monitoring\
+STATUS: deployed\
+REVISION: 1\
+NOTES:\
+kube-prometheus-stack has been installed. Check its status by running:\
   kubectl --namespace monitoring get pods -l "release=v4m-prometheus-operator"
 
-Visit https://github.com/prometheus-operator/kube-prometheus for instructions on how to create & configure Alertmanager and Prometheus instances using the Operator.
-"grafana" already exists with the same configuration, skipping
-Hang tight while we grab the latest from your chart repositories...
-...Successfully got an update from the "nfs" chart repository
-...Successfully got an update from the "opensearch" chart repository
-...Successfully got an update from the "fluent" chart repository
-...Successfully got an update from the "jetstack" chart repository
-...Successfully got an update from the "gitlab" chart repository
-...Successfully got an update from the "jupyterhub" chart repository
-...Successfully got an update from the "grafana" chart repository
-...Successfully got an update from the "prometheus-community" chart repository
-...Successfully got an update from the "nginx" chart repository
-Update Complete. ⎈Happy Helming!⎈
-Release "loki" does not exist. Installing it now.
-NAME: loki
-LAST DEPLOYED: Wed Dec  7 12:54:37 2022
-NAMESPACE: monitoring
-STATUS: deployed
-REVISION: 1
-NOTES:
-***********************************************************************
- Welcome to Grafana Loki
- Chart version: 1.8.11
- Loki version: 2.6.1
+Visit https://github.com/prometheus-operator/kube-prometheus for instructions on how to create & configure Alertmanager and Prometheus instances using the Operator.\
+"grafana" already exists with the same configuration, skipping\
+Hang tight while we grab the latest from your chart repositories...\
+...Successfully got an update from the "nfs" chart repository\
+...Successfully got an update from the "opensearch" chart repository\
+...Successfully got an update from the "fluent" chart repository\
+...Successfully got an update from the "jetstack" chart repository\
+...Successfully got an update from the "gitlab" chart repository\
+...Successfully got an update from the "jupyterhub" chart repository\
+...Successfully got an update from the "grafana" chart repository\
+...Successfully got an update from the "prometheus-community" chart repository\
+...Successfully got an update from the "nginx" chart repository\
+Update Complete. ⎈Happy Helming!⎈\
+Release "loki" does not exist. Installing it now.\
+NAME: loki\
+LAST DEPLOYED: Wed Dec  7 12:54:37 2022\
+NAMESPACE: monitoring\
+STATUS: deployed\
+REVISION: 1\
+NOTES:\
+***********************************************************************\
+ Welcome to Grafana Loki\
+ Chart version: 1.8.11\
+ Loki version: 2.6.1\
 ***********************************************************************
 
 Installed components:
@@ -279,150 +280,151 @@ Installed components:
 * read
 * write
 
-This chart requires persistence and object storage to work correctly.
-Queries will not work unless you provide a `loki.config.common.storage` section with
-a valid object storage (and the default `filesystem` storage set to `null`), as well
-as a valid `loki.config.schema_config.configs` with an `object_store` that
+This chart requires persistence and object storage to work correctly.\
+Queries will not work unless you provide a `loki.config.common.storage` section with\
+a valid object storage (and the default `filesystem` storage set to `null`), as well\
+as a valid `loki.config.schema_config.configs` with an `object_store` that\
 matches the common storage section.
 
 For example, to use MinIO as your object storage backend:
 
-loki:
-  config:
-    common:
-      storage:
-        filesystem: null
-        s3:
-          endpoint: minio.minio.svc.cluster.local:9000
-          insecure: true
-          bucketnames: loki-data
-          access_key_id: loki
-          secret_access_key: supersecret
-          s3forcepathstyle: true
-    schema_config:
-      configs:
-        - from: "2020-09-07"
-          store: boltdb-shipper
-          object_store: s3
-          schema: v11
-          index:
-            period: 24h
-            prefix: loki_index_
-Release "promtail" does not exist. Installing it now.
-NAME: promtail
-LAST DEPLOYED: Wed Dec  7 12:55:02 2022
-NAMESPACE: monitoring
-STATUS: deployed
-REVISION: 1
-TEST SUITE: None
+loki:\
+  config:\
+    common:\
+      storage:\
+        filesystem: null\
+        s3:\
+          endpoint: minio.minio.svc.cluster.local:9000\
+          insecure: true\
+          bucketnames: loki-data\
+          access_key_id: loki\
+          secret_access_key: supersecret\
+          s3forcepathstyle: true\
+    schema_config:\
+      configs:\
+        - from: "2020-09-07"\
+          store: boltdb-shipper\
+          object_store: s3\
+          schema: v11\
+          index:\
+            period: 24h\
+            prefix: loki_index_\
+Release "promtail" does not exist. Installing it now.\
+NAME: promtail\
+LAST DEPLOYED: Wed Dec  7 12:55:02 2022\
+NAMESPACE: monitoring\
+STATUS: deployed\
+REVISION: 1\
+TEST SUITE: None\
 NOTES:
-***********************************************************************
- Welcome to Grafana Promtail
- Chart version: 6.7.1
+***********************************************************************\
+ Welcome to Grafana Promtail\
+ Chart version: 6.7.1\
  Promtail version: 2.7.0
 ***********************************************************************
 
 Verify the application is working by running these commands:
 * kubectl --namespace monitoring port-forward daemonset/promtail 3101
-* curl http://127.0.0.1:3101/metrics
-configmap/promtail created
-daemonset.apps "promtail" deleted
-daemonset.apps/promtail created
-service/promtail created
-INFO Deploying ServiceMonitors and Prometheus rules
-INFO Deploying cluster ServiceMonitors
-NAME            STATUS   AGE
-ingress-nginx   Active   48d
-INFO NGINX found. Deploying podMonitor to [ingress-nginx] namespace
-podmonitor.monitoring.coreos.com/ingress-nginx configured
-podmonitor.monitoring.coreos.com/eventrouter created
-servicemonitor.monitoring.coreos.com/elasticsearch created
-servicemonitor.monitoring.coreos.com/fluent-bit created
-servicemonitor.monitoring.coreos.com/fluent-bit-v2 created
-INFO Deploying user ServiceMonitors
-INFO Deploying user ServiceMonitors from [/root/Viya_Manager/Optional-Components/Monitoring/customizations/monitoring/monitors] ...
-servicemonitor.monitoring.coreos.com/sas-esp-server created
-INFO Adding Prometheus recording rules
-prometheusrule.monitoring.coreos.com/sas-launcher-job-rules created
-NAME                  AGE
-v4m-kubernetes-apps   71s
-INFO Patching KubeHpaMaxedOut rule
-prometheusrule.monitoring.coreos.com/v4m-kubernetes-apps patched
-INFO Provisioning Loki datasource for Grafana
-secret/grafana-datasource-loki created
+* curl http://127.0.0.1:3101/metrics\
+configmap/promtail created\
+daemonset.apps "promtail" deleted\
+daemonset.apps/promtail created\
+service/promtail created\
+INFO Deploying ServiceMonitors and Prometheus rules\
+INFO Deploying cluster ServiceMonitors\
+NAME            STATUS   AGE\
+ingress-nginx   Active   48d\
+INFO NGINX found. Deploying podMonitor to [ingress-nginx] namespace\
+podmonitor.monitoring.coreos.com/ingress-nginx configured\
+podmonitor.monitoring.coreos.com/eventrouter created\
+servicemonitor.monitoring.coreos.com/elasticsearch created\
+servicemonitor.monitoring.coreos.com/fluent-bit created\
+servicemonitor.monitoring.coreos.com/fluent-bit-v2 created\
+INFO Deploying user ServiceMonitors\
+INFO Deploying user ServiceMonitors from [/root/Viya_Manager/Optional-Components/Monitoring/customizations/monitoring/monitors] ...\
+servicemonitor.monitoring.coreos.com/sas-esp-server created\
+INFO Adding Prometheus recording rules\
+prometheusrule.monitoring.coreos.com/sas-launcher-job-rules created\
+NAME                  AGE\
+v4m-kubernetes-apps   71s\
+INFO Patching KubeHpaMaxedOut rule\
+prometheusrule.monitoring.coreos.com/v4m-kubernetes-apps patched\
+INFO Provisioning Loki datasource for Grafana\
+secret/grafana-datasource-loki created\
 secret/grafana-datasource-loki labeled
 
-INFO Deploying dashboards to the [monitoring] namespace ...
-INFO Deploying welcome dashboards
-configmap/viya-welcome-dashboard created
-configmap/viya-welcome-dashboard labeled
-INFO Deploying Kubernetes cluster dashboards
-configmap/k8s-cluster-dashboard created
-configmap/k8s-cluster-dashboard labeled
-configmap/k8s-deployment-dashboard created
-configmap/k8s-deployment-dashboard labeled
-configmap/perf-k8s-container-util created
-configmap/perf-k8s-container-util labeled
-configmap/perf-k8s-headroom created
-configmap/perf-k8s-headroom labeled
-configmap/perf-k8s-node-util-detail created
-configmap/perf-k8s-node-util-detail labeled
-configmap/perf-k8s-node-util created
-configmap/perf-k8s-node-util labeled
-configmap/prometheus-alerts created
-configmap/prometheus-alerts labeled
-INFO Deploying Logging dashboards
-configmap/elasticsearch-dashboard created
-configmap/elasticsearch-dashboard labeled
-configmap/fluent-bit created
-configmap/fluent-bit labeled
-INFO Deploying SAS Viya dashboards
-configmap/cas-dashboard created
-configmap/cas-dashboard labeled
-configmap/go-service-dashboard created
-configmap/go-service-dashboard labeled
-configmap/java-service-dashboard created
-configmap/java-service-dashboard labeled
-configmap/postgres-dashboard created
-configmap/postgres-dashboard labeled
-configmap/sas-launched-jobs-node created
-configmap/sas-launched-jobs-node labeled
-configmap/sas-launched-jobs-users created
-configmap/sas-launched-jobs-users labeled
-INFO Deploying Postgres dashboards
-configmap/pg-details created
-configmap/pg-details labeled
-INFO Deploying RabbitMQ dashboards
-configmap/erlang-memory-allocators created
-configmap/erlang-memory-allocators labeled
-configmap/rabbitmq-overview created
-configmap/rabbitmq-overview labeled
-INFO Deploying NGINX dashboards
-configmap/nginx-dashboard created
-configmap/nginx-dashboard labeled
-INFO Deploying user dashboards from [/root/Viya_Manager/Optional-Components/Monitoring/customizations/monitoring/dashboards]
-configmap/cpu-memory-and-logs-usage created
-configmap/cpu-memory-and-logs-usage labeled
-configmap/log-analysis-by-project created
-configmap/log-analysis-by-project labeled
-configmap/viya-welcome-dashboard configured
-configmap/viya-welcome-dashboard unlabeled
-INFO Deployed dashboards to the [monitoring] namespace
-INFO Updating Viya Monitoring for Kubernetes version information
-Release "v4m-metrics" does not exist. Installing it now.
-NAME: v4m-metrics
-LAST DEPLOYED: Wed Dec  7 12:55:32 2022
-NAMESPACE: monitoring
-STATUS: deployed
-REVISION: 1
-TEST SUITE: None
-NOTES:
+INFO Deploying dashboards to the [monitoring] namespace ...\
+INFO Deploying welcome dashboards\
+configmap/viya-welcome-dashboard created\
+configmap/viya-welcome-dashboard labeled\
+INFO Deploying Kubernetes cluster dashboards\
+configmap/k8s-cluster-dashboard created\
+configmap/k8s-cluster-dashboard labeled\
+configmap/k8s-deployment-dashboard created\
+configmap/k8s-deployment-dashboard labeled\
+configmap/perf-k8s-container-util created\
+configmap/perf-k8s-container-util labeled\
+configmap/perf-k8s-headroom created\
+configmap/perf-k8s-headroom labeled\
+configmap/perf-k8s-node-util-detail created\
+configmap/perf-k8s-node-util-detail labeled\
+configmap/perf-k8s-node-util created\
+configmap/perf-k8s-node-util labeled\
+configmap/prometheus-alerts created\
+configmap/prometheus-alerts labeled\
+INFO Deploying Logging dashboards\
+configmap/elasticsearch-dashboard created\
+configmap/elasticsearch-dashboard labeled\
+configmap/fluent-bit created\
+configmap/fluent-bit labeled\
+INFO Deploying SAS Viya dashboards\
+configmap/cas-dashboard created\
+configmap/cas-dashboard labeled\
+configmap/go-service-dashboard created\
+configmap/go-service-dashboard labeled\
+configmap/java-service-dashboard created\
+configmap/java-service-dashboard labeled\
+configmap/postgres-dashboard created\
+configmap/postgres-dashboard labeled\
+configmap/sas-launched-jobs-node created\
+configmap/sas-launched-jobs-node labeled\
+configmap/sas-launched-jobs-users created\
+configmap/sas-launched-jobs-users labeled\
+INFO Deploying Postgres dashboards\
+configmap/pg-details created\
+configmap/pg-details labeled\
+INFO Deploying RabbitMQ dashboards\
+configmap/erlang-memory-allocators created\
+configmap/erlang-memory-allocators labeled\
+configmap/rabbitmq-overview created\
+configmap/rabbitmq-overview labeled\
+INFO Deploying NGINX dashboards\
+configmap/nginx-dashboard created\
+configmap/nginx-dashboard labeled\
+INFO Deploying user dashboards from [/root/Viya_Manager/Optional-Components/Monitoring/customizations/monitoring/dashboards]\
+configmap/cpu-memory-and-logs-usage created\
+configmap/cpu-memory-and-logs-usage labeled\
+configmap/log-analysis-by-project created\
+configmap/log-analysis-by-project labeled\
+configmap/viya-welcome-dashboard configured\
+configmap/viya-welcome-dashboard unlabeled\
+INFO Deployed dashboards to the [monitoring] namespace\
+INFO Updating Viya Monitoring for Kubernetes version information\
+Release "v4m-metrics" does not exist. Installing it now.\
+NAME: v4m-metrics\
+LAST DEPLOYED: Wed Dec  7 12:55:32 2022\
+NAMESPACE: monitoring\
+STATUS: deployed\
+REVISION: 1\
+TEST SUITE: None\
+NOTES:\
 Viya Monitoring for Kubernetes 1.2.7-SNAPSHOT is installed
 
-GRAFANA:
+GRAFANA:\
   http://iot.viya-azure-3.unx.sas.com/grafana
 
  Successfully deployed components to the [monitoring] namespace
+
 </p>
 </details>
 
@@ -436,53 +438,54 @@ User root   Host myserver   Current directory /root/Viya_Manager/Optional-Compon
 ```
 <details><summary><b><i>Click</i></b> to view the deploy_monitoring_viya installation log:</summary>
 <p>
-INFO User directory: /root/Viya_Manager/Optional-Components/Monitoring/customizations
-INFO Helm client version: 3.7.1
-INFO Kubernetes client version: v1.23.8
-INFO Kubernetes server version: v1.23.8
+INFO User directory: /root/Viya_Manager/Optional-Components/Monitoring/customizations\
+INFO Helm client version: 3.7.1\
+INFO Kubernetes client version: v1.23.8\
+INFO Kubernetes server version: v1.23.8\
 INFO Loading user environment file: /root/Viya_Manager/Optional-Components/Monitoring/customizations/monitoring/user.env
 
-"prometheus-community" already exists with the same configuration, skipping
-INFO Updating helm repositories...
-Hang tight while we grab the latest from your chart repositories...
-...Successfully got an update from the "nfs" chart repository
-...Successfully got an update from the "opensearch" chart repository
-...Successfully got an update from the "fluent" chart repository
-...Successfully got an update from the "jetstack" chart repository
-...Successfully got an update from the "gitlab" chart repository
-...Successfully got an update from the "jupyterhub" chart repository
-...Successfully got an update from the "grafana" chart repository
-...Successfully got an update from the "prometheus-community" chart repository
-...Successfully got an update from the "nginx" chart repository
-Update Complete. ⎈Happy Helming!⎈
-INFO Enabling monitoring components for workload node placement
-Enabling the [sas-viya] namespace for SAS Viya monitoring
-INFO Installing the Prometheus Pushgateway to the [sas-viya] namespace
-Release "prometheus-pushgateway" has been upgraded. Happy Helming!
-NAME: prometheus-pushgateway
-LAST DEPLOYED: Wed Dec  7 21:05:21 2022
-NAMESPACE: sas-viya
-STATUS: deployed
-REVISION: 3
-TEST SUITE: None
-NOTES:
-1. Get the application URL by running these commands:
-  export POD_NAME=$(kubectl get pods --namespace sas-viya -l "app=prometheus-pushgateway,release=prometheus-pushgateway" -o jsonpath="{.items[0].metadata.name}")
-  echo "Visit http://127.0.0.1:8080 to use your application"
-  kubectl port-forward $POD_NAME 8080:80
-INFO Adding monitors for resources in the [sas-viya] namespace...
-servicemonitor.monitoring.coreos.com/sas-arke configured
-servicemonitor.monitoring.coreos.com/sas-cas-operator configured
-servicemonitor.monitoring.coreos.com/sas-cas-server configured
-servicemonitor.monitoring.coreos.com/sas-elasticsearch configured
-servicemonitor.monitoring.coreos.com/sas-opendistro unchanged
-servicemonitor.monitoring.coreos.com/sas-postgres configured
-servicemonitor.monitoring.coreos.com/pushgateway unchanged
-servicemonitor.monitoring.coreos.com/sas-rabbitmq-server configured
-podmonitor.monitoring.coreos.com/sas-deployment-operator configured
-podmonitor.monitoring.coreos.com/sas-go-pods configured
-podmonitor.monitoring.coreos.com/sas-java-pods configured
+"prometheus-community" already exists with the same configuration, skipping\
+INFO Updating helm repositories...\
+Hang tight while we grab the latest from your chart repositories...\
+...Successfully got an update from the "nfs" chart repository\
+...Successfully got an update from the "opensearch" chart repository\
+...Successfully got an update from the "fluent" chart repository\
+...Successfully got an update from the "jetstack" chart repository\
+...Successfully got an update from the "gitlab" chart repository\
+...Successfully got an update from the "jupyterhub" chart repository\
+...Successfully got an update from the "grafana" chart repository\
+...Successfully got an update from the "prometheus-community" chart repository\
+...Successfully got an update from the "nginx" chart repository\
+Update Complete. ⎈Happy Helming!⎈\
+INFO Enabling monitoring components for workload node placement\
+Enabling the [sas-viya] namespace for SAS Viya monitoring\
+INFO Installing the Prometheus Pushgateway to the [sas-viya] namespace\
+Release "prometheus-pushgateway" has been upgraded. Happy Helming!\
+NAME: prometheus-pushgateway\
+LAST DEPLOYED: Wed Dec  7 21:05:21 2022\
+NAMESPACE: sas-viya\
+STATUS: deployed\
+REVISION: 3\
+TEST SUITE: None\
+NOTES:\
+1. Get the application URL by running these commands:\
+  export POD_NAME=$(kubectl get pods --namespace sas-viya -l "app=prometheus-pushgateway,release=prometheus-pushgateway" -o jsonpath="{.items[0].metadata.name}")\
+  echo "Visit http://127.0.0.1:8080 to use your application"\
+  kubectl port-forward $POD_NAME 8080:80\
+INFO Adding monitors for resources in the [sas-viya] namespace...\
+servicemonitor.monitoring.coreos.com/sas-arke configured\
+servicemonitor.monitoring.coreos.com/sas-cas-operator configured\
+servicemonitor.monitoring.coreos.com/sas-cas-server configured\
+servicemonitor.monitoring.coreos.com/sas-elasticsearch configured\
+servicemonitor.monitoring.coreos.com/sas-opendistro unchanged\
+servicemonitor.monitoring.coreos.com/sas-postgres configured\
+servicemonitor.monitoring.coreos.com/pushgateway unchanged\
+servicemonitor.monitoring.coreos.com/sas-rabbitmq-server configured\
+podmonitor.monitoring.coreos.com/sas-deployment-operator configured\
+podmonitor.monitoring.coreos.com/sas-go-pods configured\
+podmonitor.monitoring.coreos.com/sas-java-pods configured\
 Monitoring components successfully deployed into the [sas-viya] namespace
+	
 </p>
 </details>
 
@@ -503,26 +506,28 @@ User root   Host myserver   Current directory /root/Viya_Manager/Optional-Compon
 ```
 <details><summary><b><i>Click</i></b> to view the log generated by the remove_monitoring_cluster.sh command:</summary>
 <p>
-> ./remove_monitoring_cluster.sh
-INFO User directory: /root/Viya_Manager/Optional-Components/Monitoring/customizations
-INFO Helm client version: 3.7.1
-INFO Kubernetes client version: v1.23.8
-INFO Kubernetes server version: v1.23.8
+
+\> ./remove_monitoring_cluster.sh\
+INFO User directory: /root/Viya_Manager/Optional-Components/Monitoring/customizations\
+INFO Helm client version: 3.7.1\
+INFO Kubernetes client version: v1.23.8\
+INFO Kubernetes server version: v1.23.8\
 INFO Loading user environment file: /root/Viya_Manager/Optional-Components/Monitoring/customizations/monitoring/user.env
 
-Removing components from the [monitoring] namespace...
-INFO Removing the kube-prometheus stack...
-release "v4m-prometheus-operator" uninstalled
-release "loki" uninstalled
-INFO Removing Promtail cluster binding role...
-clusterrolebinding.rbac.authorization.k8s.io "promtail" deleted
-INFO Removing Promtail cluster role...
-clusterrole.rbac.authorization.k8s.io "promtail" deleted
-INFO Removing v4m-kubelet service
-service "v4m-kubelet" deleted
-INFO Deleting the [monitoring] namespace...
-namespace "monitoring" deleted
+Removing components from the [monitoring] namespace...\
+INFO Removing the kube-prometheus stack...\
+release "v4m-prometheus-operator" uninstalled\
+release "loki" uninstalled\
+INFO Removing Promtail cluster binding role...\
+clusterrolebinding.rbac.authorization.k8s.io "promtail" deleted\
+INFO Removing Promtail cluster role...\
+clusterrole.rbac.authorization.k8s.io "promtail" deleted\
+INFO Removing v4m-kubelet service\
+service "v4m-kubelet" deleted\
+INFO Deleting the [monitoring] namespace...\
+namespace "monitoring" deleted\
 INFO [monitoring] namespace deleted successfully
+	
 </p>
 </details>
 	
@@ -569,69 +574,69 @@ User root   Host myserver   Current directory /root/Viya_Manager/Optional-Compon
 ```
 <details><summary><b><i>Click</i></b> to view the log generated by the deploy_dashboards.sh command:</summary>
 <p>
-> ./deploy_dashboards.sh
-INFO User directory: /root/Viya_Manager/Optional-Components/Monitoring/customizations
-INFO Helm client version: 3.7.1
-INFO Kubernetes client version: v1.23.8
-INFO Kubernetes server version: v1.23.8
+
+\> ./deploy_dashboards.sh\
+INFO User directory: /root/Viya_Manager/Optional-Components/Monitoring/customizations\
+INFO Helm client version: 3.7.1\
+INFO Kubernetes client version: v1.23.8\
+INFO Kubernetes server version: v1.23.8\
 INFO Loading user environment file: /root/Viya_Manager/Optional-Components/Monitoring/customizations/monitoring/user.env
 
-INFO Deploying dashboards to the [monitoring] namespace ...
-INFO Deploying welcome dashboards
-configmap/viya-welcome-dashboard configured
-configmap/viya-welcome-dashboard labeled
-INFO Deploying Kubernetes cluster dashboards
-configmap/k8s-cluster-dashboard configured
-configmap/k8s-cluster-dashboard not labeled
-configmap/k8s-deployment-dashboard configured
-configmap/k8s-deployment-dashboard not labeled
-configmap/perf-k8s-container-util configured
-configmap/perf-k8s-container-util not labeled
-configmap/perf-k8s-headroom configured
-configmap/perf-k8s-headroom not labeled
-configmap/perf-k8s-node-util-detail configured
-configmap/perf-k8s-node-util-detail not labeled
-configmap/perf-k8s-node-util configured
-configmap/perf-k8s-node-util not labeled
-configmap/prometheus-alerts configured
-configmap/prometheus-alerts not labeled
-INFO Deploying Logging dashboards
-configmap/elasticsearch-dashboard configured
-configmap/elasticsearch-dashboard not labeled
-configmap/fluent-bit configured
-configmap/fluent-bit not labeled
-INFO Deploying SAS Viya dashboards
-configmap/cas-dashboard configured
-configmap/cas-dashboard not labeled
-configmap/go-service-dashboard configured
-configmap/go-service-dashboard not labeled
-configmap/java-service-dashboard configured
-configmap/java-service-dashboard not labeled
-configmap/postgres-dashboard configured
-configmap/postgres-dashboard not labeled
-configmap/sas-launched-jobs-node configured
-configmap/sas-launched-jobs-node not labeled
-configmap/sas-launched-jobs-users configured
-configmap/sas-launched-jobs-users not labeled
-INFO Deploying Postgres dashboards
-configmap/pg-details configured
-configmap/pg-details not labeled
-INFO Deploying RabbitMQ dashboards
-configmap/erlang-memory-allocators configured
-configmap/erlang-memory-allocators not labeled
-configmap/rabbitmq-overview configured
-configmap/rabbitmq-overview not labeled
-INFO Deploying NGINX dashboards
-configmap/nginx-dashboard configured
-configmap/nginx-dashboard not labeled
-INFO Deploying user dashboards from [/root/Viya_Manager/Optional-Components/Monitoring/customizations/monitoring/dashboards]
-configmap/cpu-memory-and-logs-usage configured
-configmap/cpu-memory-and-logs-usage not labeled
-configmap/log-analysis-by-project configured
-configmap/log-analysis-by-project not labeled
-configmap/viya-welcome-dashboard configured
-configmap/viya-welcome-dashboard unlabeled
+INFO Deploying dashboards to the [monitoring] namespace ...\
+INFO Deploying welcome dashboards\
+configmap/viya-welcome-dashboard configured\
+configmap/viya-welcome-dashboard labeled\
+INFO Deploying Kubernetes cluster dashboards\
+configmap/k8s-cluster-dashboard configured\
+configmap/k8s-cluster-dashboard not labeled\
+configmap/k8s-deployment-dashboard configured\
+configmap/k8s-deployment-dashboard not labeled\
+configmap/perf-k8s-container-util configured\
+configmap/perf-k8s-container-util not labeled\
+configmap/perf-k8s-headroom configured\
+configmap/perf-k8s-headroom not labeled\
+configmap/perf-k8s-node-util-detail configured\
+configmap/perf-k8s-node-util-detail not labeled\
+configmap/perf-k8s-node-util configured\
+configmap/perf-k8s-node-util not labeled\
+configmap/prometheus-alerts configured\
+configmap/prometheus-alerts not labeled\
+INFO Deploying Logging dashboards\
+configmap/elasticsearch-dashboard configured\
+configmap/fluent-bit not labeled\
+INFO Deploying SAS Viya dashboards\
+configmap/cas-dashboard configured\
+configmap/cas-dashboard not labeled\
+configmap/go-service-dashboard configured\
+configmap/go-service-dashboard not labeled\
+configmap/java-service-dashboard configured\
+configmap/java-service-dashboard not labeled\
+configmap/postgres-dashboard configured\
+configmap/postgres-dashboard not labeled\
+configmap/sas-launched-jobs-node configured\
+configmap/sas-launched-jobs-node not labeled\
+configmap/sas-launched-jobs-users configured\
+configmap/sas-launched-jobs-users not labeled\
+INFO Deploying Postgres dashboards\
+configmap/pg-details configured\
+configmap/pg-details not labeled\
+INFO Deploying RabbitMQ dashboards\
+configmap/erlang-memory-allocators configured\
+configmap/erlang-memory-allocators not labeled\
+configmap/rabbitmq-overview configured\
+configmap/rabbitmq-overview not labeled\
+INFO Deploying NGINX dashboards\
+configmap/nginx-dashboard configured\
+configmap/nginx-dashboard not labeled\
+INFO Deploying user dashboards from [/root/Viya_Manager/Optional-Components/Monitoring/customizations/monitoring/dashboards]\
+configmap/cpu-memory-and-logs-usage configured\
+configmap/cpu-memory-and-logs-usage not labeled\
+configmap/log-analysis-by-project configured\
+configmap/log-analysis-by-project not labeled\
+configmap/viya-welcome-dashboard configured\
+configmap/viya-welcome-dashboard unlabeled\
 INFO Deployed dashboards to the [monitoring] namespace
+
 </p>
 </details>	
 
