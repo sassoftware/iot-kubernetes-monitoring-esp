@@ -9,7 +9,6 @@ _A tutorial on monitoring SAS Event Processing resources._
 <img src="Images/Viya_on_Cloud.jpeg" align="center" width="9999">
 </td></tr></table>
 
-
 ## Table of Contents
 
 * [Overview](#overview)
@@ -197,8 +196,7 @@ Proceed with the install as follows:
   ./deploy_monitoring_cluster
 ```
 
-<details open>
-<summary><b><i>Click</i></b> to view the deploy_monitoring_cluster installation log:</summary>
+<details><summary><b><i>Click</i></b> to view the deploy_monitoring_cluster installation log:</summary>
 
 \> User root   Host myserver   Current directory /root/Viya_Manager/Optional-Components/Monitoring/viya4-monitoring-kubernetes-main/monitoring/bin
 export USER_DIR=/root/Viya_Manager/Optional-Components/Monitoring/customizations
