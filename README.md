@@ -280,6 +280,7 @@ Installed components:
 * read
 * write
 
+
 This chart requires persistence and object storage to work correctly.\
 Queries will not work unless you provide a `loki.config.common.storage` section with\
 a valid object storage (and the default `filesystem` storage set to `null`), as well\
