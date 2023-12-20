@@ -71,11 +71,9 @@ The SAS ESP Monitoring stack can be deployed from Unix platforms only. The follo
 [&#11014;](#top) Top
 ### Installation
 
-<a download="[custom-filename.jpg](https://github.com/sassoftware/iot-kubernetes-monitoring-esp/blob/main/code/ESP_Monitoring.tar.gz)" href="[/path/to/image](https://github.com/sassoftware/iot-kubernetes-monitoring-esp/blob/main/code/ESP_Monitoring.tar.gz)" title="ImageName">
-    <img alt="ImageName" src="[/path/to/image](https://github.com/sassoftware/iot-kubernetes-monitoring-esp/blob/main/code/ESP_Monitoring.tar.gz)">
-</a>
+<a href="https://github.com/sassoftware/iot-kubernetes-monitoring-esp/blob/main/code/ESP_Monitoring.tar.gz" download>Click here to download</a>
 
-Download the tarred ZIP [<ins>file</ins>](download https://github.com/sassoftware/iot-kubernetes-monitoring-esp/blob/main/code/ESP_Monitoring.tar.gz) containing the SAS ESP monitoring stack on a Unix server, and unpack it in a folder of your choice using the following command:
+Download the tarred ZIP [<ins>file</ins>](code/ESP_Monitoring.tar.gz) containing the SAS ESP monitoring stack on a Unix server, and unpack it in a folder of your choice using the following command:
 ```
 tar -xzvf ESP_Monitor.tar.gz --dir=${HOME}
 ```
