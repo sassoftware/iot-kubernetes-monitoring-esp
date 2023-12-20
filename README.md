@@ -80,91 +80,96 @@ tar -xzvf ESP_Monitor.tar.gz --dir=${HOME}
 
 ```
 Monitoring
-├── customizations
-│   └── monitoring
-│       ├── dashboards
-│       ├── loki
-│       └── monitors
-└── viya4-monitoring-kubernetes-main
-    ├── bin
-    ├── img
-    ├── logging
-    │   ├── bin
-    │   ├── esexporter
-    │   ├── eventrouter
-    │   ├── fb
-    │   ├── node-placement
-    │   ├── opensearch
-    │   │   ├── bin
-    │   │   ├── rbac
-    │   │   └── securityconfig
-    │   ├── openshift
-    │   ├── osd
-    │   │   ├── cluster_admins
-    │   │   ├── common
-    │   │   ├── namespace
-    │   │   └── tenant
-    │   └── tls
-    ├── monitoring
-    │   ├── bin
-    │   ├── dashboards
-    │   │   ├── istio
-    │   │   ├── kube
-    │   │   ├── logging
-    │   │   ├── nginx
-    │   │   ├── pgmonitor
-    │   │   │   └── disabled
-    │   │   ├── rabbitmq
-    │   │   ├── viya
-    │   │   ├── viya-logs
-    │   │   └── welcome
-    │   ├── monitors
-    │   │   ├── kube
-    │   │   ├── logging
-    │   │   └── viya
-    │   ├── multitenant
-    │   │   ├── dashboards
-    │   │   ├── openshift
-    │   │   └── tls
-    │   ├── node-placement
-    │   ├── openshift
-    │   ├── rules
-    │   │   └── viya
-    │   └── tls
-    ├── samples
-    │   ├── azure-deployment
-    │   │   ├── logging
-    │   │   └── monitoring
-    │   ├── azure-monitor
-    │   ├── cloudwatch
-    │   ├── external-alertmanager
-    │   │   └── monitoring
-    │   ├── generic-base
-    │   │   ├── logging
-    │   │   └── monitoring
-    │   │       └── dashboards
-    │   ├── gke-monitoring
-    │   ├── ingress
-    │   │   ├── host-based-ingress
-    │   │   │   ├── logging
-    │   │   │   └── monitoring
-    │   │   └── path-based-ingress
-    │   │       ├── logging
-    │   │       └── monitoring
-    │   ├── namespace-monitoring
-    │   │   └── monitoring
-    │   └── tls
-    │       ├── host-based-ingress
-    │       │   ├── logging
-    │       │   └── monitoring
-    │       └── path-based-ingress
-    │           ├── logging
-    │           └── monitoring
-    ├── v4m-chart
-    │   └── templates
-    └── v4m-container
-        ├── kubeconfig
-        └── user_dir
+|-- GitHub
+|-- customizations
+|   |-- monitoring
+|       |-- dashboards
+|       |-- grafana
+|       |   |-- authentication
+|       |   |   |-- LDAP
+|       |   |   |   |-- configmaps
+|       |   |   |   |-- patches
+|       |   |   |-- OAUTH
+|       |   |       |-- configmaps
+|       |   |       |-- patches
+|       |   |-- esp-plugin
+|       |       |-- grafana-esp-plugin-main
+|       |           |-- install
+|       |-- loki
+|       |-- monitors
+|-- viya4-monitoring-kubernetes-1.2.20
+|   |-- bin
+|   |-- img
+|   |-- logging
+|   |   |-- airgap
+|   |   |-- bin
+|   |   |-- esexporter
+|   |   |-- eventrouter
+|   |   |-- fb
+|   |   |-- node-placement
+|   |   |-- opensearch
+|   |   |   |-- bin
+|   |   |   |-- rbac
+|   |   |   |-- securityconfig
+|   |   |-- openshift
+|   |   |-- osd
+|   |   |   |-- cluster_admins
+|   |   |   |-- common
+|   |   |   |-- namespace
+|   |   |   |-- tenant
+|   |   |-- tls
+|   |-- monitoring
+|   |   |-- airgap
+|   |   |-- bin
+|   |   |-- dashboards
+|   |   |   |-- istio
+|   |   |   |-- kube
+|   |   |   |-- logging
+|   |   |   |-- nginx
+|   |   |   |-- pgmonitor
+|   |   |   |   |-- disabled
+|   |   |   |-- rabbitmq
+|   |   |   |-- viya
+|   |   |   |-- viya-logs
+|   |   |   |-- welcome
+|   |   |-- monitors
+|   |   |   |-- kube
+|   |   |   |-- logging
+|   |   |   |-- viya
+|   |   |-- node-placement
+|   |   |-- openshift
+|   |   |-- rules
+|   |   |   |-- viya
+|   |   |-- tls
+|   |-- samples
+|   |   |-- azure-deployment
+|   |   |   |-- logging
+|   |   |   |-- monitoring
+|   |   |-- azure-monitor
+|   |   |-- cloudwatch
+|   |   |-- external-alertmanager
+|   |   |   |-- monitoring
+|   |   |-- generic-base
+|   |   |   |-- logging
+|   |   |   |-- monitoring
+|   |   |       |-- dashboards
+|   |   |-- gke-monitoring
+|   |   |-- ingress
+|   |   |   |-- host-based-ingress
+|   |   |   |   |-- logging
+|   |   |   |   |-- monitoring
+|   |   |   |-- path-based-ingress
+|   |   |       |-- logging
+|   |   |       |-- monitoring
+|   |   |-- namespace-monitoring
+|   |   |   |-- monitoring
+|   |   |-- tls
+|   |-- v4m-chart
+|   |   |-- templates
+|   |-- v4m-container
+|       |-- kubeconfig
+|       |-- user_dir
+|-- viya4-monitoring-kubernetes-main -> viya4-monitoring-kubernetes-1.2.20
 ```
 Where:
 
