@@ -71,7 +71,7 @@ The SAS ESP Monitoring stack can be deployed from Unix platforms only. The follo
 [&#11014;](#top) Top
 ### Installation
  
-Download the tarred ZIP [<ins>file</ins>](Code/ESP_Monitoring.tar.gz) containing the SAS ESP monitoring stack on a Unix server, and unpack it in a folder of your choice using the following command:
+Download the tarred ZIP [<ins>file</ins>](code/ESP_Monitoring.tar.gz) containing the SAS ESP monitoring stack on a Unix server, and unpack it in a folder of your choice using the following command:
 ```
 tar -xzvf ESP_Monitor.tar.gz --dir=${HOME}
 ```
