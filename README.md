@@ -60,11 +60,10 @@ The SAS ESP Monitoring stack can be deployed from Unix platforms only. The follo
 - A local instance of **Helm** is required for the deployment of the monitoring components.
 - The deployment includes:
 ```
-	loki                       	loki-simple-scalable-1.8.11          	2.6.1
-	prometheus-pushgateway         	prometheus-pushgateway-1.11.0        	1.3.0
-	promtail                       	promtail-6.7.1                       	2.7.0
-	v4m-metrics                    	v4m-1.2.7-SNAPSHOT                   	1.2.7-SNAPSHOT
-	v4m-prometheus-operator        	kube-prometheus-stack-41.7.3         	0.60.1
+        loki                            loki-simple-scalable-1.8.11             2.6.1
+        promtail                        promtail-6.15.2                         2.9.1
+        v4m-metrics                     v4m-1.2.7-SNAPSHOT                      1.2.7-SNAPSHOT
+        v4m-prometheus-operator         kube-prometheus-stack-41.7.3            0.60.1
 	
 	[based on the current chart names and versions]
 ```
