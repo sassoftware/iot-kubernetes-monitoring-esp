@@ -175,8 +175,8 @@ Where:
 
 - **customizations** is the folder that contains the Loki/Promtail artifacts, the sample Grafana dashboards for ESP, the Kubernetes ingress definitions for the monitoring components, and the **user.env** with custom install options settings:
 	- **user.env** contains custom option settings for the deployment of the monitoring components. If necessary, review and modify the settings before deploying. A couple of considerations apply:
-		- **LOKI_ENABLED** must be set to **True** for SAS ESP project logs to be monitored;
-		- **LOKI_LOGFMT** must be set according to the format used by Kubernetes to write logs. As of the writing of this document, the format is **cri** for Azure, and **docker** for other providers like AWS.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- **LOKI_ENABLED** must be set to **True** for SAS ESP project logs to be monitored;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- **LOKI_LOGFMT** must be set according to the format used by Kubernetes to write logs. As of the writing of this document, the format is **cri** for Azure, and **docker** for other providers like AWS.
 	- **user-values-prom-operator-host/path-based.yaml.sample** contain sample settings for host or path-based access to the monitoring components. Path-based access is used for cloud-based deployments. When installing, copy the appropriate sample file to **user-values-prom-operator.yaml** in the same folder and customize it according to your needs.
 	- **dashboards** contains the sample Grafana dashboards.
 	- **loki** stores the artifacts used to install Loki/Promtail.
