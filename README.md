@@ -175,8 +175,8 @@ Where:
 
 - **customizations** is the folder that contains the Loki/Promtail artifacts, the sample Grafana dashboards for ESP, the Kubernetes ingress definitions for the monitoring components, and the **user.env** with custom install options settings:
 	- **user.env** contains custom option settings for the deployment of the monitoring components. If necessary, review and modify the settings before deploying. A couple of considerations apply:
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- **LOKI_ENABLED** must be set to **True** for SAS ESP project logs to be monitored;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- **LOKI_LOGFMT** must be set according to the format used by Kubernetes to write logs. As of the writing of this document, the format is **cri** for Azure, and **docker** for other providers like AWS.
+		- **LOKI_ENABLED** must be set to **True** for SAS ESP project logs to be monitored;
+		- **LOKI_LOGFMT** must be set according to the format used by Kubernetes to write logs. As of the writing of this document, the format is **cri** for Azure, and **docker** for other providers like AWS.
 	- **user-values-prom-operator-host/path-based.yaml.sample** contain sample settings for host or path-based access to the monitoring components. Path-based access is used for cloud-based deployments. When installing, copy the appropriate sample file to **user-values-prom-operator.yaml** in the same folder and customize it according to your needs.
 	- **dashboards** contains the sample Grafana dashboards.
 	- **loki** stores the artifacts used to install Loki/Promtail.
@@ -192,8 +192,8 @@ Proceed with the install as follows:
 - Replace/update the content of the **user-values-prom-operator.yaml** file based on whether you need host or path-based ingresses for the monitoring components. The latter are normally used for cloud deployments;
 - Review the content of the **user.env** file and customize it as needed. For a description of the options, please refer to the [Viya 4 Monitoring for Kubernetes](https://github.com/sassoftware/viya4-monitoring-kubernetes) page;
 - The current version of the monitoring stack include the option to choose **LDAP** or **OAUTH** as the preferred authentication method (see **GRAFANA_AUTHENTICATION** option in **user.env**):
-- 	With **LDAP**, review and customize the content of the files found in the "customizations/grafana/authentication/LDAP/configmaps" and "customizations/grafana/authentication/LDAP/patches" folders;
-- 	With **OAUTH**, no work is needed as the configuration files are created automatically.
+	- With **LDAP**, review and customize the content of the files found in the "customizations/grafana/authentication/LDAP/configmaps" and "customizations/grafana/authentication/LDAP/patches" folders;
+	- With **OAUTH**, no work is needed as the configuration files are created automatically.
 - The new **ESP_GRAFANA_PLUGIN_VERSION** option in **user.env** allows for the SAS/ESP Grafana plugin to be automatically deployed during the installation. The plugin works only with OAUTH authentication. The option is ignored for all ony other authentication method. For more information about the SAS ESP Grafana plugin, please refer to the [SAS ESP Grafana plugin](https://github.com/sassoftware/grafana-esp-plugin) page;
 - Set the USER_DIR= environment variable to the full path of the **customization** folder and export it as shown in the following example:
 ```
@@ -502,7 +502,7 @@ For more information on the installation of the Viya 4 monitoring layer as well 
 [&#11014;](#top) Top
 ### Removal
  
-Removal of the SAS ESP Monitoring stack is performed in the same exact way as with the Viya 4 Monitoring stack:
+Removal of the SAS ESP Monitoring stack is performed in the same exact way as with the Viya 4 Monitoring stack. For instance:
 
 ```
 User root   Host myserver   Current directory /root/Viya_Manager/Optional-Components/Monitoring/viya4-monitoring-kubernetes-main/monitoring/bin
