@@ -191,6 +191,10 @@ Proceed with the install as follows:
 - Navigate to the "customization/monitoring" folder created by the unpacking of the binaries;
 - Replace/update the content of the **user-values-prom-operator.yaml** file based on whether you need host or path-based ingresses for the monitoring components. The latter are normally used for cloud deployments;
 - Review the content of the **user.env** file and customize it as needed. For a description of the options, please refer to the [Viya 4 Monitoring for Kubernetes](https://github.com/sassoftware/viya4-monitoring-kubernetes) page;
+- The current version of the monitoring stack include the option to choose **LDAP** or **OAUTH** as the preferred authentication method (see **GRAFANA_AUTHENTICATION** option in **user.env**):
+- 	With **LDAP**, review and customize the content of the files found in the "customizations/grafana/authentication/LDAP/configmaps" and "customizations/grafana/authentication/LDAP/patches" folders;
+- 	With **OAUTH**, no work is needed as the configuration files are created automatically.
+- The new **ESP_GRAFANA_PLUGIN_VERSION** option in **user.env** allows for the SAS/ESP Grafana plugin to be automatically deployed during the installation. The plugin works only with OAUTH authentication. The option is ignored for all ony other authentication method. For more information about the SAS ESP Grafana plugin, please refer to the [SAS ESP Grafana plugin](https://github.com/sassoftware/grafana-esp-plugin) page;
 - Set the USER_DIR= environment variable to the full path of the **customization** folder and export it as shown in the following example:
 ```
   export USER_DIR=/root/Monitoring/customizations
