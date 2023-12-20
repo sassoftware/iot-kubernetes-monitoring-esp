@@ -12,6 +12,7 @@ _A tutorial on monitoring SAS Event Processing resources._
 ## Table of Contents
 
 * [Overview](#overview)
+* [What's New](#whats-new)
 * [Getting Started](#getting-started)
 	* [Prerequisites](#prerequisites)
 	* [Installation](#installation)
@@ -45,6 +46,14 @@ A Loki-based stack consists of 3 components:
 - Promtail, the agent responsible for gathering logs and sending them to Loki.
 - The Loki server, responsible for storing logs and processing queries.
 - Grafana, for querying and displaying the logs.
+
+[&#11014;](#top) Top
+## What's new
+
+The latest version of the SAS ESP Monitoring stack introduces the following features:
+
+- The ability to chose **LDAP** or **OAUTH** as the authentication methods for Grafana via the new **GRAFANA_AUTHENTICATION** option. While LDAP configuration file require some minimal configuration, the ones for **OAUTH** are auto-generated as part of the installation process.
+- Automatic deployment of the **SAS ESP Grafana plugin**, which replaces SAS Event Stream Processing Streamviewer. The plugin allows for ESP data streams to be displayed via Grafana dashboards. The new **ESP_GRAFANA_PLUGIN_VERSION** option allows for a specific version of the plugin to be installed.
 
 [&#11014;](#top) Top
 ## Getting Started
