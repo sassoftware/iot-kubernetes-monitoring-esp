@@ -52,9 +52,17 @@ A Loki-based stack consists of 3 components:
 
 The latest version of the SAS ESP Monitoring stack introduces the following features:
 
-- The ability to chose **LDAP** or **OAUTH** as the authentication methods for Grafana via the new **GRAFANA_AUTHENTICATION** option. While LDAP configuration file require some minimal configuration, the ones for **OAUTH** are auto-generated as part of the installation process.
-- Automatic deployment of the **SAS ESP Grafana plugin**, which replaces SAS Event Stream Processing Streamviewer. The plugin allows for ESP data streams to be displayed via Grafana dashboards. The new **ESP_GRAFANA_PLUGIN_VERSION** option allows for a specific version of the plugin to be installed.
-
+- The ability to chose **LDAP** or **OAUTH** as the authentication methods for Grafana via the new **GRAFANA_AUTHENTICATION** option. While LDAP configuration file require some minimal configuration, the ones for **OAUTH** are auto-generated as part of the installation process:
+```
+# Grafana Authentication (LDAP or OAUTH. Unset for default authentication)
+GRAFANA_AUTHENTICATION=OAUTH
+```
+- Automatic deployment of the **SAS ESP Grafana plugin**, which replaces SAS Event Stream Processing Streamviewer. The plugin allows for ESP data streams to be displayed via Grafana dashboards. The new **ESP_GRAFANA_PLUGIN_VERSION** option allows for a specific version of the plugin to be installed:
+```
+# Version of the ESP Grafana plugin (with OAUTH authentication only).
+# Check https://github.com/sassoftware/grafana-esp-plugin for updates
+ESP_GRAFANA_PLUGIN_VERSION=7.44.0
+```
 [&#11014;](#top) Top
 ## Getting Started
 
