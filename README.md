@@ -730,6 +730,7 @@ This project uses the SAS License Agreement for Corrective Code or Additional Fu
 
 * [SAS ESP Monitoring Events, Alerts, and Health Documentation](https://go.documentation.sas.com/doc/en/espcdc/v_030/espex/p0rwojd7hnzcymn117e1ilapqgqm.htm)
 * [SAS Viya 4 Monitorng for Kubernetes](https://github.com/sassoftware/viya4-monitoring-kubernetes)
+* [SAS Viya 4 ESP Grafana plug-in](https://github.com/sassoftware/grafana-esp-plugin)
 * [Prometheus](https://prometheus.io/)
 * [Grafana](https://grafana.com/)
 * [Grafana Loki](https://grafana.com/oss/loki/#:~:text=Loki%20is%20a%20horizontally%20scalable,labels%20for%20each%20log%20stream.)
