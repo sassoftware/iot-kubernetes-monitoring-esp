@@ -728,7 +728,7 @@ This project uses the SAS License Agreement for Corrective Code or Additional Fu
 [&#11014;](#top) Top
 ## Additional Resources
 
-* [SAS ESP Monitoring Events, Alerts, and Health Documentation](https://go.documentation.sas.com/doc/en/espcdc/v_030/espex/p0rwojd7hnzcymn117e1ilapqgqm.htm)
+* [SAS ESP Monitoring Events, Alerts, and Health Documentation](https://go.documentation.sas.com/doc/en/espcdc/v_043/espex/p0rwojd7hnzcymn117e1ilapqgqm.htm)
 * [SAS Viya 4 Monitorng for Kubernetes](https://github.com/sassoftware/viya4-monitoring-kubernetes)
 * [SAS Viya 4 ESP Grafana plug-in](https://github.com/sassoftware/grafana-esp-plugin)
 * [Prometheus](https://prometheus.io/)
