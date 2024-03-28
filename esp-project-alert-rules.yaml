@@ -1,0 +1,549 @@
+apiVersion: 1
+groups:
+    - orgId: 1
+      name: esp-project-alert-rules
+      folder: esp-project-alert-rules
+      interval: 1m
+      rules:
+        - uid: e484dfe1-c924-45c3-9e3d-0beb71f3a6e0
+          title: ESP Project CPU >80% Threshold
+          condition: 80%
+          data:
+            - refId: PodsCPU
+              relativeTimeRange:
+                from: 300
+                to: 0
+              datasourceUid: prometheus
+              model:
+                editorMode: code
+                exemplar: false
+                expr: "sum(esp_window_cpu_usage{window_name!="_eventmetering_",project_label!="sas_event_stream_processing_client_config_server"}) by (pod, project_label, namespace)"
+                format: time_series
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 999999
+                range: false
+                refId: PodsCPU
+            - refId: PodsCPULimit
+              relativeTimeRange:
+                from: 300
+                to: 0
+              datasourceUid: prometheus
+              model:
+                datasource:
+                    type: prometheus
+                    uid: prometheus
+                editorMode: code
+                expr: sum(kube_pod_container_resource_limits{job="kube-state-metrics", resource="cpu", pod=~"(esm|esps).+"}) by (pod)
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: PodsCPULimit
+            - refId: 80%
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 80
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: Divide
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: 80%
+                type: threshold
+            - refId: Divide
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: ${PodsCPU} / ${PodsCPULimit}
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: Divide
+                type: math
+          noDataState: OK
+          execErrState: Error
+          for: 1m
+          annotations: {}
+          labels:
+            severity: critical
+          isPaused: false
+        - uid: e2d4f226-437a-4def-abf5-21b64a076c8c
+          title: ESP Project State Failed
+          condition: A
+          data:
+            - refId: projectState
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: prometheus
+              model:
+                disableTextWrap: false
+                editorMode: code
+                exemplar: false
+                expr: sum(esp_project_state{project_name!="_meta_"} == 3) by (project_label, pod, namespace)
+                format: table
+                fullMetaSearch: false
+                includeNullMetadata: true
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: projectState
+                useBackend: false
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: projectState
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: A
+                type: threshold
+          noDataState: OK
+          execErrState: Error
+          for: 1m
+          annotations: {}
+          labels:
+            severity: critical
+          isPaused: false
+        - uid: f3952f67-021e-4c18-984f-01280e5bbef8
+          title: ESP Project Connector State Failed
+          condition: B
+          data:
+            - refId: connectorState
+              relativeTimeRange:
+                from: 300
+                to: 0
+              datasourceUid: prometheus
+              model:
+                disableTextWrap: false
+                editorMode: code
+                expr: 'group(esp_connector_state == 3) by (connector_name, project_label, pod, namespace) '
+                fullMetaSearch: false
+                includeNullMetadata: true
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: connectorState
+                useBackend: false
+            - refId: B
+              relativeTimeRange:
+                from: 300
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: connectorState
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: B
+                type: threshold
+          noDataState: OK
+          execErrState: Error
+          for: 1m
+          annotations: {}
+          labels:
+            severity: critical
+          isPaused: false
+        - uid: e51f7a5d-94fa-4bca-b0fb-e2a7c1427678
+          title: ESP Project Connector Flatlined
+          condition: C
+          data:
+            - refId: connectorRate
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: prometheus
+              model:
+                disableTextWrap: false
+                editorMode: code
+                expr: sum(esp_connector_state == 1 and esp_connector_cur_rate == 0) by (connector_name, project_label, pod, namespace)
+                fullMetaSearch: false
+                includeNullMetadata: true
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: connectorRate
+                useBackend: false
+            - refId: C
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: connectorRate
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: OK
+          execErrState: Error
+          for: 1m
+          annotations: {}
+          labels:
+            severity: critical
+          isPaused: false
+        - uid: cb6bc609-7cbc-4647-998f-9272b2e4f9a0
+          title: ESP Project Container Restarted
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: prometheus
+              model:
+                editorMode: code
+                exemplar: false
+                expr: sum(increase(kube_pod_container_status_restarts_total{namespace='<insert target namespace>'}[$__range]) * on(pod) group_left(label_type,label_project) kube_pod_labels{namespace='<insert target namespace>',label_type='esp'} > 1) by (pod, namespace, label_project)
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: C
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: OK
+          execErrState: Error
+          for: 1m
+          labels:
+            severity: critical
+          isPaused: false
+        - uid: b5c387d9-b061-4c33-b0f0-8d95aac22e9c
+          title: ESP Project Memory > 80% Threshold
+          condition: B
+          data:
+            - refId: PodsMemory
+              relativeTimeRange:
+                from: 300
+                to: 0
+              datasourceUid: prometheus
+              model:
+                editorMode: code
+                expr: sum(container_memory_working_set_bytes{job="kubelet", metrics_path="/metrics/cadvisor", namespace="<insert target namespace>", container!="", image!="", pod=~"(esm|esps).+"}) by (pod)
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: PodsMemory
+            - refId: PodsMemoryLimits
+              relativeTimeRange:
+                from: 300
+                to: 0
+              datasourceUid: prometheus
+              model:
+                datasource:
+                    type: prometheus
+                    uid: prometheus
+                editorMode: code
+                expr: "sum(\r\n    kube_pod_container_resource_limits{job=\"kube-state-metrics\", namespace=\"<insert target namespace>\", resource=\"memory\", pod=~\"(esm|esps).+\"}\r\n) by (pod)"
+                hide: false
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: PodsMemoryLimits
+            - refId: Divide
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: ${PodsMemory} / ${PodsMemoryLimits}
+                hide: false
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: Divide
+                type: math
+            - refId: B
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0.8
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: Divide
+                hide: false
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: B
+                type: threshold
+          noDataState: OK
+          execErrState: Error
+          for: 1m
+          annotations: {}
+          labels:
+            severity: critical
+          isPaused: false
+        - uid: c46d546b-26cd-4661-93c2-8adcdc509b33
+          title: ESP Project Logs Error
+          condition: C
+          data:
+            - refId: A
+              queryType: instant
+              relativeTimeRange:
+                from: 300
+                to: 0
+              datasourceUid: P8E80F9AEF21F6940
+              model:
+                datasource:
+                    type: loki
+                    uid: P8E80F9AEF21F6940
+                editorMode: code
+                expr: sum by(namespace, project, level) (count_over_time({namespace="<insert target namespace>", type="esp"} | json | __error__=`` | level =~ `ERROR` [$__auto]))
+                hide: false
+                intervalMs: 1000
+                maxDataPoints: 43200
+                queryType: instant
+                refId: A
+            - refId: C
+              relativeTimeRange:
+                from: 300
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: OK
+          execErrState: Error
+          for: 1m
+          annotations: {}
+          labels:
+            severity: critical
+          isPaused: false
+        - uid: edaf9077-cf97-46a4-9aec-2f631eb10982
+          title: ESP Project Logs SEVERE
+          condition: C
+          data:
+            - refId: A
+              queryType: instant
+              relativeTimeRange:
+                from: 300
+                to: 0
+              datasourceUid: P8E80F9AEF21F6940
+              model:
+                datasource:
+                    type: loki
+                    uid: P8E80F9AEF21F6940
+                editorMode: code
+                expr: sum by(namespace, project, level) (count_over_time({namespace="<insert target namespace>", type="esp"} | json | __error__=`` | level =~ `SEVERE` [$__auto]))
+                intervalMs: 1000
+                maxDataPoints: 43200
+                queryType: instant
+                refId: A
+            - refId: C
+              relativeTimeRange:
+                from: 300
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: OK
+          execErrState: Error
+          for: 1m
+          annotations: {}
+          labels:
+            severity: critical
+          isPaused: false
