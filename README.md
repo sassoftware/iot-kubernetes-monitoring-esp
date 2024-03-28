@@ -301,7 +301,7 @@ the screen offers the ability to drill down to the individual pod level to acces
 ### Adding Grafana Alert Rules
 Custom alert rules can be added to provide the ability to recieve notifications when specific behaviour happens via several different channels such Teams or through custom webhooks.
 Learn more about alert rules [here](https://grafana.com/docs/grafana/latest/alerting/fundamentals/alert-rules/#:~:text=An%20alert%20rule%20consists%20of,exceed%20to%20create%20an%20alert.).
-A list of existing ESP Project alert rules can be found here: [esp-project-alert-rules.yaml](https://github.com/sassoftware/iot-kubernetes-monitoring-esp/esp-project-alert-rules.yaml).
+A list of existing ESP Project alert rules can be found here: [esp-project-alert-rules.yaml](https://github.com/sassoftware/iot-kubernetes-monitoring-esp/blob/next/esp-project-alert-rules.yaml).
 
 Adding alert rules from the provided ESP Project alert rules:
 1. Navigate to the alert rules section in Grafana
@@ -314,6 +314,7 @@ Adding alert rules from the provided ESP Project alert rules:
 3. Using the provided ESP Project alert rules, fill in the fields for the alert rule
 
 An example for implementing the first alert rule (ESP Project CPU >80% Threshold):
+
 This alert rule will fire when an ESP project is using more than 80% of the requested CPU limit.
 
 <table align="center"><tr><td align="center" width="9999">
