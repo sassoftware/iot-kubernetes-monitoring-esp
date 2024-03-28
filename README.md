@@ -22,6 +22,7 @@ _A guide for monitoring SAS Event Stream Processing resources._
   * [Deploying SAS Viya Dashboards](#deploying-sas-viya-dashboards)
   * [Deploying Custom Dashboards](#deploying-custom-dashboards)
   * [Access the Dashboards](#access-the-dashboards)
+  * [Adding Grafana Alert Rules](#adding-grafana-alert-rules)
 * [Uninstalling](#uninstalling)
 * [Troubleshooting](#troubleshooting)
 * [Contributing](#contributing)
@@ -295,6 +296,53 @@ the screen offers the ability to drill down to the individual pod level to acces
 <table align="center"><tr><td align="center" width="9999">
 <img src="Images/Compute_Resources_Pod.png" align="center" width="9999">
 </td></tr></table>
+
+[&#11014;](#top) Top
+### Adding Grafana Alert Rules
+Custom alert rules can be added to provide the ability to recieve notifications when specific behaviour happens via several different channels such Teams or through custom webhooks.
+Learn more about alert rules [here](https://grafana.com/docs/grafana/latest/alerting/fundamentals/alert-rules/#:~:text=An%20alert%20rule%20consists%20of,exceed%20to%20create%20an%20alert.).
+A list of existing ESP Project alert rules can be found here: [esp-project-alert-rules.yaml](https://github.com/sassoftware/iot-kubernetes-monitoring-esp/esp-project-alert-rules.yaml).
+
+Adding alert rules from the provided ESP Project alert rules:
+1. Navigate to the alert rules section in Grafana
+
+<table align="center"><tr><td align="center" width="9999">
+<img src="Images/Alert_Rules_Main_Menu.png" align="center" width="9999">
+</td></tr></table>
+
+2. Click "New Alert Rule"
+3. Using the provided ESP Project alert rules, fill in the fields for the alert rule
+
+An example for implementing the first alert rule (ESP Project CPU >80% Threshold):
+This alert rule will fire when an ESP project is using more than 80% of the requested CPU limit.
+
+<table align="center"><tr><td align="center" width="9999">
+<img src="Images/80_CPU_Threshold_1.png" align="center" width="9999">
+</td></tr></table>
+
+<table align="center"><tr><td align="center" width="9999">
+<img src="Images/80_CPU_Threshold_2.png" align="center" width="9999">
+</td></tr></table>
+
+<table align="center"><tr><td align="center" width="9999">
+<img src="Images/80_CPU_Threshold_3.png" align="center" width="9999">
+</td></tr></table>
+
+<table align="center"><tr><td align="center" width="9999">
+<img src="Images/80_CPU_Threshold_4.png" align="center" width="9999">
+</td></tr></table>
+
+Note:
+It is important to set the Folder and Evaluation group to be 'esp-project-alert-rules' so they will displayed on the ESP Overview dashboard when in a firing state.
+The alert rule template has been left blank for customizing. See more about [notification templating](https://grafana.com/docs/grafana/latest/alerting/fundamentals/alert-rules/message-templating/) and [annotations](https://grafana.com/docs/grafana/latest/alerting/fundamentals/annotation-label/).
+
+Contact points can be defined to set up where firing alert rules will be routed to: 
+
+<table align="center"><tr><td align="center" width="9999">
+<img src="Images/Alert_Rules_Contact_Point.png" align="center" width="9999">
+</td></tr></table>
+
+Notification policies can be added so that alert rules with a specifc label will always be routed to a specific contact point.
 
 [&#11014;](#top) Top
 ## Uninstalling
