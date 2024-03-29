@@ -330,7 +330,7 @@ Here is an example for implementing the first alert rule, `ESP Project CPU >80% 
 <img src="Images/80_CPU_Threshold_4.png" align="center" width="9999">
 </td></tr></table>
 
-**Note**: It is important to set the **Folder** and **Evaluation group** field to **esp-project-alert-rules** so these rule alerts are displayed on the **ESP Overview** dashboard when the rule alerts are in a firing state. The alert rule template has been left blank for customizing. For more information, see [Notification templating](https://grafana.com/docs/grafana/latest/alerting/fundamentals/alert-rules/message-templating/) and [Labels and annotations](https://grafana.com/docs/grafana/latest/alerting/fundamentals/annotation-label/).
+**Note**: It is important to set the **Folder** and **Evaluation group** field to `esp-project-alert-rules` and to set the **Labels** to `type=esp-project` so these rule alerts are displayed on the **ESP Overview** dashboard when the rule alerts are in a firing state. The alert rule template has been left blank for customizing. For more information, see [Notification templating](https://grafana.com/docs/grafana/latest/alerting/fundamentals/alert-rules/message-templating/) and [Labels and annotations](https://grafana.com/docs/grafana/latest/alerting/fundamentals/annotation-label/).
 
 Contact points can be defined to specify where firing alert rules are routed to
 
