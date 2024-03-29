@@ -104,7 +104,7 @@ groups:
           for: 1m
           annotations: {}
           labels:
-            severity: critical
+            type: esp-project
           isPaused: false
         - uid: e2d4f226-437a-4def-abf5-21b64a076c8c
           title: ESP Project State Failed
@@ -164,7 +164,7 @@ groups:
           for: 1m
           annotations: {}
           labels:
-            severity: critical
+            type: esp-project
           isPaused: false
         - uid: f3952f67-021e-4c18-984f-01280e5bbef8
           title: ESP Project Connector State Failed
@@ -221,7 +221,7 @@ groups:
           for: 1m
           annotations: {}
           labels:
-            severity: critical
+            type: esp-project
           isPaused: false
         - uid: e51f7a5d-94fa-4bca-b0fb-e2a7c1427678
           title: ESP Project Connector Flatlined
@@ -278,7 +278,7 @@ groups:
           for: 1m
           annotations: {}
           labels:
-            severity: critical
+            type: esp-project
           isPaused: false
         - uid: cb6bc609-7cbc-4647-998f-9272b2e4f9a0
           title: ESP Project Container Restarted
@@ -331,7 +331,7 @@ groups:
           execErrState: Error
           for: 1m
           labels:
-            severity: critical
+            type: esp-project
           isPaused: false
         - uid: b5c387d9-b061-4c33-b0f0-8d95aac22e9c
           title: ESP Project Memory > 80% Threshold
@@ -434,7 +434,7 @@ groups:
           for: 1m
           annotations: {}
           labels:
-            severity: critical
+            type: esp-project
           isPaused: false
         - uid: c46d546b-26cd-4661-93c2-8adcdc509b33
           title: ESP Project Logs Error
@@ -490,7 +490,7 @@ groups:
           for: 1m
           annotations: {}
           labels:
-            severity: critical
+            type: esp-project
           isPaused: false
         - uid: edaf9077-cf97-46a4-9aec-2f631eb10982
           title: ESP Project Logs SEVERE
@@ -545,5 +545,5 @@ groups:
           for: 1m
           annotations: {}
           labels:
-            severity: critical
+            type: esp-project
           isPaused: false
