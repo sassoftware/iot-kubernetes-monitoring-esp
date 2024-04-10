@@ -19,8 +19,8 @@ _A guide for monitoring SAS Event Stream Processing resources._
   * [Review the Deployment Configuration](#review-the-deployment-configuration)
 * [Installation](#installation)
   * [Install SAS Event Stream Processing Monitoring for Kubernetes](#install-sas-event-stream-processing-monitoring-for-kubernetes)
-  * [Deploying SAS Viya Dashboards](#deploying-sas-viya-dashboards)
-  * [Deploying Custom Dashboards](#deploying-custom-dashboards)
+  * [Deploy SAS Viya Dashboards](#deploy-sas-viya-dashboards)
+  * [Deploy Custom Dashboards](#deploy-custom-dashboards)
   * [Access the Dashboards](#access-the-dashboards)
   * [Adding Grafana Alert Rules](#adding-grafana-alert-rules)
 * [Uninstalling](#uninstalling)
@@ -34,16 +34,16 @@ _A guide for monitoring SAS Event Stream Processing resources._
 ## Overview
 
 The current SAS Viya monitoring solution provides system administrators with a powerful tool to monitor deployments
-as a whole. Resource oversight, coupled with the ability to aggregate log information and generate alerts make it easier
-to administer deployments regardless of their complexity. This is helpful at a high level, within SAS Viya, but smaller
-ecosystems like SAS Event Stream Processing require a more specialized approach to both real time and historical
+as a whole. Resource oversight, coupled with the ability to aggregate log information and generate alerts, makes it
+easier to administer deployments regardless of their complexity. This is helpful at a high level, within SAS Viya, but
+smaller ecosystems like SAS Event Stream Processing require a more specialized approach to both real time and historical
 monitoring of projects.
 
 SAS Event Stream Processing Monitoring for Kubernetes was developed to help customers address this need. It can be
-considered as an extended version of [SAS Viya Monitoring for Kubernetes](https://github.com/sassoftware/viya4-monitoring-kubernetes), as it shares the same code base and
-allows for the installation of the same components in addition to those specific to SAS Event Stream Processing. The
-main difference is that SAS Event Stream Processing Monitoring for Kubernetes does not require the deployment of the
-SAS Viya logging layer, as it instead uses Loki for log aggregation.
+considered as an extended version of [SAS Viya Monitoring for Kubernetes](https://github.com/sassoftware/viya4-monitoring-kubernetes),
+as it shares the same code base and allows for the installation of the same components in addition to those specific to
+SAS Event Stream Processing. The main difference is that SAS Event Stream Processing Monitoring for Kubernetes does not
+require the deployment of the SAS Viya logging layer, as it instead uses Loki for log aggregation.
 
 A Grafana Lab product, Loki is a horizontally scalable, highly available, multi-tenant log aggregation system inspired
 by Prometheus, designed to be cost-effective and easy to operate. Compared to other log aggregation systems, Loki has
@@ -73,16 +73,16 @@ overall performance of the environment.
 
 The latest version of SAS Event Stream Processing Monitoring for Kubernetes introduces the following features:
 
-* The ability to choose `LDAP` or `OAUTH` as the authentication methods for Grafana via the new
-  `GRAFANA_AUTHENTICATION` option. Whilst the LDAP configuration files require some minimal configuration, the files for
-  `OAUTH` are auto-generated as part of the installation process:  
+* The ability to choose `LDAP` or `OAUTH` as the authentication methods for Grafana in the new
+  `GRAFANA_AUTHENTICATION` property. Whilst the LDAP configuration files require some minimal configuration, the files
+  for `OAUTH` are auto-generated as part of the installation process:  
     ```text
     # Grafana Authentication (LDAP or OAUTH. Unset for default authentication)
     GRAFANA_AUTHENTICATION=OAUTH
     ```
 * Automatic deployment of the SAS Event Stream Processing Data Source Plug-in for Grafana, which replaces SAS Event
   Stream Processing Streamviewer. The plug-in allows for SAS Event Stream Processing data streams to be displayed in
-  Grafana dashboards. The new `ESP_GRAFANA_PLUGIN_VERSION` parameter allows for a specific version of the plug-in to be
+  Grafana dashboards. The new `ESP_GRAFANA_PLUGIN_VERSION` property allows for a specific version of the plug-in to be
   installed:
     ```text
     # Version of the ESP Grafana plug-in (with OAUTH authentication only).
@@ -96,11 +96,12 @@ The latest version of SAS Event Stream Processing Monitoring for Kubernetes intr
 [&#11014;](#top) Top
 ### Check Prerequisite Software
 
-SAS Event Stream Processing Monitoring for Kubernetes can be deployed from Unix platforms only, and the following
-prerequisites must be met to successfully follow this guide:
+SAS Event Stream Processing Monitoring for Kubernetes can be deployed from Unix platforms only and, to successfully
+follow this guide, the following must be installed on the local computer from which the installation of monitoring
+components in the Kubernetes cluster will be initiated:
 
-* The [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl) tool must be available on the computer from which monitoring components will be installed;
-* A local instance of [Helm](https://helm.sh/) is required for the installation of the monitoring components.
+* The [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl) command-line interface (CLI);
+* The [Helm](https://helm.sh/) CLI.
 
 ### Prepare Your Working Directory
 
@@ -137,9 +138,9 @@ The following directory structure is created:
 
 Where:
 
-* The `customizations/monitoring` directory contains Loki and Promtail artifacts, sample Grafana dashboards for SAS Event
-  Stream Processing, Kubernetes ingress definitions for the monitoring components, and the `user.env`  file with custom
-  installation settings:
+* The `customizations/monitoring` directory contains Loki and Promtail artifacts, sample Grafana dashboards for SAS
+  Event Stream Processing, Kubernetes ingress definitions for the monitoring components, and the `user.env`  file with
+  custom installation settings:
 	* `dashboards` contains the sample Grafana dashboards.
     * `grafana` contains artifacts used to configure Grafana authentication and, optionally, install and configure the
       SAS Event Stream Processing Data Source Plug-in for Grafana. 
@@ -164,20 +165,20 @@ Before proceeding to the installation step, the deployment configuration must be
 2. Replace or update the content of the `user-values-prom-operator.yaml` file depending on whether you need host-based
    or path-based ingresses for the monitoring components. The latter are normally used for cloud deployments.
 3. Review the content of the `user.env` file and customize it as needed. For an in-depth description of the options,
-   see [SAS Viya Monitoring for Kubernetes](https://github.com/sassoftware/viya4-monitoring-kubernetes);
-   * It is strongly recommended that you choose a strong password for the default Grafana admin user at this stage,
-     which can be set using the `GRAFANA_ADMIN_PASSWORD` parameter. However, the default password can be changed later
+   see [SAS Viya Monitoring for Kubernetes](https://github.com/sassoftware/viya4-monitoring-kubernetes).
+   * It is strongly recommended that you choose a strong password for the default Grafana `admin` user at this stage,
+     which can be set using the `GRAFANA_ADMIN_PASSWORD` property. However, the default password can be changed later
      as described in the [Access the Dashboards](#access-the-dashboards) section.
-   * The `GRAFANA_AUTHENTICATION` option allows you to choose `LDAP` or `OAUTH` as the authentication method.
-   * The `ESP_GRAFANA_PLUGIN_VERSION` parameter allows for the SAS Event Stream Processing Data Source Plug-in for
+   * The `GRAFANA_AUTHENTICATION` property allows you to choose `LDAP` or `OAUTH` as the authentication method.
+   * The `ESP_GRAFANA_PLUGIN_VERSION` property allows for the SAS Event Stream Processing Data Source Plug-in for
      Grafana to be automatically deployed during installation. The plug-in works only with `OAUTH` authentication, with
-     the option being ignored for any other authentication method. For more information, see
+     the property being ignored for any other authentication method. For more information, see
      [SAS Event Stream Processing Data Source Plug-in for Grafana](https://github.com/sassoftware/grafana-esp-plugin).
-   * The `LOKI_ENABLED` option must be set to `True` for SAS Event Stream Processing project logs to be monitored.
-   * The `LOKI_LOGFMT` option must be set according to the format used by Kubernetes to write logs. As of the writing of
-     this document, the format is `cri` for Microsoft Azure, and `docker` for other providers like Amazon Web
+   * The `LOKI_ENABLED` property must be set to `True` for SAS Event Stream Processing project logs to be monitored.
+   * The `LOKI_LOGFMT` property must be set according to the format used by Kubernetes to write logs. As of the writing
+     of this document, the format is `cri` for Microsoft Azure, and `docker` for other providers like Amazon Web
      Services (AWS).
-4. Depending on the method selected via the `GRAFANA_AUTHENTICATION` option there might be additional configuration
+4. Depending on the method selected in the `GRAFANA_AUTHENTICATION` property there might be additional configuration
    required:
     * For `GRAFANA_AUTHENTICATION=LDAP`, review and customize the content of the files found in the `configmaps` and
       `patches` directories under `customizations/grafana/authentication/LDAP`.
@@ -189,10 +190,10 @@ Before proceeding to the installation step, the deployment configuration must be
 
 ### Install SAS Event Stream Processing Monitoring for Kubernetes
 
-With the contents of the `user-values-prom-operator.yaml` and `user.env` file set, the working directory is ready to
+With the contents of the `user-values-prom-operator.yaml` and `user.env` files set, the working directory is ready to
 carry out the installation process. Complete the following steps:
 
-1. Set and export the `USER_DIR` environment variable to the path of the `customization` directory as shown in
+1. Set and export the USER_DIR environment variable to the path of the `customization` directory as shown in
    the following example, where `<target-directory>` should be replaced by the path to the directory that you used in
    the [Prepare Your Working Directory](#prepare-your-working-directory) section:  
 	```shell
@@ -214,12 +215,12 @@ This results in the deployment of the following components to the target Kuberne
 | `v4m-prometheus-operator`  | `kube-prometheus-stack-41.7.3` | 0.60.1              |
 
 [&#11014;](#top) Top
-### Deploying SAS Viya Dashboards
+### Deploy SAS Viya Dashboards
 
 With SAS Event Stream Processing Monitoring for Kubernetes in place, you can optionally perform the following steps to
 deploy the SAS Viya dashboards.
 
-1. Set and export the `VIYA_NS` environment variable with the namespace of your SAS Viya deployment:
+1. Set and export the VIYA_NS environment variable with the namespace of your SAS Viya deployment:
     ```shell
     export VIYA_NS=<viya-namespace>
     ```
@@ -229,25 +230,26 @@ deploy the SAS Viya dashboards.
     ./deploy_monitoring_viya.sh
     ```
 
-For more information on the installation of the SAS Viya monitoring layer as well as on the optional logging component
-for logs originating from applications other than SAS Event Stream Processing, see
+For more information about the installation of the SAS Viya monitoring layer as well as on the optional logging
+component for logs originating from applications other than SAS Event Stream Processing, see
 [SAS Viya Monitoring for Kubernetes](https://github.com/sassoftware/viya4-monitoring-kubernetes).
 
 [&#11014;](#top) Top
-### Deploying Custom Dashboards
+### Deploy Custom Dashboards
 
-The dashboards installed with SAS Event Stream Processing Monitoring for Kubernetes are intended to provide an example of
-the kind of monitoring that can be achieved through Grafana. Since the dashboards are provisioned as part of the
+The dashboards installed with SAS Event Stream Processing Monitoring for Kubernetes are intended to provide an example
+of the kind of monitoring that can be achieved through Grafana. Since the dashboards are provisioned as part of the
 installation, they cannot be modified directly in Grafana. It is therefore recommended to either change their source
 code, or to create copies to work on. They can be cloned and modified to create even more sophisticated dashboards to,
 for example, target different metrics or trigger alerts. The source code for the sample dashboards can be found in the
 `$USER_DIR/monitoring/dashboards` directory.
 
-Whether you decide to modify the existing dashboard or create new ones in the same directory, they can be deployed into an
-existing environment using the following steps:
+Whether you decide to modify the existing dashboard or create new ones in the same directory, they can be deployed into
+an existing environment using the following steps:
 
-1. Set and export the `USER_DIR` environment variable if not already set, where `<target-directory>` should again
-   be replaced by the path to the directory used when [preparing your working directory](#preparing-your-working-directory):
+1. Set and export the USER_DIR environment variable if not already set, where `<target-directory>` should again
+   be replaced by the path to the directory used when in the
+   [Prepare Your Working Directory](#prepare-your-working-directory) section:
     ```shell
     export USER_DIR=<target-directory>/Monitoring/customizations
     ```
@@ -259,7 +261,7 @@ existing environment using the following steps:
 
 Alternatively, dashboards can be created or cloned in Grafana, with no deployment needed once the dashboards are ready.
 Either way, it is recommended to consult the Grafana documentation for best practices on how to develop dashboards.
-	
+
 [&#11014;](#top) Top
 ### Access the Dashboards
  
@@ -268,7 +270,7 @@ user can either be provided in the `user.env` file in the `$USER_DIR` directory 
 by running the `change_grafana_admin_password.sh` script, located in the
 `<target-directory>/viya4-monitoring-kubernetes-main/monitoring/bin` directory.
 
-The Viya Welcome dashboard is displayed upon logging in:
+When you log in to Grafana, SAS Viya dashboards are displayed:
 
 <table align="center"><tr><td align="center" width="9999">
 <img src="Images/Viya_Welcome_Dashboard.png" align="center" width="9999">
@@ -346,7 +348,7 @@ Notification policies can be added so that alert rules with a specific label are
 Uninstalling SAS Event Stream Processing Monitoring for Kubernetes is performed in the same way as for SAS Viya
 Monitoring for Kubernetes:
 
-1. Set and export the `USER_DIR` environment variable if not already set:
+1. Set and export the USER_DIR environment variable if not already set:
     ```shell
     export USER_DIR=<monitoring-root-directory>/Monitoring/customizations
     ```
@@ -385,7 +387,7 @@ Please see the license file for additional detail.
 [&#11014;](#top) Top
 ## Additional Resources
 
-* [SAS Help Center: Monitoring Events, Alerts, and Health with Prometheus](https://go.documentation.sas.com/doc/en/espcdc/latest/espex/p0rwojd7hnzcymn117e1ilapqgqm.htm)
+* [SAS Help Center: Monitoring Events, Alerts, and Health with Prometheus](https://go.documentation.sas.com/doc/en/espcdc/default/espex/p0rwojd7hnzcymn117e1ilapqgqm.htm)
 * [SAS Viya Monitoring for Kubernetes](https://github.com/sassoftware/viya4-monitoring-kubernetes)
 * [SAS Event Stream Processing Data Source Plug-in for Grafana](https://github.com/sassoftware/grafana-esp-plugin)
 * [Prometheus](https://prometheus.io/)
