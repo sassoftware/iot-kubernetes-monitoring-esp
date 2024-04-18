@@ -205,34 +205,34 @@ Where:
 
 Proceed with the install as follows:
 
-- Navigate to the "customization/monitoring" folder created by the unpacking of the binaries;
+- Navigate to the "customizations/monitoring" folder created by the unpacking of the binaries;
 - Replace/update the content of the **user-values-prom-operator.yaml** file based on whether you need host or path-based ingresses for the monitoring components. The latter are normally used for cloud deployments;
 - Review the content of the **user.env** file and customize it as needed. For a description of the options, please refer to the [Viya 4 Monitoring for Kubernetes](https://github.com/sassoftware/viya4-monitoring-kubernetes) page;
 - The current version of the monitoring stack include the option to choose **LDAP** or **OAUTH** as the preferred authentication method (see **GRAFANA_AUTHENTICATION** option in **user.env**):
 	- With **LDAP**, review and customize the content of the files found in the "customizations/grafana/authentication/LDAP/configmaps" and "customizations/grafana/authentication/LDAP/patches" folders;
 	- With **OAUTH**, no work is needed as the configuration files are created automatically.
 - The new **ESP_GRAFANA_PLUGIN_VERSION** option in **user.env** allows for the SAS/ESP Grafana plugin to be automatically deployed during the installation. The plugin works only with OAUTH authentication. The option is ignored for all ony other authentication method. For more information about the SAS ESP Grafana plugin, please refer to the [SAS ESP Grafana plugin](https://github.com/sassoftware/grafana-esp-plugin) page;
-- Set the USER_DIR= environment variable to the full path of the **customization** folder and export it as shown in the following example:
+- Set the USER_DIR= environment variable to the full path of the **customizations** folder and export it as shown in the following example:
 ```
   export USER_DIR=/root/Monitoring/customizations
 ```
 - Navigate to the **<monitoring stack root folder>/viya4-monitoring-kubernetes-main/monitoring/bin** folder, and install the monitoring stack using the following command:
 ```
-  ./deploy_monitoring_cluster
+  ./deploy_monitoring_cluster.sh
 ```
 
 <details><summary><b><i>Click</i></b> to view the deploy_monitoring_cluster installation log:</summary>
 
-\> User root   Host myserver   Current directory /root/Viya_Manager/Optional-Components/Monitoring/viya4-monitoring-kubernetes-main/monitoring/bin
-export USER_DIR=/root/Viya_Manager/Optional-Components/Monitoring/customizations
+\> User root   Host myserver   Current directory /root/Monitoring/viya4-monitoring-kubernetes-main/monitoring/bin
+export USER_DIR=/root/Monitoring/customizations
 
-\> User root   Host myserver   Current directory /root/Viya_Manager/Optional-Components/Monitoring/viya4-monitoring-kubernetes-main/monitoring/bin
+\> User root   Host myserver   Current directory /root/Monitoring/viya4-monitoring-kubernetes-main/monitoring/bin
 \> ./deploy_monitoring_cluster.sh\
-INFO User directory: /root/Viya_Manager/Optional-Components/Monitoring/customizations\
+INFO User directory: /root/Monitoring/customizations\
 INFO Helm client version: 3.7.1\
 INFO Kubernetes client version: v1.23.8\
 INFO Kubernetes server version: v1.23.8\
-INFO Loading user environment file: /root/Viya_Manager/Optional-Components/Monitoring/customizations/monitoring/user.env
+INFO Loading user environment file: /root/Monitoring/customizations/monitoring/user.env
 
 namespace/monitoring created\
 Deploying monitoring to the [monitoring] namespace...\
@@ -259,7 +259,7 @@ customresourcedefinition.apiextensions.k8s.io/thanosrulers.monitoring.coreos.com
 customresourcedefinition.apiextensions.k8s.io/probes.monitoring.coreos.com replaced\
 No resources found\
 INFO Enabling monitoring components for workload node placement\
-INFO User response file: [/root/Viya_Manager/Optional-Components/Monitoring/customizations/monitoring/user-values-prom-operator.yaml]\
+INFO User response file: [/root/Monitoring/customizations/monitoring/user-values-prom-operator.yaml]\
 Deploying the kube-prometheus stack. This may take a few minutes ...\
 Installing via Helm (Wed Dec 20 18:15:01 UTC 2023 - timeout 20m)\
 Release "v4m-prometheus-operator" does not exist. Installing it now.\
@@ -372,7 +372,7 @@ servicemonitor.monitoring.coreos.com/elasticsearch created\
 servicemonitor.monitoring.coreos.com/fluent-bit created\
 servicemonitor.monitoring.coreos.com/fluent-bit-v2 created\
 Deploying user ServiceMonitors\
-Deploying user ServiceMonitors from [/root/Viya_Manager/Optional-Components/Monitoring/customizations/monitoring/monitors] ...\
+Deploying user ServiceMonitors from [/root/Monitoring/customizations/monitoring/monitors] ...\
 servicemonitor.monitoring.coreos.com/sas-esp-server created\
 Adding Prometheus recording rules\
 prometheusrule.monitoring.coreos.com/sas-launcher-job-rules created\
@@ -464,7 +464,7 @@ configmap/rabbitmq-overview labeled\
 Deploying NGINX dashboards\
 configmap/nginx-dashboard created\
 configmap/nginx-dashboard labeled\
-Deploying user dashboards from [/root/Viya_Manager/Optional-Components/Monitoring/customizations/monitoring/dashboards]\
+Deploying user dashboards from [/root/Monitoring/customizations/monitoring/dashboards]\
 configmap/cpu-memory-and-logs-usage created\
 configmap/cpu-memory-and-logs-usage labeled\
 configmap/log-analysis-by-project created\
@@ -493,19 +493,19 @@ GRAFANA:\
 
 - Optionally, perform the following steps to deploy the Viya 4 dashboards:
 ```
-User root   Host myserver   Current directory /root/Viya_Manager/Optional-Components/Monitoring/viya4-monitoring-kubernetes-main/monitoring/bin
+User root   Host myserver   Current directory /root/Monitoring/viya4-monitoring-kubernetes-main/monitoring/bin
 > export VIYA_NS=sas-viya <-- Replace as needed with the name of the Viya namespace
 
-User root   Host myserver   Current directory /root/Viya_Manager/Optional-Components/Monitoring/viya4-monitoring-kubernetes-main/monitoring/bin
+User root   Host myserver   Current directory /root/Monitoring/viya4-monitoring-kubernetes-main/monitoring/bin
 > ./deploy_monitoring_viya.sh
 ```
 <details><summary><b><i>Click</i></b> to view the deploy_monitoring_viya installation log:</summary>
 <p>
-INFO User directory: /root/Viya_Manager/Optional-Components/Monitoring/customizations\
+INFO User directory: /root/Monitoring/customizations\
 INFO Helm client version: 3.7.1\
 INFO Kubernetes client version: v1.23.8\
 INFO Kubernetes server version: v1.23.8\
-INFO Loading user environment file: /root/Viya_Manager/Optional-Components/Monitoring/customizations/monitoring/user.env
+INFO Loading user environment file: /root/Monitoring/customizations/monitoring/user.env
 
 "prometheus-community" already exists with the same configuration, skipping\
 INFO Updating helm repositories...\
@@ -561,21 +561,21 @@ For more information on the installation of the Viya 4 monitoring layer as well 
 Removal of the SAS ESP Monitoring stack is performed in the same exact way as with the Viya 4 Monitoring stack. For instance:
 
 ```
-User root   Host myserver   Current directory /root/Viya_Manager/Optional-Components/Monitoring/viya4-monitoring-kubernetes-main/monitoring/bin
-> export USER_DIR=/root/Viya_Manager/Optional-Components/Monitoring/customizations
+User root   Host myserver   Current directory /root/Monitoring/viya4-monitoring-kubernetes-main/monitoring/bin
+> export USER_DIR=/root/Monitoring/customizations
 
-User root   Host myserver   Current directory /root/Viya_Manager/Optional-Components/Monitoring/viya4-monitoring-kubernetes-main/monitoring/bin
+User root   Host myserver   Current directory /root/Monitoring/viya4-monitoring-kubernetes-main/monitoring/bin
 > ./remove_monitoring_cluster.sh
 ```
 <details><summary><b><i>Click</i></b> to view the log generated by the remove_monitoring_cluster.sh command:</summary>
 <p>
 
 \> ./remove_monitoring_cluster.sh\
-INFO User directory: /root/Viya_Manager/Optional-Components/Monitoring/customizations\
+INFO User directory: /root/Monitoring/customizations\
 INFO Helm client version: 3.7.1\
 INFO Kubernetes client version: v1.23.8\
 INFO Kubernetes server version: v1.23.8\
-INFO Loading user environment file: /root/Viya_Manager/Optional-Components/Monitoring/customizations/monitoring/user.env
+INFO Loading user environment file: /root/Monitoring/customizations/monitoring/user.env
 
 Removing components from the [monitoring] namespace...\
 INFO Removing the kube-prometheus stack...\
@@ -629,21 +629,21 @@ On the **SAS ESP CPU, Memory, and Logs Usage** dashboard, the **Current CPU Usag
  
 The dashboards installed with the SAS ESP Monitoring stack are meant to be used as an example of the kind of monitoring that can be done through Grafana. Since the dashboards are provisioned as part of the installation, they cannot be modified directly in Grafana. Therefore it is recommended to either change their source code, or to create copies to work on. They can be cloned and modified to create even more sophisticated dashboards to, for instance, target different metrics or trigger alerts. The source code for the sample dashboards can be found in the **$USER_DIR/monitoring/dashboards** folder. Whether you decide to modify the existing dashboard or create new ones in the same folder, they can be deploy into an existing stack by running the following commands:
 ```
-User root   Host myserver   Current directory /root/Viya_Manager/Optional-Components/Monitoring/viya4-monitoring-kubernetes-main/monitoring/bin
-> export USER_DIR=/root/Viya_Manager/Optional-Components/Monitoring/customizations
+User root   Host myserver   Current directory /root/Monitoring/viya4-monitoring-kubernetes-main/monitoring/bin
+> export USER_DIR=/root/Monitoring/customizations
 
-User root   Host myserver   Current directory /root/Viya_Manager/Optional-Components/Monitoring/viya4-monitoring-kubernetes-main/monitoring/bin
+User root   Host myserver   Current directory /root/Monitoring/viya4-monitoring-kubernetes-main/monitoring/bin
 > ./deploy_dashboards.sh
 ```
 <details><summary><b><i>Click</i></b> to view the log generated by the deploy_dashboards.sh command:</summary>
 <p>
 
 \> ./deploy_dashboards.sh\
-INFO User directory: /root/Viya_Manager/Optional-Components/Monitoring/customizations\
+INFO User directory: /root/Monitoring/customizations\
 INFO Helm client version: 3.7.1\
 INFO Kubernetes client version: v1.23.8\
 INFO Kubernetes server version: v1.23.8\
-INFO Loading user environment file: /root/Viya_Manager/Optional-Components/Monitoring/customizations/monitoring/user.env
+INFO Loading user environment file: /root/Monitoring/customizations/monitoring/user.env
 
 INFO Deploying dashboards to the [monitoring] namespace ...\
 INFO Deploying welcome dashboards\
@@ -691,7 +691,7 @@ configmap/rabbitmq-overview not labeled\
 INFO Deploying NGINX dashboards\
 configmap/nginx-dashboard configured\
 configmap/nginx-dashboard not labeled\
-INFO Deploying user dashboards from [/root/Viya_Manager/Optional-Components/Monitoring/customizations/monitoring/dashboards]\
+INFO Deploying user dashboards from [/root/Monitoring/customizations/monitoring/dashboards]\
 configmap/cpu-memory-and-logs-usage configured\
 configmap/cpu-memory-and-logs-usage not labeled\
 configmap/log-analysis-by-project configured\
