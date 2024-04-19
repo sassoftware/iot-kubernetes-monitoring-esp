@@ -5,10 +5,6 @@
 
 _A guide for monitoring SAS Event Stream Processing resources._
 
-<table align="center"><tr><td align="center" width="9999">
-<img src="Images/Viya_on_Cloud.jpeg" align="center" width="9999">
-</td></tr></table>
-
 ## Table of Contents
 
 * [Overview](#overview)
