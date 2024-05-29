@@ -1,0 +1,22 @@
+spec:
+  template:
+    spec:
+      volumes:
+        - name: grafana-config
+          configMap:
+            defaultMode: 420
+            name: v4m-grafana
+        - name: grafana-ldap-config
+          configMap: 
+            defaultMode: 420
+            name: v4m-grafana-ldap
+      containers:
+        - name: grafana
+          volumeMounts:
+          - mountPath: /etc/grafana/grafana.ini
+            name: grafana-config
+            subPath: grafana.ini
+          - mountPath: /etc/grafana/ldap.toml
+            name: grafana-ldap-config
+            subPath: ldap.toml
+          

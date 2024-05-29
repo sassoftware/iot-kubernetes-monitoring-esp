@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: v4m-grafana
+data:
+  grafana.ini: |
+    [analytics]
+    check_for_updates = false
+
+    [grafana_net]
+    url = https://grafana.net
+
+    [log]
+    mode = console
+
+    [log.console]
+    format = json
+
+    [dashboards]
+    default_home_dashboard_path = /tmp/dashboards/viya-welcome-dashboard.json
+
+    [paths]
+    data = /var/lib/grafana/
+    logs = /var/log/grafana
+    plugins = /var/lib/grafana/plugins
+    provisioning = /etc/grafana/provisioning
+
+    [server]
+    domain = TEMPLATE_GRAFANA_DOMAIN
+    root_url = https://TEMPLATE_GRAFANA_DOMAIN/grafana/
+    serve_from_sub_path = true
+
+    [plugins]
+    allow_loading_unsigned_plugins = sasesp-plugin
+
+    [feature_toggles]
+    accessTokenExpirationCheck = true
+
+    [security]
+    disable_initial_admin_creation = true
+    cookie_secure = true
+    cookie_samesite = lax
+
+    [users]
+    auto_assign_org = true
+    auto_assign_org_role = Admin
+
+    [auth]
+    disable_login_form = true
+    signout_redirect_url = TEMPLATE_SIGNOUT_REDIRECT_URL
+
+    [auth.generic_oauth]
+    tls_skip_verify_insecure = true
+    enabled = true
+    name = OAuth
+    use_pkce = true
+    auto_login = true
+    client_id = TEMPLATE_OAUTH_CLIENT_ID
+    client_secret = TEMPLATE_OAUTH_CLIENT_SECRET
+    scopes = openid email profile
+    email_attribute_path = email
+    name_attribute_path = user_name
+    login_attribute_path = user_name
+    auth_url = TEMPLATE_AUTH_URL
+    token_url = TEMPLATE_TOKEN_URL
+    api_url = TEMPLATE_API_URL
+    allow_assign_grafana_admin = true
+    role_attribute_path = contains(grafana_roles[*], 'grafana-admin') && 'GrafanaAdmin' || contains(grafana_roles[*], 'admin') && 'Admin' || contains(grafana_roles[*], 'editor') && 'Editor' || 'Viewer'

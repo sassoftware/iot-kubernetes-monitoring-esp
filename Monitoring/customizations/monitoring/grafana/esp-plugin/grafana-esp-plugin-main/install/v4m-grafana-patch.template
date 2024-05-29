@@ -1,0 +1,20 @@
+spec:
+  template:
+    spec:
+      volumes:
+        - name: grafana-config
+          configMap:
+            defaultMode: 420
+            name: v4m-grafana
+      containers:
+      - name: grafana
+        env:
+          - name: GF_INSTALL_PLUGINS
+            value: TEMPLATE_ESP_PLUGIN_SOURCE;sasesp-plugin
+        volumeMounts:
+        - mountPath: /etc/grafana/grafana.ini
+          name: grafana-config
+          subPath: grafana.ini
+      dnsConfig:
+        searches:
+          - TEMPLATE_ESP_NAMESPACE.svc.cluster.local

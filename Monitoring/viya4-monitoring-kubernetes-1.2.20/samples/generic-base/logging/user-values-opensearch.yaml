@@ -1,0 +1,40 @@
+# Chart: https://github.com/opensearch-project/helm-charts/tree/opensearch-2.15.0/charts/opensearch
+# Default values: https://github.com/opensearch-project/helm-charts/blob/opensearch-2.15.0/charts/opensearch/values.yaml
+
+#image:
+#  tag: 2.10.0
+#  repository: "opensearchproject/opensearch"
+#  pullPolicy: "IfNotPresent"
+
+## Number of OpenSearch node (pods)
+# replicas: 3
+
+## Java heap settings for OpenSearch nodes
+# opensearchJavaOpts: "-Xms4096m -Xmx4096m"
+
+## OpenSearch storage configuration
+# persistence:
+#   enabled: true
+#   #storageClass: alt-storage
+#   size: 30Gi
+#   enableInitChown: false
+
+
+## The following stanzas 'sysctl' and 'sysctlInit'
+## configure the Kubernetes cluster nodes to run
+## OpenSearch in the same way but using different
+## mechanisms (via securityContext or via a
+## privileged initContainer). By default, we use
+## the latter approach but include both stanzas
+## to allow you to choose an approach that suits
+## your organization's preferences.
+
+## Use securityContext to set sysctl
+#sysctl:
+#  enabled: false
+
+## Use privileged initContainer to set sysctl
+#sysctlInit:
+#  enabled: true
+
+#sysctlVmMaxMapCount: 262144

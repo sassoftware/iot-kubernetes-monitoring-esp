@@ -1,0 +1,59 @@
+# Override values for the Fluent Bit helm chart
+#
+# Chart:  https://github.com/fluent/helm-charts/blob/fluent-bit-0.30.4/charts/fluent-bit
+# Default values: https://github.com/fluent/helm-charts/blob/fluent-bit-0.30.4/charts/fluent-bit/values.yaml
+
+image:
+  tag: 2.1.10
+podAnnotations: 
+  fluentbit.io/parser: fluentbit
+podLabels:
+  fbout: es
+serviceMonitor:
+  enabled: false
+extraVolumeMounts:
+- mountPath: /fluent-bit/etc/viya-parsers.conf
+  name: parsers-config
+  subPath: viya-parsers.conf
+- mountPath: /fluent-bit/etc/viya-tracing.conf
+  name: tracing-config
+  subPath: viya-tracing.conf
+extraVolumes:
+- configMap:
+    defaultMode: 420
+    name: fb-viya-parsers
+  name: parsers-config
+- configMap:
+    defaultMode: 420
+    name: fb-viya-tracing
+  name: tracing-config
+fullConfigMap: false
+existingConfigMap: fb-fluent-bit-config
+
+env:
+   - name: ES_LOGCOLLECTOR_USER
+     valueFrom:
+       secretKeyRef:
+         name: internal-user-logcollector
+         key: username
+   - name: ES_LOGCOLLECTOR_PASSWD
+     valueFrom:
+       secretKeyRef:
+         name: internal-user-logcollector
+         key: password
+envFrom:
+   - configMapRef:
+        name: fb-env-vars
+
+
+# Be very tolerant
+tolerations:
+- operator: "Exists"
+
+resources:
+#   limits:
+#     cpu: 100m
+#     memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
