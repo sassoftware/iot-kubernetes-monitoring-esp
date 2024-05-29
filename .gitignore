@@ -1,0 +1,9 @@
+/**/*.swp
+/**/*.bak
+/**/*.log
+
+# Allow .github
+!/.github
+
+# Allow .github-bot.yaml
+!/.github-bot.yaml

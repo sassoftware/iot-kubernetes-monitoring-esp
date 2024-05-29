@@ -1,0 +1,12 @@
+apiVersion: 1
+
+datasources:
+- name: "SAS Event Stream Manager"
+  type: sasesp-plugin
+  access: proxy
+  url: https://sas-event-stream-manager-app/SASEventStreamManager
+  jsonData:
+    isViya: true
+    oauthPassThru: true
+    tlsSkipVerify: true
+  editable: true

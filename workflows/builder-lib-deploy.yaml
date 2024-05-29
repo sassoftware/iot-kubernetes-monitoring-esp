@@ -1,0 +1,35 @@
+name: builder-lib-deploy
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  svi-gradle:
+    name: gradle
+    # uses: ./.github/workflows/builder-lib.yaml
+    uses: sas-institute-rnd-internal/workflows-platform-products/.github/workflows/core-builder-lib-deploy.yaml@main
+    with:
+      # disable publishing artifacts for the moment
+      # to stop us overwritting valid artifact libraries - when we go live
+      # we will change this
+      publish-artifacts: false
+
+      #######
+      ## The following are default parameters that you MAY override
+      ## the provided values below are the defaults
+
+      # artifactory_stack: svi
+      # cadence-version: latest
+      # info: true
+      # debug: false
+      # java-version: 11
+      # pipeline: dev
+      # publish-artifacts: false
+      ## tests are usually run as a dependency on the build task
+      # run-test: false
+      # publish-artifacts-target: false
+      # build-package: false
+      # post-packaging: ''
+      # blackduck-scan: blackDuckDetectScan -P enableBlackDuck -PsasBlackDuckUrl=https://blackduck-svi.unx.sas.com/

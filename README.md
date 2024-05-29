@@ -102,18 +102,12 @@ components in the Kubernetes cluster will be initiated:
 
 ### Prepare Your Working Directory
 
-On a Unix system, download the tarred ZIP <a href="code/ESP_Monitoring.tar.gz" download>file</a> that contains the
-scripts and files required to deploy SAS Event Stream Processing Monitoring for Kubernetes. Use the following command to
-extract the contents to a directory of your choice:
+Monitoring folder contains the scripts and files required to deploy SAS Event Stream Processing Monitoring for Kubernetes. 
 
-```shell
-tar -xzvf ESP_Monitor.tar.gz --dir=<target-directory>
-```
-
-The following directory structure is created:
+The following is the directory structure of the folder:
 
 ```text
-<target-directory>/Monitoring
+Monitoring
 ├── customizations
 │   └── monitoring
 │       ├── dashboards

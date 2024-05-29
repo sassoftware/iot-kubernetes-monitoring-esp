@@ -1,0 +1,23 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: es-transport-tls-cert
+spec:
+  commonName: es-transport
+  dnsNames:
+  - localhost
+  - v4m-es-client-service
+  issuerRef:
+    kind: Issuer
+    name: namespace-issuer
+  secretName: es-transport-tls-secret
+  privateKey:
+    encoding: PKCS8
+  subject:
+    organizations:
+    - cert-manager
+  usages:
+  - digital signature
+  - key encipherment
+  - server auth
+  - client auth

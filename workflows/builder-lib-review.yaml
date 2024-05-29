@@ -1,0 +1,31 @@
+name: builder-lib-review
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  svi-gradle:
+    name: gradle
+    # uses: ./.github/workflows/builder-lib.yaml
+    uses: sas-institute-rnd-internal/workflows-platform-products/.github/workflows/core-builder-lib.yaml@main
+      #with:
+      # Task to be exucuted to fulfil our extra requirements
+
+      #######
+      ## The following are default parameters that you MAY override
+      ## the provided values below are the defaults
+
+      # artifactory_stack: svi
+      # cadence-version: latest
+      # info: true
+      # debug: false
+      # java-version: 11
+      # pipeline: dev
+      # publish-artifacts: false
+      ## tests are usually run as a dependency on the build task
+      # run-test: false
+      # publish-artifacts-target: false
+      # build-package: false
+    # post-packaging: ''

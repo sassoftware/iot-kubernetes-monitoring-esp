@@ -1,0 +1,9 @@
+global:
+  dockerRegistry: __AIRGAP_REGISTRY__
+
+imagePullSecrets:
+  - name: __AIRGAP_IMAGE_PULL_SECRET_NAME__
+
+sysctlInit:
+  image: library/busybox
+

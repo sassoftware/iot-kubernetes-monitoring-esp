@@ -1,0 +1,12 @@
+name: github-bot
+'on':
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+jobs:
+  github-bot:
+    name: github-bot
+    uses: sas-institute-rnd-internal/github-bot-workflows/.github/workflows/bot-cli.yaml@main
