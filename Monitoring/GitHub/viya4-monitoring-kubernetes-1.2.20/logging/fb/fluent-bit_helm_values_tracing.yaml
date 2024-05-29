@@ -1,5 +1,0 @@
-extraPorts:
-  - port: 4318
-    containerPort: 4318
-    protocol: TCP
-    name: otlphttp
