@@ -124,7 +124,6 @@ Monitoring
 │       └── user-values-prom-operator-path-based.yaml.sample
 ├── viya4-monitoring-kubernetes-1.2.20
 │   └── ...
-└── viya4-monitoring-kubernetes-main -> viya4-monitoring-kubernetes-1.2.20
 ```
 
 Where:
