@@ -246,7 +246,7 @@
             "uid": "P8E80F9AEF21F6940"
           },
           "editorMode": "code",
-          "expr": "{namespace=~\"$namespace\", project=\"$project\", type=\"esp\"} |~ `^(?i)$filter` |~ `(?i)$type` | json | __error__=`` | line_format `[{{.level}}] \t {{.message}}`",
+          "expr": "{namespace=~\"$namespace\", project=\"$project\", type=\"esp\"} |~ `(?i)$filter` |~ `(?i)$type` | json | __error__=`` | line_format `[{{.level}}] \t {{.message}}`",
           "queryType": "range",
           "refId": "A"
         }
