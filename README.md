@@ -93,6 +93,8 @@ The latest version of SAS Event Stream Processing Monitoring for Kubernetes intr
 [&#11014;](#top) Top
 ### Check Prerequisites
 
+When SAS Event Stream Processing is deployed with the SAS Viya platform, you can deploy SAS Event Stream Processing Monitoring for Kubernetes.
+
 SAS Event Stream Processing Monitoring for Kubernetes can be deployed from Unix platforms only and, to successfully
 follow this guide, the following must be installed on the local computer from which the deployment of monitoring
 components in the Kubernetes cluster will be initiated:
