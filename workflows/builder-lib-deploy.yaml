@@ -6,15 +6,14 @@ on:
       - main
 
 jobs:
-  svi-gradle:
+  iot-gradle:
     name: gradle
     # uses: ./.github/workflows/builder-lib.yaml
-    uses: sas-institute-rnd-internal/workflows-platform-products/.github/workflows/core-builder-lib-deploy.yaml@main
+    uses: sas-institute-rnd-internal/workflows-platform-products/.github/workflows/core-builder-svc-deploy.yaml@main
     with:
-      # disable publishing artifacts for the moment
-      # to stop us overwritting valid artifact libraries - when we go live
-      # we will change this
-      publish-artifacts: false
+      pipeline: prod
+      blackduck-scan: ''
+      release-strategy: "release-commit"
 
       #######
       ## The following are default parameters that you MAY override
