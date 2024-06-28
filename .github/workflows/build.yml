@@ -16,8 +16,6 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-    - name: Set up yarn
-      uses: DerYeger/yarn-setup-action@master
     
     - name: Get current version
       id: current_version
@@ -26,25 +24,7 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         custom_release_rules: feat:patch,bump:minor
         dry_run: true
-    
-    - name: Build yarn
-      run: |
-        yarn version --new-version ${{ steps.current_version.outputs.new_version }} --no-git-tag-version
-        yarn build
-        yarn lint
-        yarn test:ci
-        
-    - name: Zip artifacts
-      run: |
-        yarn zip
-    
-    - name: Attatch artifacts to job
-      uses: actions/upload-artifact@v3
-      with:
-        name: sasesp-monitoring-zip-files
-        path: ./sasesp-monitoring*.zip
-        retention-days: 14
-    
+
     - name: Bump version and push tag
       if: ${{ !inputs.release }}
       id: release_version
