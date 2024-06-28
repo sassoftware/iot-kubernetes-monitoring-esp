@@ -298,7 +298,7 @@ the screen offers the ability to drill down to the individual pod level to acces
 ### Adding Grafana Alert Rules
 Custom alert rules can be added to provide the ability to receive notifications when specific behavior happens though different channels, such as Microsoft Teams or custom webhooks. For more information, see [Alert rules](https://grafana.com/docs/grafana/latest/alerting/fundamentals/alert-rules/#:~:text=An%20alert%20rule%20consists%20of,exceed%20to%20create%20an%20alert.) in Grafana documentation.
 
-A list of existing ESP project alert rules can be found in the [esp-project-alert-rules.yaml](https://github.com/sassoftware/iot-kubernetes-monitoring-esp/blob/next/esp-project-alert-rules.yaml) file.
+A list of existing ESP project alert rules can be found in the [esp-project-alert-rules.yaml](https://github.com/sassoftware/iot-kubernetes-monitoring-esp/blob/main/esp-project-alert-rules.yaml) file.
 
 To add alert rules from the provided ESP project alert rules:
 1. Navigate to the **Alert rules** section in Grafana:
