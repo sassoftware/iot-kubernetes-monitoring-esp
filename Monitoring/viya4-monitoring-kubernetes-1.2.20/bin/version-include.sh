@@ -10,7 +10,7 @@ function populateValuesYAML() {
   gitCommit=$(git rev-parse --short HEAD 2>/dev/null)
   if [ -n "$gitCommit" ]; then
     echo "gitCommit: $gitCommit" >> "$v4mValuesYAML"
-    gitStatus=$(git status -s | sed 's/^ M/M/' | sed 's/^/  /')
+    gitStatus=$(git status -s | sed 's/^ *//' | sed 's/^/  /')
     if [ -n "$gitStatus" ]; then
       echo "gitStatus: |" >> "$v4mValuesYAML"
       echo "$gitStatus" >> "$v4mValuesYAML"
