@@ -11,8 +11,13 @@ if [ ! $(which kubectl) ]; then
   exit 1
 fi
 
-KUBE_CLIENT_VER=$(kubectl version --short | grep 'Client Version' | awk '{print $3}' 2>/dev/null)
-KUBE_SERVER_VER=$(kubectl version --short | grep 'Server Version' | awk '{print $3}' 2>/dev/null)
+if ! kubectl version --short &> /dev/null; then
+    KUBE_CLIENT_VER=$(kubectl version | grep 'Client Version' | awk '{print $3}' 2>/dev/null)
+    KUBE_SERVER_VER=$(kubectl version | grep 'Server Version' | awk '{print $3}' 2>/dev/null)
+else
+    KUBE_CLIENT_VER=$(kubectl version --short | grep 'Client Version' | awk '{print $3}' 2>/dev/null)
+    KUBE_SERVER_VER=$(kubectl version --short | grep 'Server Version' | awk '{print $3}' 2>/dev/null)
+fi
 
 # Client version allowed to be one minor version earlier than minimum server version
 if [[ $KUBE_CLIENT_VER =~ v1.2[0-9] ]]; then

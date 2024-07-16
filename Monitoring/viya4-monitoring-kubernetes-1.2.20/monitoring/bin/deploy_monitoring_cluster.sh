@@ -15,6 +15,18 @@ if [ "$OPENSHIFT_CLUSTER" == "true" ]; then
   fi
 fi
 
+# Fail fast on invalid auth configuration:
+GRAFANA_AUTHENTICATION="${GRAFANA_AUTHENTICATION:-default}"
+GRAFANA_AUTH_PROVIDER="${GRAFANA_AUTH_PROVIDER:-viya}"
+GRAFANA_AUTH_TYPE="${GRAFANA_AUTH_PROVIDER,,}"
+if [ "${GRAFANA_AUTHENTICATION^^}" == "OAUTH" ]; then
+    VALID_AUTH_TYPES="viya keycloak uaa"
+    [[ "${VALID_AUTH_TYPES}" =~ (^|[[:space:]])$GRAFANA_AUTH_TYPE($|[[:space:]]) ]] || {
+        log_error "Invalid Grafana OAuth Provider: ${GRAFANA_AUTH_PROVIDER}"
+        exit 1
+    }
+fi
+
 source bin/tls-include.sh
 if verify_cert_generator $MON_NS prometheus alertmanager grafana; then
   log_debug "cert generator check OK [$cert_generator_ok]"
@@ -448,11 +460,11 @@ GRAFANA_AUTHENTICATION="${GRAFANA_AUTHENTICATION:-default}"
 if [ "${GRAFANA_AUTHENTICATION^^}" == "LDAP" ] || [ "${GRAFANA_AUTHENTICATION^^}" == "OAUTH" ]; then
    log_verbose "Configuring Grafana authentication to [${GRAFANA_AUTHENTICATION^^}]"
 
-   AUTH_DIR=$USER_DIR/monitoring/grafana/authentication/${GRAFANA_AUTHENTICATION^^}
+   AUTH_DIR="$(realpath "${USER_DIR}")/monitoring/grafana/authentication/${GRAFANA_AUTHENTICATION^^}"
    ESP_GRAFANA_PLUGIN_VERSION="${ESP_GRAFANA_PLUGIN_VERSION:-null}"
    if [ "$ESP_GRAFANA_PLUGIN_VERSION" != "null" ]; then
       if [ "${GRAFANA_AUTHENTICATION^^}" == "OAUTH" ]; then
-         $USER_DIR/monitoring/grafana/esp-plugin/grafana-esp-plugin-main/install/configure-grafana.sh ${AUTH_DIR} ${ESP_GRAFANA_PLUGIN_VERSION} viya
+         $USER_DIR/monitoring/grafana/esp-plugin/grafana-esp-plugin-main/install/configure-grafana.sh "${AUTH_DIR}" "${ESP_GRAFANA_PLUGIN_VERSION}" "${GRAFANA_AUTH_TYPE}"
       else
          log_verbose "Authentication set to [${GRAFANA_AUTHENTICATION^^}]. Disabling ESP Grafana plugin installation."
       fi
@@ -485,7 +497,7 @@ if [ "${GRAFANA_AUTHENTICATION^^}" == "LDAP" ] || [ "${GRAFANA_AUTHENTICATION^^}
       kubectl label secret -n $MON_NS grafana-datasource-sas-event-stream-processing-studio grafana_datasource=1 sas.com/monitoring-base=kube-viya-monitoring
 
       log_verbose "Registering Grafana as an OAUTH client"
-      $USER_DIR/monitoring/grafana/esp-plugin/grafana-esp-plugin-main/install/register-oauth-client-viya.sh
+      $USER_DIR/monitoring/grafana/esp-plugin/grafana-esp-plugin-main/install/register-oauth-client-"${GRAFANA_AUTH_TYPE}".sh
    fi
 
    sleep 5

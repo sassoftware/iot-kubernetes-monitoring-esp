@@ -124,7 +124,7 @@ Monitoring
 │       ├── user-values-prom-operator.yaml
 │       ├── user-values-prom-operator-host-based.yaml.sample
 │       └── user-values-prom-operator-path-based.yaml.sample
-├── viya4-monitoring-kubernetes-1.2.20
+├── viya4-monitoring-kubernetes-x.x.xx
 │   └── ...
 ```
 
@@ -144,9 +144,9 @@ Where:
       access to the monitoring components. Path-based access is used for cloud-based deployments.
       * When deploying, copy the appropriate sample file to the `user-values-prom-operator.yaml` file in the same
         directory and customize it according to your needs.
-* `viya4-monitoring-kubernetes-main` is the directory created by extracting the binaries for SAS Event Stream Processing
-  Monitoring for Kubernetes. This directory contains configuration files and scripts for both the monitoring and logging
-  components of the SAS Viya platform.
+* `viya4-monitoring-kubernetes-x.x.xx` is the directory created by extracting the binaries for SAS Event Stream 
+  Processing Monitoring for Kubernetes. This directory contains configuration files and scripts for both the monitoring
+  and logging components of the SAS Viya platform.
   * **NOTE:** The content of this directory should never be modified, and is intended to be used as-is.
 
 ### Review the Deployment Configuration
@@ -157,11 +157,16 @@ Before proceeding to the deployment step, the deployment configuration must be s
 2. Replace or update the content of the `user-values-prom-operator.yaml` file depending on whether you need host-based
    or path-based ingresses for the monitoring components. The latter are normally used for cloud deployments.
 3. Review the content of the `user.env` file and customize it as needed. For an in-depth description of the options,
-   see [SAS Viya Monitoring for Kubernetes](https://github.com/sassoftware/viya4-monitoring-kubernetes).
+   see [SAS Viya Monitoring for Kubernetes](https://github.com/sassoftware/viya4-monitoring-kubernetes) and comments
+   provided in the file itself.
    * It is strongly recommended that you choose a strong password for the default Grafana `admin` user at this stage,
      which can be set using the `GRAFANA_ADMIN_PASSWORD` property. However, the default password can be changed later
      as described in the [Access the Dashboards](#access-the-dashboards) section.
    * The `GRAFANA_AUTHENTICATION` property allows you to choose `LDAP` or `OAUTH` as the authentication method.
+   * For `GRAFANA_AUTHENTICATION=OAUTH`, the `GRAFANA_AUTH_PROVIDER` property allows you to choose `viya` (default),
+     `uaa`, or - for SAS Event Stream Processing Standalone Installer deployments - `keycloak` as the identity
+     provider to be configured for use by Grafana.
+   * The `KEYCLOAK_SUBPATH` property allows you to set the path used to access Keycloak (default: `/auth/`).
    * The `ESP_GRAFANA_PLUGIN_VERSION` property allows for the SAS Event Stream Processing Data Source Plug-in for
      Grafana to be automatically deployed. The plug-in works only with `OAUTH` authentication, with
      the property being ignored for any other authentication method. For more information, see
@@ -170,6 +175,8 @@ Before proceeding to the deployment step, the deployment configuration must be s
    * The `LOKI_LOGFMT` property must be set according to the format used by Kubernetes to write logs. As of the writing
      of this document, the format is `cri` for Microsoft Azure, and `docker` for other providers like Amazon Web
      Services (AWS).
+   * The `MON_NODE_PLACEMENT_ENABLE` property must be set to `false` for SAS Event Stream Processing Standalone
+     Installer deployments.
 4. Depending on the method selected in the `GRAFANA_AUTHENTICATION` property there might be additional configuration
    required:
     * For `GRAFANA_AUTHENTICATION=LDAP`, review and customize the content of the files found in the `configmaps` and
@@ -191,7 +198,7 @@ carry out the deployment process. Complete the following steps:
 	```shell
 	export USER_DIR=<target-directory>/Monitoring/customizations
 	```
-2. Navigate to the `<target-directory>/viya4-monitoring-kubernetes-main/monitoring/bin` directory, and deploy
+2. Navigate to the `<target-directory>/viya4-monitoring-kubernetes-x.x.xx/monitoring/bin` directory, and deploy
    SAS Event Stream Processing Monitoring for Kubernetes using the following command:  
 	```shell
 	./deploy_monitoring_cluster.sh
@@ -216,7 +223,7 @@ deploy the SAS Viya Monitoring for Kubernetes dashboards.
     ```shell
     export VIYA_NS=<viya-namespace>
     ```
-2. Navigate to the `<target-directory>/viya4-monitoring-kubernetes-main/monitoring/bin` directory and deploy
+2. Navigate to the `<target-directory>/viya4-monitoring-kubernetes-x.x.xx/monitoring/bin` directory and deploy
    the dashboards using the following command:
     ```shell
     ./deploy_monitoring_viya.sh
@@ -245,7 +252,7 @@ an existing environment using the following steps:
     ```shell
     export USER_DIR=<target-directory>/Monitoring/customizations
     ```
-2. Navigate to the `<target-directory>/viya4-monitoring-kubernetes-main/monitoring/bin` directory and deploy
+2. Navigate to the `<target-directory>/viya4-monitoring-kubernetes-x.x.xx/monitoring/bin` directory and deploy
    your custom dashboards using the following command:
     ```shell
     ./deploy_dashboards.sh
@@ -263,7 +270,7 @@ Either way, it is recommended to consult the Grafana documentation for best prac
 You can access Grafana by using the link displayed at the bottom of the deployment log. The password for the `admin`
 user can either be provided in the `user.env` file in the `$USER_DIR` directory (recommended), or set after deployment
 by running the `change_grafana_admin_password.sh` script, located in the
-`<target-directory>/viya4-monitoring-kubernetes-main/monitoring/bin` directory.
+`<target-directory>/viya4-monitoring-kubernetes-x.x.xx/monitoring/bin` directory.
 
 When you log in to Grafana, the dashboards are displayed:
 
@@ -347,7 +354,7 @@ Monitoring for Kubernetes:
     ```shell
     export USER_DIR=<monitoring-root-directory>/Monitoring/customizations
     ```
-2. Navigate to the `<target-directory>/viya4-monitoring-kubernetes-main/monitoring/bin` directory and use the following
+2. Navigate to the `<target-directory>/viya4-monitoring-kubernetes-x.x.xx/monitoring/bin` directory and use the following
    command to remove the previously-deployed monitoring components:
     ```shell
     ./remove_monitoring_cluster.sh

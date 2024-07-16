@@ -3,6 +3,9 @@
 set -e -o pipefail -o nounset
 
 KEYCLOAK_SUBPATH="${KEYCLOAK_SUBPATH:-auth}"
+# Strip trailing/leading slashes:
+KEYCLOAK_SUBPATH="${KEYCLOAK_SUBPATH%+(/*)}"
+KEYCLOAK_SUBPATH="${KEYCLOAK_SUBPATH#+(/*)}"
 
 ESP_NAMESPACE="${1}"
 
