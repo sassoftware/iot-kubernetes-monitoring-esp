@@ -36,7 +36,7 @@ easier to administer deployments regardless of their complexity. This is helpful
 smaller ecosystems like SAS Event Stream Processing require a more specialized approach to both real time and historical
 monitoring of projects.
 
-SAS Event Stream Processing Monitoring for Kubernetes was developed to help customers address this need. It can be
+SAS Event Stream Processing Monitoring for Kubernetes was developed to help customers address this need. SAS Event Stream Processing Monitoring for Kubernetes can be deployed when SAS Event Stream Processing is deployed with the SAS Viya platform or when standalone SAS Event Stream Processing is deployed. SAS Event Stream Processing Monitoring for Kubernetes  can be
 considered as an extended version of [SAS Viya Monitoring for Kubernetes](https://github.com/sassoftware/viya4-monitoring-kubernetes),
 as it shares the same code base and allows for the deployment of the same components in addition to those specific to
 SAS Event Stream Processing. The main difference is that SAS Event Stream Processing Monitoring for Kubernetes does not
@@ -68,24 +68,7 @@ overall performance of the environment.
 [&#11014;](#top) Top
 ## What's New
 
-The latest version of SAS Event Stream Processing Monitoring for Kubernetes introduces the following features:
-
-* The ability to choose `LDAP` or `OAUTH` as the authentication methods for Grafana in the new
-  `GRAFANA_AUTHENTICATION` property. Whilst the LDAP configuration files require some minimal configuration, the files
-  for `OAUTH` are auto-generated as part of the deployment process:  
-    ```text
-    # Grafana Authentication (LDAP or OAUTH. Unset for default authentication)
-    GRAFANA_AUTHENTICATION=OAUTH
-    ```
-* Automatic deployment of the SAS Event Stream Processing Data Source Plug-in for Grafana, which replaces SAS Event
-  Stream Processing Streamviewer. The plug-in allows for SAS Event Stream Processing data streams to be displayed in
-  Grafana dashboards. The new `ESP_GRAFANA_PLUGIN_VERSION` property allows for a specific version of the plug-in to be
-  deployed:
-    ```text
-    # Version of the ESP Grafana plug-in (with OAUTH authentication only).
-    # Check https://github.com/sassoftware/grafana-esp-plugin for updates
-    ESP_GRAFANA_PLUGIN_VERSION=7.44.0
-    ```
+You can now deploy SAS Event Stream Processing Monitoring for Kubernetes when standalone SAS Event Stream Processing is deployed. Previously you could deploy SAS Event Stream Processing Monitoring for Kubernetes only when SAS Event Stream Processing was deployed with the SAS Viya platform.
 
 [&#11014;](#top) Top
 ## Preparing to Deploy the Monitoring Components
@@ -93,7 +76,7 @@ The latest version of SAS Event Stream Processing Monitoring for Kubernetes intr
 [&#11014;](#top) Top
 ### Check Prerequisites
 
-When SAS Event Stream Processing is deployed with the SAS Viya platform, you can deploy SAS Event Stream Processing Monitoring for Kubernetes.
+When SAS Event Stream Processing is deployed with the SAS Viya platform or when standalone SAS Event Stream Processing is deployed, you can deploy SAS Event Stream Processing Monitoring for Kubernetes.
 
 SAS Event Stream Processing Monitoring for Kubernetes can be deployed from Unix platforms only and, to successfully
 follow this guide, the following must be installed on the local computer from which the deployment of monitoring
@@ -167,8 +150,14 @@ Before proceeding to the deployment step, the deployment configuration must be s
      `uaa`, or - for SAS Event Stream Processing Standalone Installer deployments - `keycloak` as the identity
      provider to be configured for use by Grafana.
    * The `KEYCLOAK_SUBPATH` property allows you to set the path used to access Keycloak (default: `/auth/`).
-   * The `ESP_GRAFANA_PLUGIN_VERSION` property allows for the SAS Event Stream Processing Data Source Plug-in for
-     Grafana to be automatically deployed. The plug-in works only with `OAUTH` authentication, with
+   * The `ESP_GRAFANA_PLUGIN_VERSION` property allows for a specific version of the SAS Event Stream Processing Data Source Plug-in for
+     Grafana to be automatically deployed. For example:
+	    ```text
+	    # Version of the ESP Grafana plug-in (with OAUTH authentication only).
+	    # Check https://github.com/sassoftware/grafana-esp-plugin for updates
+	    ESP_GRAFANA_PLUGIN_VERSION=7.44.0
+	    ```
+     The plug-in works only with `OAUTH` authentication, with
      the property being ignored for any other authentication method. For more information, see
      [SAS Event Stream Processing Data Source Plug-in for Grafana](https://github.com/sassoftware/grafana-esp-plugin).
    * The `LOKI_ENABLED` property must be set to `True` for SAS Event Stream Processing project logs to be monitored.
