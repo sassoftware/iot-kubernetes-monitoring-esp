@@ -23,5 +23,6 @@ jobs:
           cat user-values-prom-operator.yaml
           cd ${GITHUB_WORKSPACE}/Monitoring/viya4-monitoring-kubernetes-1.2.20/monitoring/bin 
           ls
-          ./remove_monitoring_cluster.sh
+          chmod +x remove_monitoring_cluster.sh
+          bash remove_monitoring_cluster.sh
           kubectl delete namespace monitoring
