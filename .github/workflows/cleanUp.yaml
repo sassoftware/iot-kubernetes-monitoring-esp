@@ -1,0 +1,33 @@
+name: Clean Up Environment
+
+on:
+  workflow_dispatch:
+
+jobs:
+  cleanUp:
+     runs-on: ubuntu-latest
+     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+        # shallow clone doesn't fetch tags, so cdp-release-management plugin doesn't work without this
+          fetch-depth: 0
+
+      - name: Remove Monitoring Cluster via bash script
+        shell: bash
+        run: |
+          echo ${GITHUB_WORKSPACE}
+          export USER_DIR=${GITHUB_WORKSPACE}\Monitoring\customizations
+          echo ${USER_DIR}
+          cd ${USER_DIR}
+          ls
+      
+      - name: Create a GitHub release
+        if: ${{ !inputs.release }}
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.release_version.outputs.new_tag }}
+          name: Release ${{ steps.release_version.outputs.new_tag }}
+          body: ${{ steps.release_version.outputs.changelog }}
+          artifacts: "./sasesp-monitoring*.zip"
+          preRelease: true
