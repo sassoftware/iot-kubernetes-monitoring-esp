@@ -16,18 +16,11 @@ jobs:
       - name: Remove Monitoring Cluster via bash script
         shell: bash
         run: |
-          echo ${GITHUB_WORKSPACE}
           export USER_DIR=${GITHUB_WORKSPACE}/Monitoring/customizations
-          echo ${USER_DIR}
-          cd ${USER_DIR}
+          echo ${USER_DIR}/monitoring
+          sed -i 's/host.mycluster.example.com/monitoring.espviya129-azure-nginx-e07a1be2.unx.sas.com/g' user-values-prom-operator.yaml
+          cat user-values-prom-operator.yaml
+          cd ${GITHUB_WORKSPACE}/Monitoring/viya4-monitoring-kubernetes-1.2.20/monitoring/bin 
           ls
-      
-      - name: Create a GitHub release
-        if: ${{ !inputs.release }}
-        uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ steps.release_version.outputs.new_tag }}
-          name: Release ${{ steps.release_version.outputs.new_tag }}
-          body: ${{ steps.release_version.outputs.changelog }}
-          artifacts: "./sasesp-monitoring*.zip"
-          preRelease: true
+          ./remove_monitoring_cluster.sh
+          kubectl delete namespace monitoring
