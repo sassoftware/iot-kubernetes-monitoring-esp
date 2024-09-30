@@ -17,7 +17,7 @@ jobs:
         shell: bash
         run: |
           echo ${GITHUB_WORKSPACE}
-          export USER_DIR=${GITHUB_WORKSPACE}\Monitoring\customizations
+          export USER_DIR=${GITHUB_WORKSPACE}/Monitoring/customizations
           echo ${USER_DIR}
           cd ${USER_DIR}
           ls
