@@ -17,7 +17,9 @@ jobs:
         shell: bash
         run: |
           mkdir .kube
+          cd .kube
           echo "${{ secrets.KUBERNETES_CONFIG }}" > config
+          cd ..
           export USER_DIR=${GITHUB_WORKSPACE}/Monitoring/customizations
           cd ${USER_DIR}/monitoring
           ls
