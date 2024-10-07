@@ -16,13 +16,14 @@ jobs:
       - name: Remove Monitoring Cluster via bash script
         shell: bash
         run: |
+          mkdir .kube
+          echo ${{ secrets.KUBERNETES_CONFIG }} > config
           export USER_DIR=${GITHUB_WORKSPACE}/Monitoring/customizations
           cd ${USER_DIR}/monitoring
           ls
-          sed -i 's/host.mycluster.example.com/{{k8s_cluster}}/g' user-values-prom-operator.yaml
+          sed -i 's/host.mycluster.example.com/${{ secrets.K8S_CLUSTER }}/g' user-values-prom-operator.yaml
           cat user-values-prom-operator.yaml
           cd ${GITHUB_WORKSPACE}/Monitoring/viya4-monitoring-kubernetes-1.2.20/monitoring/bin 
           ls
-          chmod +x remove_monitoring_cluster.sh
           bash remove_monitoring_cluster.sh
           kubectl delete namespace monitoring
