@@ -16,10 +16,10 @@ jobs:
       - name: Remove Monitoring Cluster via bash script
         shell: bash
         run: |
+          cd $HOME
           mkdir .kube
           cd .kube
           echo "${{ secrets.KUBERNETES_CONFIG }}" > config
-          cd ..
           export USER_DIR=${GITHUB_WORKSPACE}/Monitoring/customizations
           cd ${USER_DIR}/monitoring
           ls
