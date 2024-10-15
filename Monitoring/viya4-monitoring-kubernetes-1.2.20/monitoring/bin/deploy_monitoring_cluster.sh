@@ -257,52 +257,35 @@ if [ "$ENABLE_LOKI" == "true" ]; then
    helmRepoAdd grafana https://grafana.github.io/helm-charts
    helm repo update
 
-   log_debug "Installing Loki"
-   helm $helmDebug upgrade --install loki grafana/loki-simple-scalable \
-     --namespace $MON_NS \
-     --timeout 5m \
-     --set "loki.auth_enabled=false,minio.enabled=true,querier.max_concurrent=2048,querier.parallelise-shardable-queries=false,query_scheduler.max_outstanding_requests_per_tenant=2048"
-
-   sleep 5
-
-   log_debug "Installing Promtail"
-   helm $helmDebug upgrade --install promtail grafana/promtail \
-     --set "loki.serviceName=loki" \
-     --namespace $MON_NS \
-     --timeout 5m
-
-   sleep 5
-
    if [ -d "$USER_DIR/monitoring/loki" ]; then
       LokiCfgDir="$USER_DIR/monitoring/loki"
    else
       LokiCfgDir="monitoring"
    fi
 
-   log_debug "Configuring Loki from [$LokiCfgDir]"
-   for f in $LokiCfgDir/loki*.yaml; do
-       # Need to check existence because if there are no matching files,
-       # f will include the wildcard character (*)
-       if [ -f "$f" ]; then
-          if [ -f "$f.sample" ]; then
-             log_debug "Customizing [$f]"
-             cp "$f.sample" "$f"
-
-             LOKI_LOGFMT=${LOKI_LOGFMT:-docker}
-             if echo "$OSTYPE" | grep 'darwin' > /dev/null 2>&1; then
-                sed -i '' "s/__LOKI_LOGFMT__/${LOKI_LOGFMT,,}/g" $f
-             else
-                sed -i "s/__LOKI_LOGFMT__/${LOKI_LOGFMT,,}/g" $f
-             fi
-          fi
-
-          log_debug "Applying [$f]"
-          kubectl delete --ignore-not-found -n $MON_NS -f $f
-          kubectl apply -n $MON_NS -f $f
-       fi
-   done
+   log_debug "Installing Loki"
+   helm $helmDebug upgrade --install loki grafana/loki-simple-scalable \
+     --namespace "${MON_NS}" \
+     --timeout 5m \
+     --set "loki.auth_enabled=false,minio.enabled=true"
 
    sleep 5
+
+   if [ ! -f "${LokiCfgDir}/promtail-chart-values.yaml" ] || [ ! -s "${LokiCfgDir}/promtail-chart-values.yaml" ]; then
+     log_warn "No Promtail values detected, deploying with default values"
+     # Ensure file exists for Helm upgrade execution.
+     touch "${LokiCfgDir}/promtail-chart-values.yaml"
+   fi
+
+   LOKI_LOGFMT=${LOKI_LOGFMT:-docker}
+
+   log_debug "Installing Promtail"
+   helm $helmDebug upgrade --install promtail grafana/promtail \
+     --values "${LokiCfgDir}/promtail-chart-values.yaml" \
+     --set-json "config.snippets.pipelineStages=[{\"${LOKI_LOGFMT,,}\":{}}]" \
+     --namespace "${MON_NS}" \
+     --timeout 5m
+
 fi
 # ESP Monitoring
 
