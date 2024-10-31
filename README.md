@@ -378,7 +378,7 @@ Please see the license file for additional detail.
 [&#11014;](#top) Top
 ## Additional Resources
 
-* [SAS Help Center: Monitoring Events, Alerts, and Health with Prometheus](https://go.documentation.sas.com/doc/en/espcdc/default/espex/p0rwojd7hnzcymn117e1ilapqgqm.htm)
+* [SAS Help Center: Monitoring Events, Alerts, and Health with Prometheus](https://go.documentation.sas.com/doc/en/espcdc/default/espex/p012m6yncdn4e3n1wq4rroih16y0.htm#p0rwojd7hnzcymn117e1ilapqgqm )
 * [SAS Viya Monitoring for Kubernetes](https://github.com/sassoftware/viya4-monitoring-kubernetes)
 * [SAS Event Stream Processing Data Source Plug-in for Grafana](https://github.com/sassoftware/grafana-esp-plugin)
 * [Prometheus](https://prometheus.io/)
