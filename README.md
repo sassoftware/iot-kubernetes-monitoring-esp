@@ -161,7 +161,7 @@ Before proceeding to the deployment step, the deployment configuration must be s
      the property being ignored for any other authentication method. For more information, see
      [SAS Event Stream Processing Data Source Plug-in for Grafana](https://github.com/sassoftware/grafana-esp-plugin).
    * The `LOKI_ENABLED` property must be set to `True` for SAS Event Stream Processing project logs to be monitored.
-   * The `LOKI_RETENTION_PERIOD` property allows you to set the period of time logs are persisted in Loki until deletion. By default, the property is set to `24h` (24 hours); setting the property to `0` disables retention.
+   * The `LOKI_RETENTION_PERIOD` property enables you to set the period of time logs are persisted in Loki until deletion. By default, the property is set to `24h` (24 hours); setting the property to `0` disables retention.
    * The `LOKI_LOGFMT` property must be set according to the format used by Kubernetes to write logs. As of the writing
      of this document, the format is `cri` for Microsoft Azure, and `docker` for other providers like Amazon Web
      Services (AWS).
