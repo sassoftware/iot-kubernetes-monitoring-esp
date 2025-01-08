@@ -68,7 +68,7 @@ overall performance of the environment.
 [&#11014;](#top) Top
 ## What's New
 
-You can now deploy SAS Event Stream Processing Monitoring for Kubernetes when standalone SAS Event Stream Processing is deployed. Previously you could deploy SAS Event Stream Processing Monitoring for Kubernetes only when SAS Event Stream Processing was deployed with the SAS Viya platform.
+SAS Event Stream Processing Monitoring for Kubernetes now supports configuration of the Loki retention period, allowing logs to be deleted after a specified period of time.
 
 [&#11014;](#top) Top
 ## Preparing to Deploy the Monitoring Components
@@ -161,6 +161,7 @@ Before proceeding to the deployment step, the deployment configuration must be s
      the property being ignored for any other authentication method. For more information, see
      [SAS Event Stream Processing Data Source Plug-in for Grafana](https://github.com/sassoftware/grafana-esp-plugin).
    * The `LOKI_ENABLED` property must be set to `True` for SAS Event Stream Processing project logs to be monitored.
+   * The `LOKI_RETENTION_PERIOD` property allows you to set the period of time logs are persisted in Loki until deletion. By default, the property is set to `24h` (24 hours); setting the property to `0` disables retention.
    * The `LOKI_LOGFMT` property must be set according to the format used by Kubernetes to write logs. As of the writing
      of this document, the format is `cri` for Microsoft Azure, and `docker` for other providers like Amazon Web
      Services (AWS).
@@ -197,8 +198,8 @@ This results in the deployment of the following components to the target Kuberne
 
 | Release Name               | Helm Chart Name                | Application Version |
 |----------------------------|--------------------------------|---------------------|
-| `loki`                     | `loki-simple-scalable-1.8.11`  | 2.6.1               |
-| `promtail`                 | `promtail-6.15.2`              | 2.9.1               |
+| `loki`                     | `loki-6.24.0`                  | 3.3.2               |
+| `promtail`                 | `promtail-6.16.6`              | 3.0.0               |
 | `v4m-metrics`              | `v4m-1.2.7-SNAPSHOT`           | 1.2.7-SNAPSHOT      |
 | `v4m-prometheus-operator`  | `kube-prometheus-stack-41.7.3` | 0.60.1              |
 
