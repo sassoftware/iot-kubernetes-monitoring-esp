@@ -264,10 +264,12 @@ if [ "$ENABLE_LOKI" == "true" ]; then
    fi
 
    log_debug "Installing Loki"
-   helm $helmDebug upgrade --install loki grafana/loki-simple-scalable \
-     --namespace "${MON_NS}" \
-     --timeout 5m \
-     --set "loki.auth_enabled=false,minio.enabled=true"
+   LOKI_RETENTION_PERIOD="${LOKI_RETENTION_PERIOD:-24h}"
+   helm $helmDebug upgrade --install loki grafana/loki \
+        --namespace "${MON_NS}" \
+        --timeout 5m \
+        --values "${LokiCfgDir}/values.yaml" \
+        --set loki.limits_config.retention_period=$LOKI_RETENTION_PERIOD
 
    sleep 5
 

@@ -1,3 +1,6 @@
+# Ensure pods are spun up on all nodes
+tolerations:
+  - operator: Exists
 # -- Section for crafting Promtails config file. The only directly relevant value is `config.file`
 # which is a templated string that references the other values and snippets below this key.
 # @default -- See `values.yaml`
