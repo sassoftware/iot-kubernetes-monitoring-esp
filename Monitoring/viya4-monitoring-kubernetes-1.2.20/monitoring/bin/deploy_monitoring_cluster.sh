@@ -488,6 +488,12 @@ if [ "${GRAFANA_AUTHENTICATION^^}" == "LDAP" ] || [ "${GRAFANA_AUTHENTICATION^^}
    sleep 5
 else
    log_verbose "Configuring Grafana with default authentication"
+   AUTH_DIR="$(realpath "${USER_DIR}")/monitoring/grafana/authentication/default"
+
+   # Apply configmaps and patch Grafana
+   for f in $AUTH_DIR/patches/*.yaml; do
+     kubectl patch deployment v4m-grafana -n $MON_NS --patch-file $f
+   done
 fi
 # ESP Monitoring
 

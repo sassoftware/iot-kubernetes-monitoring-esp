@@ -94,7 +94,7 @@ function generate_manifests() {
 
 ESP_DOMAIN=$(kubectl -n "${ESP_NAMESPACE}" get ingress --output jsonpath='{.items[0].spec.rules[0].host}')
 GRAFANA_DOMAIN=$(kubectl -n "${GRAFANA_NAMESPACE}" get ingress --output jsonpath='{.items[0].spec.rules[0].host}')
-ESP_PLUGIN_SOURCE="https://github.com/sassoftware/grafana-esp-plugin/releases/download/v${ESP_PLUGIN_VERSION}/sasesp-plugin-${ESP_PLUGIN_VERSION}.zip"
+ESP_PLUGIN_SOURCE="https://github.com/sassoftware/grafana-esp-plugin/releases/download/v${ESP_PLUGIN_VERSION}/sasesp-plugin-${ESP_PLUGIN_VERSION}.zip,volkovlabs-variable-panel"
 
 if [ "${OAUTH_TYPE}" == "viya" ]; then
     TEMPLATE_AUTH_URL="https://${ESP_DOMAIN}/SASLogon/oauth/authorize"

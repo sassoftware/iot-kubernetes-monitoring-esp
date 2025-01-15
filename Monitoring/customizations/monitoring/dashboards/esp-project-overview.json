@@ -1048,7 +1048,7 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 10,
+        "w": 12,
         "x": 0,
         "y": 14
       },
@@ -1099,7 +1099,282 @@
           "refId": "B"
         }
       ],
-      "title": "Connector Status",
+      "title": "All Connectors Status",
+      "transformations": [
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "pod": true
+            },
+            "indexByName": {},
+            "renameByName": {}
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "thresholdsStyle": {
+              "mode": "color",
+              "thresholds": []
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 12,
+        "x": 12,
+        "y": 14
+      },
+      "id": 19,
+      "options": {
+        "alwaysVisibleFilter": false,
+        "autoScroll": false,
+        "collapsedByDefault": false,
+        "customValue": false,
+        "displayMode": "minimize",
+        "emptyValue": false,
+        "favorites": {
+          "enabled": false,
+          "storage": "browser"
+        },
+        "filter": false,
+        "groupSelection": false,
+        "header": true,
+        "isUseLocalTime": false,
+        "minimizeOutputFormat": "text",
+        "padding": 0,
+        "persistent": false,
+        "saveSelectedGroup": false,
+        "saveSelectedGroupKey": "",
+        "showGroupTotal": false,
+        "showLabel": true,
+        "showName": false,
+        "showResetButton": false,
+        "showTotal": false,
+        "statusSort": false,
+        "sticky": false,
+        "tabsInOrder": true,
+        "variable": "selected_connectors"
+      },
+      "pluginVersion": "3.6.0",
+      "transparent": true,
+      "type": "volkovlabs-variable-panel"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-BlYlRd"
+          },
+          "custom": {
+            "align": "left",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": true,
+            "minWidth": 50
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Value #A"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "0": {
+                        "color": "yellow",
+                        "index": 0,
+                        "text": "Stopped"
+                      },
+                      "1": {
+                        "color": "green",
+                        "index": 1,
+                        "text": "Running"
+                      },
+                      "2": {
+                        "color": "blue",
+                        "index": 2,
+                        "text": "Finished"
+                      },
+                      "3": {
+                        "color": "red",
+                        "index": 3,
+                        "text": "Failed"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              },
+              {
+                "id": "displayName",
+                "value": "Status"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "connector_name"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "auto"
+                }
+              },
+              {
+                "id": "displayName",
+                "value": "Connector Name"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "window_name"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "auto"
+                }
+              },
+              {
+                "id": "displayName",
+                "value": "Window Name"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Value #B"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Events/sec"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 12,
+        "y": 15
+      },
+      "id": 20,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "frameIndex": 2,
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "10.2.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "group by (connector_name, window_name) (esp_connector_state{namespace=~\"$namespace\",project_name=\"$project\", connector_name=~\"$selected_connectors\"})",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum(esp_connector_cur_rate{namespace=\"$namespace\", project_name=\"$project\", connector_name=~\"$selected_connectors\"}) by (connector_name, pod)",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "B"
+        }
+      ],
+      "title": "Selected Connectors Status",
       "transformations": [
         {
           "id": "merge",
@@ -1178,9 +1453,9 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 14,
-        "x": 10,
-        "y": 14
+        "w": 24,
+        "x": 0,
+        "y": 21
       },
       "id": 18,
       "interval": "",
@@ -1283,7 +1558,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 21
+        "y": 28
       },
       "id": 8,
       "options": {
@@ -1329,7 +1604,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 28
+        "y": 35
       },
       "id": 9,
       "panels": [],
@@ -1483,7 +1758,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 29
+        "y": 36
       },
       "id": 10,
       "options": {
@@ -1549,7 +1824,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 37
+        "y": 44
       },
       "id": 16,
       "panels": [],
@@ -1732,7 +2007,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 38
+        "y": 45
       },
       "id": 17,
       "options": {
@@ -1883,6 +2158,38 @@
         },
         "refresh": 1,
         "regex": "/pod=\"(?<text>[^\"]+)/g",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "query_result((esp_connector_state{namespace=~\"$namespace\",project_name=\"$project\"}))",
+        "hide": 2,
+        "includeAll": true,
+        "label": "Selected connectors",
+        "multi": true,
+        "name": "selected_connectors",
+        "options": [],
+        "query": {
+          "qryType": 3,
+          "query": "query_result((esp_connector_state{namespace=~\"$namespace\",project_name=\"$project\"}))",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "/connector_name=\"(?<text>[^\"]+)|connector_name=\"(?<value>[^\"]+)/g",
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
