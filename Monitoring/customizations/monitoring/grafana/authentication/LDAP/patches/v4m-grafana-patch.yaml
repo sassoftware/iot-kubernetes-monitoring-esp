@@ -19,4 +19,6 @@ spec:
           - mountPath: /etc/grafana/ldap.toml
             name: grafana-ldap-config
             subPath: ldap.toml
-          
+          env:
+            - name: GF_INSTALL_PLUGINS
+              value: volkovlabs-variable-panel
