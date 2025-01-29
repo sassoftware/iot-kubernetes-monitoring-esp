@@ -1076,7 +1076,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "group by (connector_name, window_name) (esp_connector_state{namespace=~\"$namespace\",project_name=\"$project\"})",
+          "expr": "esp_connector_state{namespace=~\"$namespace\",project_name=\"$project\"}",
           "format": "table",
           "instant": true,
           "legendFormat": "__auto",
@@ -1110,7 +1110,17 @@
           "options": {
             "excludeByName": {
               "Time": true,
-              "pod": true
+              "__name__": true,
+              "container": true,
+              "endpoint": true,
+              "instance": true,
+              "job": true,
+              "namespace": true,
+              "pod": true,
+              "project_label": true,
+              "project_name": true,
+              "query_name": true,
+              "service": true
             },
             "indexByName": {},
             "renameByName": {}
@@ -1351,7 +1361,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "group by (connector_name, window_name) (esp_connector_state{namespace=~\"$namespace\",project_name=\"$project\", connector_name=~\"$selected_connectors\"})",
+          "expr": "esp_connector_state{namespace=~\"$namespace\",project_name=\"$project\", connector_name=~\"$selected_connectors\"}",
           "format": "table",
           "instant": true,
           "legendFormat": "__auto",
@@ -1385,7 +1395,17 @@
           "options": {
             "excludeByName": {
               "Time": true,
-              "pod": true
+              "__name__": true,
+              "container": true,
+              "endpoint": true,
+              "instance": true,
+              "job": true,
+              "namespace": true,
+              "pod": true,
+              "project_label": true,
+              "project_name": true,
+              "query_name": true,
+              "service": true
             },
             "indexByName": {},
             "renameByName": {}
