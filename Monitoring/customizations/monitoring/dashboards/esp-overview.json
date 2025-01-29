@@ -912,7 +912,12 @@
           "show": false
         },
         "showHeader": true,
-        "sortBy": []
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Connector Failures"
+          }
+        ]
       },
       "pluginVersion": "10.2.1",
       "targets": [
