@@ -1623,6 +1623,76 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "thresholdsStyle": {
+              "mode": "color",
+              "thresholds": []
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 35
+      },
+      "id": 22,
+      "options": {
+        "alwaysVisibleFilter": false,
+        "autoScroll": false,
+        "collapsedByDefault": false,
+        "customValue": false,
+        "displayMode": "minimize",
+        "emptyValue": false,
+        "favorites": {
+          "enabled": false,
+          "storage": "browser"
+        },
+        "filter": false,
+        "groupSelection": false,
+        "header": true,
+        "isUseLocalTime": false,
+        "minimizeOutputFormat": "text",
+        "padding": 0,
+        "persistent": false,
+        "saveSelectedGroup": false,
+        "saveSelectedGroupKey": "",
+        "showGroupTotal": false,
+        "showLabel": true,
+        "showName": false,
+        "showResetButton": false,
+        "showTotal": false,
+        "statusSort": false,
+        "sticky": false,
+        "tabsInOrder": true,
+        "variable": "connector_flatline_interval"
+      },
+      "pluginVersion": "3.6.0",
+      "transparent": true,
+      "type": "volkovlabs-variable-panel"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -1642,21 +1712,54 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           },
           "unit": "none"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Connector Name"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "Open connector logging",
+                    "url": "./d/d64a8b0f-af1b-4b40-b0de-a70ab8ec49fb/project-logs?orgId=1&var-namespace=$namespace&var-project=$project&var-pod=$pod&from=${__data.fields[\"Time - 300000\"]}&to=now&var-type=All&var-filter=${__value.text}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Time - 300000"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 35
+        "y": 36
       },
       "id": 21,
+      "interval": "$connector_flatline_interval",
       "options": {
         "cellHeight": "sm",
         "footer": {
@@ -1687,36 +1790,76 @@
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
-          "refId": "A",
+          "refId": "Rate",
           "useBackend": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "esp_connector_state{namespace=\"$namespace\", project_name=\"$project\", connector_name=~\"$selected_connectors\"}",
+          "format": "table",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "State"
         }
       ],
       "title": "Connector Flatline History",
       "transformations": [
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "Time",
+            "mode": "outerTabular"
+          }
+        },
         {
           "id": "organize",
           "options": {
             "excludeByName": {
               "Time": false,
               "Value": false,
+              "Value #Rate": false,
+              "Value #State": false,
               "__name__": true,
+              "__name__ 1": true,
+              "__name__ 2": true,
               "connector_name": false,
+              "connector_name 1": false,
+              "connector_name 2": true,
               "container": true,
+              "container 2": true,
               "endpoint": true,
+              "endpoint 2": true,
               "instance": true,
+              "instance 2": true,
               "job": true,
+              "job 2": true,
               "namespace": true,
+              "namespace 2": true,
               "pod": true,
+              "pod 2": true,
               "project_label": true,
+              "project_label 2": true,
               "project_name": true,
+              "project_name 2": true,
               "query_name": true,
+              "query_name 2": true,
               "service": true,
-              "window_name": true
+              "service 2": true,
+              "window_name": true,
+              "window_name 1": true,
+              "window_name 2": true
             },
             "indexByName": {},
             "renameByName": {
               "Time": "",
-              "connector_name": "Connector Name"
+              "connector_name": "Connector Name",
+              "connector_name 1": "Connector Name"
             }
           }
         },
@@ -1728,10 +1871,19 @@
                 "config": {
                   "id": "lowerOrEqual",
                   "options": {
-                    "value": 0
+                    "value": 0.3
                   }
                 },
-                "fieldName": "Value"
+                "fieldName": "Value #Rate"
+              },
+              {
+                "config": {
+                  "id": "equal",
+                  "options": {
+                    "value": 1
+                  }
+                },
+                "fieldName": "Value #State"
               }
             ],
             "match": "any",
@@ -1739,11 +1891,29 @@
           }
         },
         {
+          "id": "calculateField",
+          "options": {
+            "binary": {
+              "left": "Time",
+              "operator": "-",
+              "right": "300000"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
           "id": "organize",
           "options": {
             "excludeByName": {
-              "Value": true
+              "Time - 300000": false,
+              "Value": true,
+              "Value #Rate": true,
+              "Value #State": true
             },
+            "indexByName": {},
             "renameByName": {}
           }
         }
@@ -1756,7 +1926,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 42
+        "y": 43
       },
       "id": 9,
       "panels": [],
@@ -1910,7 +2080,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 43
+        "y": 44
       },
       "id": 10,
       "options": {
@@ -1976,7 +2146,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 51
+        "y": 52
       },
       "id": 16,
       "panels": [],
@@ -2159,7 +2329,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 52
+        "y": 53
       },
       "id": 17,
       "options": {
@@ -2345,6 +2515,26 @@
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "30s",
+          "value": "30s"
+        },
+        "hide": 2,
+        "label": "Connector Flatline Check Interval",
+        "name": "connector_flatline_interval",
+        "options": [
+          {
+            "selected": true,
+            "text": "30s",
+            "value": "30s"
+          }
+        ],
+        "query": "30s",
+        "skipUrlSync": false,
+        "type": "textbox"
       }
     ]
   },
