@@ -1871,7 +1871,7 @@
                 "config": {
                   "id": "lowerOrEqual",
                   "options": {
-                    "value": 0.3
+                    "value": 0
                   }
                 },
                 "fieldName": "Value #Rate"
