@@ -190,7 +190,7 @@ carry out the deployment process. Complete the following steps:
 	```
 2.  Set an environment variable to the value the ESP namespace:
 	```shell
-        export VIYA_NS=<esp-namespace>
+        export ESP_NAMESPACE=<esp-namespace>
 	```
 4.  Navigate to the `<target-directory>/viya4-monitoring-kubernetes-x.x.xx/monitoring/bin` directory, and deploy
    SAS Event Stream Processing Monitoring for Kubernetes using the following command:  
