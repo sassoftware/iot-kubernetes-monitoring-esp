@@ -23,5 +23,11 @@ loki:
       effect: NoSchedule
   limits_config:
     allow_structured_metadata: false
+  storage:
+    bucketNames:
+      chunks: loki-chunks
+    aws:
+      endpoint: http://loki-minio.monitoring.svc:9000
+      s3ForcePathStyle: true
 minio:
   enabled: true

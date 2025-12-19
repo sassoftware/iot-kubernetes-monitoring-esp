@@ -1,0 +1,91 @@
+prometheus:
+  prometheusSpec:
+    web:
+      tlsConfig:
+        clientAuthType: NoClientCert
+        keySecret:
+          key: tls.key
+          name: prometheus-tls-secret
+        cert:
+          secret:
+            key: tls.crt
+            name: prometheus-tls-secret
+  service:
+    port: 9090
+    targetPort: 9090
+  serviceMonitor:
+    scheme: https
+    tlsConfig:
+      insecureSkipVerify: true
+
+alertmanager:
+  alertmanagerSpec:
+    web:
+      tlsConfig:
+        clientAuthType: NoClientCert
+        keySecret:
+          key: tls.key
+          name: alertmanager-tls-secret
+        cert:
+          secret:
+            key: tls.crt
+            name: alertmanager-tls-secret
+  service:
+    port: 9093
+    targetPort: 9093
+  serviceMonitor:
+    scheme: https
+    tlsConfig:
+      insecureSkipVerify: true
+
+prometheus-node-exporter:
+  extraArgs:
+    - "--web.config.file=/opt/node-exporter/node-exporter-web.yaml"
+  configmaps:
+    - name: node-exporter-tls-web-config
+      mountPath: /opt/node-exporter
+
+# node-exporter helm chart does not yet support HTTPS
+# node-exporter:
+#   sidecarVolumeMount:
+#   - name: tls-secret
+#     mountPath: /cert
+#     readOnly: true
+
+grafana:
+  readinessProbe:
+    httpGet:
+      scheme: HTTPS
+      port: 3000
+  livenessProbe:
+    httpGet:
+      scheme: HTTPS
+      port: 3000
+  extraSecretMounts:
+    - name: grafana-tls
+      mountPath: /cert
+      secretName: grafana-tls-secret
+      readOnly: true
+      subPath: ""
+  service:
+    port: 3000
+    targetPort: 3000
+  sidecar:
+    dashboards:
+      reloadURL: "https://localhost:3000/api/admin/provisioning/dashboards/reload"
+      env:
+        REQ_SKIP_TLS_VERIFY: true
+    datasources:
+      defaultDatasourceEnabled: false
+      reloadURL: "https://localhost:3000/api/admin/provisioning/datasources/reload"
+      env:
+        REQ_SKIP_TLS_VERIFY: true
+  serviceMonitor:
+    scheme: https
+    tlsConfig:
+      insecureSkipVerify: true
+  "grafana.ini":
+    server:
+      protocol: https
+      cert_file: /cert/tls.crt
+      cert_key: /cert/tls.key

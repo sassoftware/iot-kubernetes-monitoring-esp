@@ -1,0 +1,290 @@
+# Override values for the Prometheus Operator helm chart
+#
+# Prometheus Operator Helm Chart
+# https://https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack
+#
+# CRDs
+# https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md
+#
+# Default Values
+# https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
+
+## NOTE: All image.*, imagePullSecrets and related keys now derived from environment variables and generated at run-time (DO NOT SET HERE)
+##       See monitoring/prom-operator_container_image.template for complete list
+###global:
+###  imageRegistry: foo
+###  imagePullSecrets: foo
+###prometheusOperator:
+###  image:
+###    registry: foo
+###    repository: foo
+###    tag: foo
+###    pullPolicy: foo
+
+commonLabels:
+  sas.com/monitoring-base: kube-viya-monitoring
+
+# ===================
+# Prometheus Operator
+# ===================
+# https://github.com/coreos/prometheus-operator
+prometheusOperator:
+  ###  image:   # See NOTE at top of file
+  logFormat: json
+  logLevel: info
+  createCustomResource: false
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "50Mi"
+    limits:
+      cpu: "500m"
+      memory: "2Gi"
+  tlsProxy:
+    resources:
+      requests:
+        cpu: "50m"
+        memory: "25Mi"
+  #prometheusConfigReloader:
+  # image:   # See NOTE at top of file
+
+# ======================
+# kubelet ServiceMonitor
+# ======================
+kubelet:
+  serviceMonitor:
+    # Default to use the https-metrics endpoint
+    # Depending on your environment, this may require configuration
+    # changes to the kubelet.
+    # See issue: https://github.com/coreos/prometheus-operator/issues/926
+    cAdvisorMetricRelabelings: null
+    https: true
+    interval: 20s
+
+# ======================
+# kube-state-metrics
+# ======================
+kubeStateMetrics:
+  serviceMonitor:
+    interval: 20s
+
+# https://github.com/kubernetes/kube-state-metrics
+# https://github.com/helm/charts/tree/master/stable/kube-state-metrics
+kube-state-metrics:
+  #image:   # See NOTE at top of file
+  resources:
+    requests:
+      cpu: "25m"
+      memory: "50Mi"
+  # kube-state-metrics 2.0 requires explicitly defining which labels are
+  # collected for each resource type
+  extraArgs:
+    - --metric-labels-allowlist=nodes=[*],namespaces=[*],pods=[*],deployments=[*],statefulsets=[*],daemonsets=[*],jobs=[*]
+
+  # Available collectors for kube-state-metrics.
+  # By default, all available resources are enabled, comment out to disable.
+  collectors:
+    - certificatesigningrequests
+    - configmaps
+    - cronjobs
+    - daemonsets
+    - deployments
+    - endpoints
+    - horizontalpodautoscalers
+    - ingresses
+    - jobs
+    - leases
+    - limitranges
+    - mutatingwebhookconfigurations
+    - namespaces
+    - networkpolicies
+    - nodes
+    - persistentvolumeclaims
+    - persistentvolumes
+    - poddisruptionbudgets
+    - pods
+    - replicasets
+    - replicationcontrollers
+    - resourcequotas
+    ## Metrics on Secrets disabled to
+    ## eliminate need for granting
+    ## 'list' permission to ClusterRole
+    #- secrets
+    - services
+    - statefulsets
+    - storageclasses
+    - validatingwebhookconfigurations
+    - volumeattachments
+
+# ==========
+# Prometheus
+# ==========
+prometheus:
+  serviceAccount:
+    name: sas-ops-acct
+  service:
+    type: ClusterIP
+    nodePort: null
+  prometheusSpec:
+    #image:   # See NOTE at top of file
+    logLevel: info
+    logFormat: json
+    podAntiAffinity: soft
+    # Don't restrict ServiceMonitor namespace selection by default
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    ruleSelectorNilUsesHelmValues: false
+    retention: 7d
+    retentionSize: 20GiB
+    replicas: 1
+    resources:
+      # These values may very well need to be overridden to higher
+      # values depending on the scale of the cluster
+      requests:
+        cpu: "1000m"
+        memory: "2Gi"
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          # storageClassName:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 25Gi
+          volumeMode: Filesystem
+    alertingEndpoints:
+      - name: v4m-alertmanager
+        port: http-web
+
+# =======================
+# Prometheus AlertManager
+# =======================
+alertmanager:
+  service:
+    type: ClusterIP
+    nodePort: null
+  alertmanagerSpec:
+    #image: # See NOTE at top of file
+    logFormat: json
+    podAntiAffinity: soft
+    retention: 240h
+    resources:
+      requests:
+        cpu: "50m"
+        memory: "50Mi"
+    storage:
+      volumeClaimTemplate:
+        spec:
+          # storageClassName:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 10Gi
+          volumeMode: Filesystem
+
+# =======================
+# Prometheus Node Exporter
+# =======================
+nodeExporter:
+  operatingSystems:
+    aix:
+      enabled: false
+    darwin:
+      enabled: false
+
+# https://github.com/prometheus/node_exporter
+# https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-node-exporter
+prometheus-node-exporter:
+  #image:  # See NOTE at top of file
+  service:
+    # Override the default port of 9100 to avoid potential conflicts
+    port: 9110
+    targetPort: 9110
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "50Mi"
+    limits:
+      cpu: "250m"
+      memory: "100Mi"
+  # Be very tolerant
+  tolerations:
+    - operator: "Exists"
+  prometheus:
+    monitor:
+      relabelings:
+        - sourceLabels: [__meta_kubernetes_pod_node_name]
+          separator: ;
+          regex: ^(.*)$
+          targetLabel: nodename
+          replacement: $1
+          action: replace
+
+# =======
+# Grafana
+# =======
+# https://github.com/grafana/helm-charts/tree/main/charts/grafana
+grafana:
+  #image: See NOTE at top of file
+  image:
+    tag: 12.2.0
+  initChownData:
+    enabled: false
+  "grafana.ini":
+    analytics:
+      check_for_updates: false
+    log:
+      mode: console
+    "log.console":
+      format: json
+    dashboards:
+      default_home_dashboard_path: /tmp/dashboards/viya-welcome-dashboard.json
+    feature_toggles:
+      prometheusSpecialCharsInLabelValues: true
+
+  service:
+    type: NodePort
+    nodePort: 31100
+  testFramework:
+    enabled: false
+  plugins: []
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "150Mi"
+  sidecar:
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+    datasources:
+      enabled: true
+      label: grafana_datasource
+    resources:
+      requests:
+        cpu: "50m"
+        memory: "100Mi"
+    #image: See NOTE at top of file
+  prune: true
+  deploymentStrategy:
+    type: Recreate
+  persistence:
+    type: pvc
+    enabled: true
+    # storageClassName:
+    accessModes:
+      - ReadWriteOnce
+    size: 5Gi
+    # annotations: {}
+    finalizers:
+      - kubernetes.io/pvc-protection
+    # subPath: ""
+    # existingClaim:
+  extraVolumes:
+    - name: grafana-alert-rules
+      configMap:
+        name: grafana-alert-rules
+  extraVolumeMounts:
+    - name: grafana-alert-rules
+      mountPath: /etc/grafana/provisioning/alerting
