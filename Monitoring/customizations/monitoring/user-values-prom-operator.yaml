@@ -27,10 +27,10 @@ prometheus:
     enabled: true
     ingressClassName: nginx
     hosts:
-    - monitoring.ingress-nginx.espsc-kc5-m1.espstudio.sashq-d.openstack.sas.com
+    - host.mycluster.example.com
   prometheusSpec:
     routePrefix: /prometheus
-    externalUrl: https://monitoring.ingress-nginx.espsc-kc5-m1.espstudio.sashq-d.openstack.sas.com/prometheus
+    externalUrl: http://host.mycluster.example.com/prometheus
  
 alertmanager:
   # Disable default configuration of NodePort
@@ -41,20 +41,20 @@ alertmanager:
     enabled: true
     ingressClassName: nginx
     hosts:
-    - monitoring.ingress-nginx.espsc-kc5-m1.espstudio.sashq-d.openstack.sas.com
+    - host.mycluster.example.com
     paths:
     - /alertManager
   alertmanagerSpec:
     routePrefix: /alertManager
-    externalUrl: https://monitoring.ingress-nginx.espsc-kc5-m1.espstudio.sashq-d.openstack.sas.com/alertManager
+    externalUrl: http://host.mycluster.example.com/alertManager
 
 grafana:
   # Additional configuration necessary to serve Grafana from a subpath
   "grafana.ini":
     server:
       protocol: http
-      domain: monitoring.ingress-nginx.espsc-kc5-m1.espstudio.sashq-d.openstack.sas.com
-      root_url: https://monitoring.ingress-nginx.espsc-kc5-m1.espstudio.sashq-d.openstack.sas.com/grafana
+      domain: host.mycluster.example.com
+      root_url: http://host.mycluster.example.com/grafana
       serve_from_sub_path: true
   # Disable default configuration of NodePort
   service:
@@ -64,5 +64,5 @@ grafana:
     enabled: true
     ingressClassName: nginx
     hosts:
-    - monitoring.ingress-nginx.espsc-kc5-m1.espstudio.sashq-d.openstack.sas.com
+    - host.mycluster.example.com
     path: /grafana
