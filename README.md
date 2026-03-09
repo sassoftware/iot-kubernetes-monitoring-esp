@@ -55,7 +55,7 @@ the following benefits:
 
 A Loki-based system consists of 3 components:
 
-* Promtail, the agent responsible for gathering logs and sending them to Loki.
+* Alloy, the agent responsible for gathering logs and sending them to Loki.
 * The Loki server, responsible for storing logs and processing queries.
 * Grafana, for querying and displaying the logs.
 
@@ -113,14 +113,14 @@ Monitoring
 
 Where:
 
-* The `customizations/monitoring` directory contains Loki and Promtail artifacts, sample Grafana dashboards for SAS
+* The `customizations/monitoring` directory contains Loki and Alloy artifacts, sample Grafana dashboards for SAS
   Event Stream Processing, Kubernetes ingress definitions for the monitoring components, and the `user.env`  file with
   custom deployment settings:
 	* `dashboards` contains the sample Grafana dashboards.
     * `grafana` contains artifacts used to configure Grafana authentication and, optionally, deploy and configure the
       SAS Event Stream Processing Data Source Plug-in for Grafana. 
-	* `loki` stores the artifacts used to deploy Loki and Promtail.
-	* `monitors` contains the service monitor definition for Loki and Promtail.
+	* `loki` stores the artifacts used to deploy Loki and Alloy.
+	* `monitors` contains the service monitor definition for Loki.
 	* `user.env` provides the configuration for the deployment of the monitoring components. If necessary, review
       and modify the settings before deploying.
 	* The `user-values-prom-operator-*-based.yaml.sample` files contain sample settings for host-based or path-based
@@ -200,12 +200,12 @@ carry out the deployment process. Complete the following steps:
  
 This results in the deployment of the following components to the target Kubernetes cluster:
 
-| Release Name               | Helm Chart Name                | Application Version |
-|----------------------------|--------------------------------|---------------------|
-| `loki`                     | `loki-6.24.0`                  | 3.3.2               |
-| `promtail`                 | `promtail-6.16.6`              | 3.0.0               |
-| `v4m-metrics`              | `v4m-1.2.7-SNAPSHOT`           | 1.2.7-SNAPSHOT      |
-| `v4m-prometheus-operator`  | `kube-prometheus-stack-41.7.3` | 0.60.1              |
+| Release Name              | Helm Chart Name                | Application Version |
+|---------------------------|--------------------------------|---------------------|
+| `loki`                    | `loki-6.24.0`                  | 3.3.2               |
+| `alloy`                   | `alloy-1.6.1`                  | 1.13.2              |
+| `v4m-metrics`             | `v4m-1.2.7-SNAPSHOT`           | 1.2.7-SNAPSHOT      |
+| `v4m-prometheus-operator` | `kube-prometheus-stack-41.7.3` | 0.60.1              |
 
 [&#11014;](#top) Top
 ### Deploy the SAS Viya Monitoring for Kubernetes Dashboards
