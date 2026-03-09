@@ -507,18 +507,17 @@ if [ "$ENABLE_LOKI" == "true" ]; then
 
    sleep 5
 
-   if [ ! -f "${LokiCfgDir}/promtail-chart-values.yaml" ] || [ ! -s "${LokiCfgDir}/promtail-chart-values.yaml" ]; then
-     log_warn "No Promtail values detected, deploying with default values"
+   if [ ! -f "${LokiCfgDir}/alloy-chart-values.yaml" ] || [ ! -s "${LokiCfgDir}/alloy-chart-values.yaml" ]; then
+     log_warn "No Alloy values detected, deploying with default values"
      # Ensure file exists for Helm upgrade execution.
-     touch "${LokiCfgDir}/promtail-chart-values.yaml"
+     touch "${LokiCfgDir}/alloy-chart-values.yaml"
    fi
 
    LOKI_LOGFMT=${LOKI_LOGFMT:-docker}
 
-   log_debug "Installing Promtail"
-   helm $helmDebug upgrade --install promtail grafana/promtail \
-     --values "${LokiCfgDir}/promtail-chart-values.yaml" \
-     --set-json "config.snippets.pipelineStages=[{\"${LOKI_LOGFMT,,}\":{}}]" \
+   log_debug "Installing Alloy"
+   helm $helmDebug upgrade --install alloy grafana/alloy \
+     --values "${LokiCfgDir}/alloy-chart-values.yaml" \
      --namespace "${MON_NS}" \
      --timeout 5m
 
