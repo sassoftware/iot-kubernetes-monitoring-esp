@@ -657,6 +657,17 @@ else
    log_debug "Skipping creation of Loki datasource for Grafana"
 fi
 
+INSTALL_DIR="$(realpath "${USER_DIR}")/monitoring/grafana/esp-plugin/grafana-esp-plugin-main/install"
+if [[ "${CONTOUR_PROXY}" == true ]]; then
+   log_verbose "Patching Grafana for contour"
+
+   if ! kubectl get HTTPProxy -n "${ESP_NAMESPACE}" sas-httpproxy-root -o json | jq -e '.spec.includes[]? | select(.name=="grafana")' >/dev/null; then
+      kubectl patch HTTPProxy -n "${ESP_NAMESPACE}" sas-httpproxy-root --type='json' -p='[{"op": "add", "path": "/spec/includes/-", "value": {"name": "grafana", "namespace": "'"${MON_NS}"'"}}]'
+   fi
+
+   kubectl -n "${MON_NS}" apply -f $INSTALL_DIR/grafana-http-proxy.yaml
+fi
+
 GRAFANA_AUTHENTICATION="${GRAFANA_AUTHENTICATION:-default}"
 if [ "${GRAFANA_AUTHENTICATION^^}" == "LDAP" ] || [ "${GRAFANA_AUTHENTICATION^^}" == "OAUTH" ]; then
    log_verbose "Configuring Grafana authentication to [${GRAFANA_AUTHENTICATION^^}]"

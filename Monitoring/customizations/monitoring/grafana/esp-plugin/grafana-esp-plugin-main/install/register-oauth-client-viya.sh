@@ -24,8 +24,7 @@ if [ -z "${OAUTH_CLIENT_SECRET}" ]; then
 fi
 export OAUTH_CLIENT_SECRET
 
-ESP_DOMAIN=$(kubectl -n "${ESP_NAMESPACE}" get ingress --output json | jq -r '.items[0].spec.rules[0].host')
-GRAFANA_DOMAIN=$(kubectl -n "${GRAFANA_NAMESPACE}" get ingress --output json | jq -r '.items[0].spec.rules[0].host')
+. $USER_DIR/monitoring/grafana/esp-plugin/grafana-esp-plugin-main/install/get-domain-name.sh
 
 function fetch_consul_token () {
     _token=$(kubectl -n "${ESP_NAMESPACE}" get secret sas-consul-client -o go-template='{{ .data.CONSUL_TOKEN | base64decode}}')

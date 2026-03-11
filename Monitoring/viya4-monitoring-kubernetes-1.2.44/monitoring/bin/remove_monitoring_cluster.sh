@@ -46,6 +46,13 @@ if helm3ReleaseExists v4m-tempo "$MON_NS"; then
     helm uninstall --namespace "$MON_NS" v4m-tempo
 fi
 
+if [[ "${CONTOUR_PROXY}" == true ]]; then
+    log_verbose "Removing contour patches"
+    INDEX=$(kubectl get HTTPProxy sas-httpproxy-root -n "$ESP_NAMESPACE" -o json | jq '.spec.includes | to_entries[] | select(.value.name=="grafana") | .key')
+    kubectl patch HTTPProxy sas-httpproxy-root -n "$ESP_NAMESPACE" --type='json' -p="[{'op': 'remove', 'path': '/spec/includes/$INDEX'}]"
+    kubectl delete HTTPProxy grafana --ignore-not-found -n "$MON_NS"
+fi
+
 if [ "$MON_DELETE_NAMESPACE_ON_REMOVE" == "true" ]; then
     log_info "Deleting the [$MON_NS] namespace..."
     if kubectl delete namespace "$MON_NS" --timeout "$KUBE_NAMESPACE_DELETE_TIMEOUT"; then

@@ -92,8 +92,7 @@ function generate_manifests() {
   done <<< "$(find "${_source}" -name "*.template")"
 }
 
-ESP_DOMAIN=$(kubectl -n "${ESP_NAMESPACE}" get ingress --output jsonpath='{.items[0].spec.rules[0].host}')
-GRAFANA_DOMAIN=$(kubectl -n "${GRAFANA_NAMESPACE}" get ingress --output jsonpath='{.items[0].spec.rules[0].host}')
+. $USER_DIR/monitoring/grafana/esp-plugin/grafana-esp-plugin-main/install/get-domain-name.sh
 ESP_PLUGIN_SOURCE="sasesp-plugin@${ESP_PLUGIN_VERSION}@https://github.com/sassoftware/grafana-esp-plugin/releases/download/v${ESP_PLUGIN_VERSION}/sasesp-plugin-${ESP_PLUGIN_VERSION}.zip"
 
 if [ "${OAUTH_TYPE}" == "viya" ]; then
