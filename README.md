@@ -192,6 +192,10 @@ carry out the deployment process. Complete the following steps:
 	```shell
         export ESP_NAMESPACE=<esp-namespace>
 	```
+3.  If the target Kubernetes environment uses Contour as an ingress controller, set an environment variable to reflect this:
+    ```shell
+        export CONTOUR_PROXY=true
+    ```
 4.  Navigate to the `<target-directory>/viya4-monitoring-kubernetes-x.x.xx/monitoring/bin` directory, and deploy
    SAS Event Stream Processing Monitoring for Kubernetes using the following command:  
 	```shell
