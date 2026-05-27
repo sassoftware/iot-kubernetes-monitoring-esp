@@ -31,6 +31,11 @@ KEYCLOAK_SUBPATH="${KEYCLOAK_SUBPATH%+(/*)}"
 KEYCLOAK_SUBPATH="${KEYCLOAK_SUBPATH#+(/*)}"
 export KEYCLOAK_SUBPATH
 
+function escape_replacement() {
+    # Escape ampersands in sed replacement strings.
+    printf '%s' "${1}" | sed 's|&|\\&|g'
+}
+
 function get_oauth_client_id() {
     if [ "${OAUTH_TYPE}" == "viya" ]; then
         OAUTH_CLIENT_ID="${OAUTH_CLIENT_ID:-sv_client}"
@@ -84,8 +89,8 @@ function generate_manifests() {
       sed -i $EXTENSION 's|TEMPLATE_GRAFANA_DOMAIN|'"${GRAFANA_DOMAIN}"'|g' "${filename}"
       sed -i $EXTENSION 's|TEMPLATE_ESP_DOMAIN|'"${ESP_DOMAIN}"'|g' "${filename}"
       sed -i $EXTENSION 's|TEMPLATE_ESP_NAMESPACE|'"${ESP_NAMESPACE}"'|g' "${filename}"
-      sed -i $EXTENSION 's|TEMPLATE_OAUTH_CLIENT_ID|'"${OAUTH_CLIENT_ID}"'|g' "${filename}"
-      sed -i $EXTENSION 's|TEMPLATE_OAUTH_CLIENT_SECRET|'"${OAUTH_CLIENT_SECRET}"'|g' "${filename}"
+      sed -i $EXTENSION 's|TEMPLATE_OAUTH_CLIENT_ID|'"$(escape_replacement "${OAUTH_CLIENT_ID}")"'|g' "${filename}"
+      sed -i $EXTENSION 's|TEMPLATE_OAUTH_CLIENT_SECRET|'"$(escape_replacement "${OAUTH_CLIENT_SECRET}")"'|g' "${filename}"
       sed -i $EXTENSION 's|TEMPLATE_ESP_PLUGIN_SOURCE|'"${ESP_PLUGIN_SOURCE}"'|g' "${filename}"
 
       rm -rf "${filename}.bak"
