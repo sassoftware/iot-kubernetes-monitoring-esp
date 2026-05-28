@@ -1,8 +1,6 @@
 <a name="top"></a>
-![](https://vbr.wocr.tk/badge?page_id=page.id=@user_name.iot-kubernetes-monitoring-esp&color=55acb7&style=for-the-badge&logo=Github&left_text=Visitors)
 
-# <ins>_Monitoring SAS Event Stream Processing on Kubernetes</ins>_
-
+# Monitoring SAS Event Stream Processing on Kubernetes
 _A guide for monitoring SAS Event Stream Processing resources._
 
 ## Table of Contents
@@ -375,14 +373,11 @@ could lead to deployment errors.
 
 [&#11014;](#top) Top
 ## Contributing
-
 This project does not accept contributions.
 
 [&#11014;](#top) Top
 ## License
-
-This project uses the SAS License Agreement for Corrective Code or Additional Functionality.
-Please see the license file for additional detail.
+This project is licensed under the [Apache 2.0 License](LICENSE).
 
 [&#11014;](#top) Top
 ## Additional Resources
