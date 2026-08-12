@@ -53,6 +53,12 @@ if [[ "${CONTOUR_PROXY}" == true ]]; then
     kubectl delete HTTPProxy grafana --ignore-not-found -n "$MON_NS"
 fi
 
+# Remove Grafana client from auth provider
+if [ "$GRAFANA_AUTH_PROVIDER" == "viya" ] || [ "$GRAFANA_AUTH_PROVIDER" == "keycloak" ]; then
+    log_verbose "Removing Grafana client from auth provider"
+    . $USER_DIR/monitoring/grafana/esp-plugin/grafana-esp-plugin-main/install/remove-oauth-"${GRAFANA_AUTH_PROVIDER}".sh "${ESP_NAMESPACE}"
+fi
+
 if [ "$MON_DELETE_NAMESPACE_ON_REMOVE" == "true" ]; then
     log_info "Deleting the [$MON_NS] namespace..."
     if kubectl delete namespace "$MON_NS" --timeout "$KUBE_NAMESPACE_DELETE_TIMEOUT"; then
@@ -75,6 +81,7 @@ done
 log_verbose "Removing configmaps and secrets"
 kubectl delete cm --ignore-not-found -n "$MON_NS" -l sas.com/monitoring-base=kube-viya-monitoring
 kubectl delete secret --ignore-not-found -n "$MON_NS" -l sas.com/monitoring-base=kube-viya-monitoring
+kubectl delete cm --ignore-not-found -n "$MON_NS" grafana-alert-rules
 
 if [ "$MON_DELETE_PVCS_ON_REMOVE" == "true" ]; then
     log_verbose "Removing known monitoring PVCs"

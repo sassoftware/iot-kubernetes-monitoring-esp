@@ -1,61 +1,42 @@
 #!/usr/bin/env bash
 
-set -e -o pipefail
+set -e -o pipefail -o nounset
 
-# Environment variables
-ESP_NAMESPACE="${ESP_NAMESPACE:-$(kubectl get deploy -A | grep sas-esp-operator | head -1 2>/dev/null | awk '{print $1}')}"
+ESP_NAMESPACE="${1}"
+GRAFANA_NAMESPACE="${2:-${ESP_NAMESPACE}}"
+OAUTH_CLIENT_ID="${OAUTH_CLIENT_ID:-sv_client}"; export OAUTH_CLIENT_ID
+OAUTH_CLIENT_SECRET="${OAUTH_CLIENT_SECRET:-secret}"; export OAUTH_CLIENT_SECRET
+PLUGIN_SCRIPT_DIR="$USER_DIR/monitoring/grafana/esp-plugin/grafana-esp-plugin-main/install"
 
-if [ -z "${GRAFANA_NAMESPACE}" ]; then
-    GRAFANA_NAMESPACE="${MON_NS:-$(kubectl get deploy -A -l app.kubernetes.io/name=grafana | tail -1 | awk '{print $1}')}"
-fi
+function usage () {
+    echo "Usage: ${0} <viya-namespace> <grafana-namespace>" >&2
+    exit 1
+}
 
-if [ -z "${ESP_NAMESPACE}" ] || [ -z "${GRAFANA_NAMESPACE}" ];then
-   echo -ne "- Either Viya or Grafana do not seem to be running on the cluster...\n"
-   exit 1
-fi
+[ -z "${KUBECONFIG-}" ] && {
+    echo "KUBECONFIG environment variable unset." >&2
+    exit 1
+}
 
-if [ -z "${OAUTH_CLIENT_ID}" ]; then
-    OAUTH_CLIENT_ID="$(kubectl -n "${GRAFANA_NAMESPACE}" get configmap v4m-grafana -o yaml | grep client_id | head -1 2>/dev/null | awk '{print $3}')"
-fi
-export OAUTH_CLIENT_ID
+[ -z "${ESP_NAMESPACE-}" ] && {
+    echo "Usage: ${0} <esp-namespace> <grafana-namespace>" >&2
+    exit 1
+}
 
-if [ -z "${OAUTH_CLIENT_SECRET}" ]; then
-    OAUTH_CLIENT_SECRET="$(kubectl -n "${GRAFANA_NAMESPACE}" get configmap v4m-grafana -o yaml | grep client_secret | head -1 2>/dev/null | awk '{print $3}')"
-fi
-export OAUTH_CLIENT_SECRET
-
-. $USER_DIR/monitoring/grafana/esp-plugin/grafana-esp-plugin-main/install/get-domain-name.sh
+#Work out the domain names
+. $PLUGIN_SCRIPT_DIR/get-domain-name.sh $ESP_NAMESPACE $GRAFANA_NAMESPACE
 
 function fetch_consul_token () {
     _token=$(kubectl -n "${ESP_NAMESPACE}" get secret sas-consul-client -o go-template='{{ .data.CONSUL_TOKEN | base64decode}}')
 
-    echo "${_token}"
+    echo ${_token}
 }
 
 function fetch_saslogon_token () {
     _token=$(fetch_consul_token)
-    _resp=$(curl -k -X POST "https://$ESP_DOMAIN/SASLogon/oauth/clients/consul?callback=false&serviceId=app" -H "X-Consul-Token: ${_token}" 2>/dev/null)
+    _resp=$(curl -k -X POST "https://$ESP_DOMAIN/SASLogon/oauth/clients/consul?callback=false&serviceId=app" -H "X-Consul-Token: ${_token}")
 
     echo "${_resp}" | jq -r '.access_token'
-}
-
-function patch_saslogon_csp () {
-  _patch_json=$(cat <<EOF
-[
-  {
-    "op": "add",
-    "path": "/spec/template/spec/containers/0/env/-",
-    "value": {
-      "name": "SAS_COMMONS_WEB_SECURITY_CONTENTSECURITYPOLICY",
-      "value": "default-src 'self'; style-src 'self'; font-src 'self' data:; frame-ancestors 'self'; form-action 'self' ${GRAFANA_DOMAIN};"
-    }
-  }
-]
-EOF
-)
-  kubectl patch deployment sas-logon-app \
-    --namespace "${ESP_NAMESPACE}" \
-    --type='json' --patch="${_patch_json}"
 }
 
 function register_oauth_client () {
@@ -73,25 +54,10 @@ function register_oauth_client () {
         "name": "Grafana"
     }'
 
-    # Delete existing client definition if found
-    _resp=$(curl -k -X DELETE "https://$ESP_DOMAIN/SASLogon/oauth/clients/${OAUTH_CLIENT_ID}" \
-        -H 'Content-Type: application/json' \
-        -H "Authorization: Bearer ${_token}" \
-        -d "${_body}" 2>/dev/null)
-    regex_error="error"
-    if [[ "${_resp}" =~ $regex_error ]]; then
-       error=$(echo "${_resp}" | jq -r '.error')
-       error_description=$(echo "${_resp}" | jq -r '.error_description')
-       echo >&2 "Failed to delete Grafana as OAuth client"
-       echo >&2 "${error}: ${error_description}"
-    else
-       echo "Grafana deleted as OAuth client"
-    fi
-
     _resp=$(curl -k -X POST "https://$ESP_DOMAIN/SASLogon/oauth/clients" \
         -H 'Content-Type: application/json' \
         -H "Authorization: Bearer ${_token}" \
-        -d "${_body}" 2>/dev/null)
+        -d "${_body}")
 
     regex_error="error"
     if [[ "${_resp}" =~ $regex_error ]]; then
@@ -99,25 +65,19 @@ function register_oauth_client () {
        error_description=$(echo "${_resp}" | jq -r '.error_description')
        echo >&2 "Failed to register Grafana as OAuth client"
        echo >&2 "${error}: ${error_description}"
+
     else
        echo "Grafana registered as OAuth client"
-    fi
-
-    if [[ "${GRAFANA_DOMAIN}" != "${ESP_DOMAIN}" ]]; then
-      echo "Patching SAS Logon Content Security Policy..."
-      patch_saslogon_csp
     fi
 
 }
 
 cat <<EOF
-
-OAUTH details:
-  Viya Domain:         ${ESP_DOMAIN}
+OAuth details:
+  ESP Domain:         ${ESP_DOMAIN}
   Grafana Domain:      ${GRAFANA_DOMAIN}
   OAuth client ID:     ${OAUTH_CLIENT_ID}
-  OAuth client secret: ****
-
+  OAuth client secret: ${OAUTH_CLIENT_SECRET}
 EOF
 
 register_oauth_client

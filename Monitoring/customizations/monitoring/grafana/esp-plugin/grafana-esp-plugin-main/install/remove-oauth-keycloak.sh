@@ -3,21 +3,18 @@
 set -e -o pipefail -o nounset
 
 KEYCLOAK_SUBPATH="${KEYCLOAK_SUBPATH:-auth}"
-# Strip trailing/leading slashes:
-KEYCLOAK_SUBPATH="${KEYCLOAK_SUBPATH%+(/*)}"
-KEYCLOAK_SUBPATH="${KEYCLOAK_SUBPATH#+(/*)}"
 
 ESP_NAMESPACE="${1}"
 
 function check_requirements() {
 
-  [ -z "$KUBECONFIG" ] && {
+  [ -z "${KUBECONFIG-}" ] && {
     echo "KUBECONFIG environment variable unset." >&2
     exit 1
   }
 
-  [ -z "${ESP_NAMESPACE}" ] && {
-    echo "Usage: ${0} <esp-namespace>" >&2
+  [ -z "${ESP_NAMESPACE-}" ] && {
+    echo "Usage: ${0} <esp-namespace> <grafana-namespace>" >&2
     exit 1
   }
 
@@ -80,7 +77,14 @@ function remove_keycloak_roles() {
 check_requirements
 
 echo "Fetching required deployment information..."
-ESP_DOMAIN=$(kubectl -n "${ESP_NAMESPACE}" get ingress --output json | jq -r '.items[0].spec.rules[0].host')
+ESP_DOMAIN=$(kubectl -n "${ESP_NAMESPACE}" get ingress/sas-event-stream-manager-app --output json | jq -r '.spec.rules[0].host') || {
+  echo "Failed to get ESP domain from ingress, trying http proxy"
+}
+if [ -z "${ESP_DOMAIN}" ]; then
+  ESP_DOMAIN=$(kubectl get httpproxy -n "${ESP_NAMESPACE}" sas-httpproxy-root -o jsonpath="{.spec.virtualhost.fqdn}") || {
+    echo "Failed to get ESP domain from http proxy"
+  }
+fi
 export ESP_DOMAIN
 
 _oauth2_proxy_secret=$(kubectl -n "${ESP_NAMESPACE}" get secret oauth2-proxy-client-secret --output json)

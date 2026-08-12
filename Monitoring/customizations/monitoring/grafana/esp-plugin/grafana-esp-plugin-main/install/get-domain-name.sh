@@ -4,7 +4,10 @@ set -e -o pipefail -o nounset
 set -o nounset
 
 echo "Determining domain names"
-GRAFANA_NAMESPACE="${MON_NS:-${ESP_NAMESPACE}}"
+
+#input variables
+ESP_NAMESPACE="${1}"
+GRAFANA_NAMESPACE="${2:-${ESP_NAMESPACE}}"
 
 # If no esp domain then we are looking to install grafana on a separate namespace
 if [ -z ${ESP_DOMAIN+null} ]; then
@@ -32,18 +35,19 @@ fi
 [ -z ${GRAFANA_DOMAIN+null} ] && {
 
   # We cant easily determine the grafana domain unless there is an ingress
-  GRAFANA_DOMAIN=$(kubectl -n "${GRAFANA_NAMESPACE}" get ingress/sas-event-stream-manager-app --output json | jq -r '.items[0].spec.rules[0].host') || {
-    echo "Failed to get ESP domain from ingress trying http proxy" >&2
-    GRAFANA_DOMAIN=$(kubectl get httpproxy -n "${ESP_NAMESPACE}" sas-httpproxy-root -o jsonpath="{.spec.virtualhost.fqdn}")
-    echo "Domain is " $GRAFANA_DOMAIN
+  GRAFANA_DOMAIN=$(kubectl -n "${GRAFANA_NAMESPACE}" get ingress --output json | jq -r '.items[0].spec.rules[0].host') || {
+    echo "Failed to get ESP domain from ingress trying sas-httpproxy-root in the ESP_NAMESPACE"
   }
 
-  if [ "${GRAFANA_DOMAIN}" == null ]; then
-    echo "Unable to determine the grafana domain name from an ingress, please set GRAFANA_DOMAIN to your environments domain name." >&2
-    exit 1
+  if [ -z "${GRAFANA_DOMAIN}" ] || [ "${GRAFANA_DOMAIN}" == "null" ]; then
+    GRAFANA_DOMAIN=$(kubectl get httpproxy -n "${ESP_NAMESPACE}" sas-httpproxy-root -o jsonpath="{.spec.virtualhost.fqdn}") || {
+      echo "Unable to determine the grafana domain name from an ingress or proxy, please set GRAFANA_DOMAIN to your environments domain name."
+      exit 1
+    }
   fi
+
+  echo "Grafana domain is " $GRAFANA_DOMAIN
 }
 
-echo "Exporting ${ESP_DOMAIN} AND ${GRAFANA_DOMAIN}"
 export ESP_DOMAIN
 export GRAFANA_DOMAIN

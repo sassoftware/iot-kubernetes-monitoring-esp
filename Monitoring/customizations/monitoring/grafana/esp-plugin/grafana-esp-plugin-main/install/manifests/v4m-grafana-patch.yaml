@@ -1,0 +1,20 @@
+spec:
+  template:
+    spec:
+      volumes:
+        - name: grafana-config
+          configMap:
+            defaultMode: 420
+            name: v4m-grafana
+      containers:
+      - name: grafana
+        env:
+          - name: GF_PLUGINS_PREINSTALL_SYNC
+            value: "sasesp-plugin@7.67.8@https://github.com/sassoftware/grafana-esp-plugin/releases/download/v7.67.8/sasesp-plugin-7.67.8.zip,volkovlabs-image-panel,volkovlabs-image-panel,volkovlabs-variable-panel"
+        volumeMounts:
+        - mountPath: /etc/grafana/grafana.ini
+          name: grafana-config
+          subPath: grafana.ini
+      dnsConfig:
+        searches:
+          - kc4-oracle.svc.cluster.local

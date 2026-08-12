@@ -1,129 +1,186 @@
 #!/usr/bin/env bash
 
-# Environment variables
-AUTH_DIR=${1}
-ESP_NAMESPACE="${ESP_NAMESPACE:-$(kubectl get deploy -A | grep sas-esp-operator | head -1 2>/dev/null | awk '{print $1}')}"
+set -x -e -o pipefail -o nounset
 
-if [ -z "${GRAFANA_NAMESPACE}" ]; then
-    GRAFANA_NAMESPACE="${MON_NS:-$(kubectl get deploy -A -l app.kubernetes.io/name=grafana | tail -1 | awk '{print $1}')}"
-fi
+#input variables
+ESP_NAMESPACE="${1}"
+export ESP_NAMESPACE
+GRAFANA_NAMESPACE="${2:-${ESP_NAMESPACE}}"
+ESP_PLUGIN_VERSION="${3}"
 
-if [ -z "${ESP_NAMESPACE}" ] || [ -z "${GRAFANA_NAMESPACE}" ]; then
-   echo -ne "- Either Viya or Grafana do not seem to be running on the cluster...\n"
-   exit 1
-fi
-
-_oauth_type="${3:-viya}"
-OAUTH_TYPE="${_oauth_type,,}"
-
-VALID_AUTH_TYPES="viya keycloak uaa"
-[[ "${VALID_AUTH_TYPES}" =~ (^|[[:space:]])$OAUTH_TYPE($|[[:space:]]) ]] || {
-    log_error "Invalid Grafana OAuth Provider: ${_oauth_type}"
-    exit 1
-}
-
-ESP_PLUGIN_VERSION="${2:-7.67.8}"
-export ESP_PLUGIN_VERSION
-
+#optional environment variables - exported for use in other scripts
+OAUTH_CLIENT_ID="${OAUTH_CLIENT_ID:-sv_client}"
+export OAUTH_CLIENT_ID
+OAUTH_CLIENT_SECRET="${OAUTH_CLIENT_SECRET:-secret}"
+export OAUTH_CLIENT_SECRET
 KEYCLOAK_SUBPATH="${KEYCLOAK_SUBPATH:-auth}"
-# Strip trailing/leading slashes:
-KEYCLOAK_SUBPATH="${KEYCLOAK_SUBPATH%+(/*)}"
-KEYCLOAK_SUBPATH="${KEYCLOAK_SUBPATH#+(/*)}"
 export KEYCLOAK_SUBPATH
 
-function escape_replacement() {
-    # Escape ampersands in sed replacement strings.
-    printf '%s' "${1}" | sed 's|&|\\&|g'
-}
+#optional environment variables
+OAUTH_TYPE="${OAUTH_TYPE:-viya}"
+DRY_RUN="${DRY_RUN:-false}"
+INSTALL_GRAFANA="${INSTALL_GRAFANA:-false}"
+CONTOUR_PROXY="${CONTOUR_PROXY:-false}"
+GRAFANA_VERSION="${GRAFANA_VERSION:-12.1.0}"
+PLUGIN_SCRIPT_DIR="$USER_DIR/monitoring/grafana/esp-plugin/grafana-esp-plugin-main/install"
+MANIFEST_DIR="$PLUGIN_SCRIPT_DIR/manifests"
 
-function get_oauth_client_id() {
-    if [ "${OAUTH_TYPE}" == "viya" ]; then
-        OAUTH_CLIENT_ID="${OAUTH_CLIENT_ID:-sv_client}"
-        echo "${OAUTH_CLIENT_ID}"
-    else
-        _oauth2_proxy_secret=$(kubectl -n "${ESP_NAMESPACE}" get secret oauth2-proxy-client-secret --output json)
-        OAUTH_CLIENT_ID=$(echo "${_oauth2_proxy_secret}" | jq -r '.data.OAUTH2_PROXY_CLIENT_ID | @base64d')
-        echo "${OAUTH_CLIENT_ID}"
-    fi
-}
+function check_requirements() {
+  [ -z "${KUBECONFIG-}" ] && {
+    echo "KUBECONFIG environment variable unset." >&2
+    exit 1
+  }
 
-function get_oauth_client_secret() {
-    if [ "${OAUTH_TYPE}" == "viya" ]; then
-        [[ -n "${OAUTH_CLIENT_SECRET}" ]] || OAUTH_CLIENT_SECRET="$(head -c 24 /dev/urandom | base64 -w 0)"
-        echo "${OAUTH_CLIENT_SECRET}"
-    else
-        _oauth2_proxy_secret=$(kubectl -n "${ESP_NAMESPACE}" get secret oauth2-proxy-client-secret --output json)
-        OAUTH_CLIENT_SECRET=$(echo "${_oauth2_proxy_secret}" | jq -r '.data.OAUTH2_PROXY_CLIENT_SECRET | @base64d')
-        echo "${OAUTH_CLIENT_SECRET}"
-    fi
-}
+  [ -z "${ESP_NAMESPACE-}" ] && {
+    echo "Usage: ${0} <esp-namespace> <grafana-namespace> <version>" >&2
+    exit 1
+  }
 
-OAUTH_CLIENT_ID="$(get_oauth_client_id)"; export OAUTH_CLIENT_ID
-OAUTH_CLIENT_SECRET="$(get_oauth_client_secret)"; export OAUTH_CLIENT_SECRET
+  [ -z "${ESP_PLUGIN_VERSION-}" ] && {
+    echo "Usage: ${0} <esp-namespace> <grafana-namespace> <version>" >&2
+    exit 1
+  }
 
-function generate_manifests() {
-  EXTENSION=
-  if [ -z "$(sed --version 2>/dev/null | head -1 | awk '{print $NF}')" ];then
-     EXTENSION=.bak
+  if ! kubectl get namespace "${ESP_NAMESPACE}" 2>/dev/null 1>&2; then
+    echo >&2 "ERROR: Namespace ${ESP_NAMESPACE} not found."
+    exit 1
   fi
 
-  _source=$(dirname "$(realpath "${BASH_SOURCE[0]}")")
-
-  while read -r file; do
-      filename=$(basename -- "$file")
-      filename="${filename%.*}.yaml"
-
-      if [ "${filename}" == "v4m-grafana-config.yaml" ]; then
-         filename="${AUTH_DIR}/configmaps/${filename}"
-      else
-         filename="${AUTH_DIR}/patches/${filename}"
-      fi
-
-      cp -f "${file}" "${filename}"
-
-      sed -i $EXTENSION 's|TEMPLATE_AUTH_URL|'"${TEMPLATE_AUTH_URL}"'|g' "${filename}"
-      sed -i $EXTENSION 's|TEMPLATE_TOKEN_URL|'"${TEMPLATE_TOKEN_URL}"'|g' "${filename}"
-      sed -i $EXTENSION 's|TEMPLATE_API_URL|'"${TEMPLATE_API_URL}"'|g' "${filename}"
-      sed -i $EXTENSION 's|TEMPLATE_SIGNOUT_REDIRECT_URL|'"${TEMPLATE_SIGNOUT_REDIRECT_URL}"'|g' "${filename}"
-
-      sed -i $EXTENSION 's|TEMPLATE_GRAFANA_DOMAIN|'"${GRAFANA_DOMAIN}"'|g' "${filename}"
-      sed -i $EXTENSION 's|TEMPLATE_ESP_DOMAIN|'"${ESP_DOMAIN}"'|g' "${filename}"
-      sed -i $EXTENSION 's|TEMPLATE_ESP_NAMESPACE|'"${ESP_NAMESPACE}"'|g' "${filename}"
-      sed -i $EXTENSION 's|TEMPLATE_OAUTH_CLIENT_ID|'"$(escape_replacement "${OAUTH_CLIENT_ID}")"'|g' "${filename}"
-      sed -i $EXTENSION 's|TEMPLATE_OAUTH_CLIENT_SECRET|'"$(escape_replacement "${OAUTH_CLIENT_SECRET}")"'|g' "${filename}"
-      sed -i $EXTENSION 's|TEMPLATE_ESP_PLUGIN_SOURCE|'"${ESP_PLUGIN_SOURCE}"'|g' "${filename}"
-
-      rm -rf "${filename}.bak"
-  done <<< "$(find "${_source}" -name "*.template")"
+  if ! kubectl get namespace "${GRAFANA_NAMESPACE}" 2>/dev/null 1>&2; then
+    echo >&2 "ERROR: Namespace ${GRAFANA_NAMESPACE} not found."
+    exit 1
+  fi
 }
 
-. $USER_DIR/monitoring/grafana/esp-plugin/grafana-esp-plugin-main/install/get-domain-name.sh
-ESP_PLUGIN_SOURCE="sasesp-plugin@${ESP_PLUGIN_VERSION}@https://github.com/sassoftware/grafana-esp-plugin/releases/download/v${ESP_PLUGIN_VERSION}/sasesp-plugin-${ESP_PLUGIN_VERSION}.zip"
+function generate_manifests() {
+  if [ -d "${MANIFEST_DIR}" ]; then
+    echo "Existing manifest directory found." >&2
+    echo "Removing manifests..."
+    rm -r "${MANIFEST_DIR}"/
+  fi
+
+  [ -d "${MANIFEST_DIR}" ] || mkdir "${MANIFEST_DIR}"
+  cp -r "${PLUGIN_SCRIPT_DIR}"/*.yaml "${MANIFEST_DIR}/"
+
+  for file in $(find "${MANIFEST_DIR}/" -name "*.y*ml"); do
+
+    sed -i 's|TEMPLATE_ESP_NAMESPACE|'"${ESP_NAMESPACE}"'|g' $file
+
+    sed -i 's|TEMPLATE_AUTH_URL|'$TEMPLATE_AUTH_URL'|g' $file
+    sed -i 's|TEMPLATE_TOKEN_URL|'$TEMPLATE_TOKEN_URL'|g' $file
+    sed -i 's|TEMPLATE_API_URL|'$TEMPLATE_API_URL'|g' $file
+    sed -i 's|TEMPLATE_SIGNOUT_REDIRECT_URL|'$TEMPLATE_SIGNOUT_REDIRECT_URL'|g' $file
+
+    sed -i 's|TEMPLATE_GRAFANA_DOMAIN|'$GRAFANA_DOMAIN'|g' $file
+    sed -i 's|TEMPLATE_ESP_DOMAIN|'$ESP_DOMAIN'|g' $file
+    sed -i 's|TEMPLATE_OAUTH_CLIENT_ID|'$OAUTH_CLIENT_ID'|g' $file
+
+    escaped_secret=$(echo "$OAUTH_CLIENT_SECRET" | sed -e 's/[\/&|\\]/\\&/g')
+    sed -i "s|TEMPLATE_OAUTH_CLIENT_SECRET|$escaped_secret|g" $file
+
+    if [[ "$GRAFANA_VERSION" =~ ^"11" ]]; then
+      sed -i 's|TEMPLATE_ESP_PLUGIN_VAR|'$TEMPLATE_ESP_PLUGIN_VAR_11'|g' $file
+      sed -i 's|TEMPLATE_ESP_PLUGIN_SOURCE|'$PLUGIN_STRING_GRAFANA_11'|g' $file
+    else
+      sed -i 's|TEMPLATE_ESP_PLUGIN_VAR|'$TEMPLATE_ESP_PLUGIN_VAR_12'|g' $file
+      sed -i 's|TEMPLATE_ESP_PLUGIN_SOURCE|'$PLUGIN_STRING_GRAFANA_12'|g' $file
+    fi
+
+    sed -i 's|TEMPLATE_GRAFANA_VERSION|'$GRAFANA_VERSION'|g' $file
+
+    escaped_oauth_scopes=$(echo "$TEMPLATE_OAUTH_SCOPES" | sed -e 's/[\/&|\\]/\\&/g')
+    sed -i "s|TEMPLATE_OAUTH_SCOPES|$escaped_oauth_scopes|g" $file
+
+    if [[ "${DRY_RUN}" == true ]]; then
+
+      if [[ "${INSTALL_GRAFANA}" == false && "${file}" == "${MANIFEST_DIR}/grafana.yaml" ]]; then
+        echo ""
+      else
+        echo $file
+        cat $file
+      fi
+
+    fi
+
+  done
+}
+
+check_requirements
+
+echo "Fetching required deployment information..."
+
+#Work out the domain names
+. $PLUGIN_SCRIPT_DIR/get-domain-name.sh $ESP_NAMESPACE $GRAFANA_NAMESPACE
+
+ESP_PLUGIN_VERSION="${ESP_PLUGIN_VERSION#v}"
+ESP_PLUGIN_SOURCE="https://github.com/sassoftware/grafana-esp-plugin/releases/download/v$ESP_PLUGIN_VERSION/sasesp-plugin-$ESP_PLUGIN_VERSION.zip"
+
+TEMPLATE_ESP_PLUGIN_VAR_11="GF_INSTALL_PLUGINS"
+PLUGIN_STRING_GRAFANA_11="${ESP_PLUGIN_SOURCE};sasesp-plugin,volkovlabs-image-panel"
+
+TEMPLATE_ESP_PLUGIN_VAR_12="GF_PLUGINS_PREINSTALL_SYNC"
+PLUGIN_STRING_GRAFANA_12="sasesp-plugin@${ESP_PLUGIN_VERSION}@${ESP_PLUGIN_SOURCE},volkovlabs-image-panel"
 
 if [ "${OAUTH_TYPE}" == "viya" ]; then
-    TEMPLATE_AUTH_URL="https://${ESP_DOMAIN}/SASLogon/oauth/authorize"
-    TEMPLATE_TOKEN_URL="https://${ESP_DOMAIN}/SASLogon/oauth/token"
-    TEMPLATE_API_URL="https://${ESP_DOMAIN}/SASLogon/userinfo"
-    TEMPLATE_SIGNOUT_REDIRECT_URL="https://${ESP_DOMAIN}/SASLogon/logout.do"
+
+  TEMPLATE_AUTH_URL="https://${ESP_DOMAIN}/SASLogon/oauth/authorize"
+  TEMPLATE_TOKEN_URL="https://${ESP_DOMAIN}/SASLogon/oauth/token"
+  TEMPLATE_API_URL="https://${ESP_DOMAIN}/SASLogon/userinfo"
+  TEMPLATE_SIGNOUT_REDIRECT_URL="https://${ESP_DOMAIN}/SASLogon/logout.do"
+  TEMPLATE_OAUTH_SCOPES="* openid profile email"
+
 elif [ "${OAUTH_TYPE}" == "keycloak" ]; then
-    TEMPLATE_AUTH_URL="https://${ESP_DOMAIN}/${KEYCLOAK_SUBPATH}/realms/sas-esp/protocol/openid-connect/auth"
-    TEMPLATE_TOKEN_URL="https://${ESP_DOMAIN}/${KEYCLOAK_SUBPATH}/realms/sas-esp/protocol/openid-connect/token"
-    TEMPLATE_API_URL="https://${ESP_DOMAIN}/${KEYCLOAK_SUBPATH}/realms/sas-esp/protocol/openid-connect/userinfo"
-    TEMPLATE_SIGNOUT_REDIRECT_URL="https://${ESP_DOMAIN}/${KEYCLOAK_SUBPATH}/realms/sas-esp/protocol/openid-connect/logout?client_id=${OAUTH_CLIENT_ID}\&post_logout_redirect_uri=https://${ESP_DOMAIN}/grafana/login"
+
+  TEMPLATE_AUTH_URL="https://${ESP_DOMAIN}/${KEYCLOAK_SUBPATH}/realms/sas-esp/protocol/openid-connect/auth"
+  TEMPLATE_TOKEN_URL="https://${ESP_DOMAIN}/${KEYCLOAK_SUBPATH}/realms/sas-esp/protocol/openid-connect/token"
+  TEMPLATE_API_URL="https://${ESP_DOMAIN}/${KEYCLOAK_SUBPATH}/realms/sas-esp/protocol/openid-connect/userinfo"
+  TEMPLATE_SIGNOUT_REDIRECT_URL="https://${ESP_DOMAIN}/${KEYCLOAK_SUBPATH}/realms/sas-esp/protocol/openid-connect/logout?client_id=${OAUTH_CLIENT_ID}\&post_logout_redirect_uri=https://${ESP_DOMAIN}/grafana/login"
+  TEMPLATE_OAUTH_SCOPES="openid profile email"
+
 else
-    TEMPLATE_AUTH_URL="https://${ESP_DOMAIN}/uaa/oauth/authorize"
-    TEMPLATE_TOKEN_URL="https://${ESP_DOMAIN}/uaa/oauth/token?token_format=jwt"
-    TEMPLATE_API_URL="https://${ESP_DOMAIN}/uaa/userinfo"
-    TEMPLATE_SIGNOUT_REDIRECT_URL="https://${ESP_DOMAIN}/oauth2/sign_out?rd=https://${ESP_DOMAIN}/uaa/logout.do?redirect=https://${ESP_DOMAIN}/uaa/login"
+
+  TEMPLATE_AUTH_URL="https://${ESP_DOMAIN}/uaa/oauth/authorize"
+  TEMPLATE_TOKEN_URL="https://${ESP_DOMAIN}/uaa/oauth/token?token_format=jwt"
+  TEMPLATE_API_URL="https://${ESP_DOMAIN}/uaa/userinfo"
+  TEMPLATE_SIGNOUT_REDIRECT_URL="https://${ESP_DOMAIN}/oauth2/sign_out?rd=https://${ESP_DOMAIN}/uaa/logout.do?redirect=https://${ESP_DOMAIN}/uaa/login"
+
 fi
 
 cat <<EOF
-ESP Grafana plug-in deployment details:
-  Viya domain:         ${ESP_DOMAIN}
+Deployment details:
+  ESP domain:          ${ESP_DOMAIN}
   Grafana domain:      ${GRAFANA_DOMAIN}
   OAuth client ID:     ${OAUTH_CLIENT_ID}
   OAuth client secret: ****
-  Plug-in:             ${ESP_PLUGIN_SOURCE}
+Deploying Grafana with values:
+  ESP plugin source:   ${ESP_PLUGIN_SOURCE}
 EOF
 
+echo "Generating manifests..."
 generate_manifests
+
+if [[ "${DRY_RUN}" == true ]]; then
+  echo "Manifests generated"
+  exit 0
+fi
+
+echo "Create config-map.yaml"
+kubectl -n "${GRAFANA_NAMESPACE}" apply -f "${MANIFEST_DIR}/config-map.yaml"
+
+if [[ "${INSTALL_GRAFANA}" == true ]]; then
+  echo "Installing grafana"
+  kubectl -n "${GRAFANA_NAMESPACE}" apply -f "${MANIFEST_DIR}/grafana.yaml"
+  #No need to patch grafana as it will already be installed with the plugin and config
+  if [[ "${CONTOUR_PROXY}" == true ]]; then
+    if ! kubectl get HTTPProxy -n "${ESP_NAMESPACE}" sas-httpproxy-root -o json | jq -e '.spec.includes[]? | select(.name=="grafana")' >/dev/null; then
+      kubectl patch HTTPProxy -n "${ESP_NAMESPACE}" sas-httpproxy-root --type='json' -p='[{"op": "add", "path": "/spec/includes/-", "value": {"name": "grafana", "namespace": "'${GRAFANA_NAMESPACE}'"}}]'
+    fi
+    kubectl -n "${GRAFANA_NAMESPACE}" apply -f "${MANIFEST_DIR}/grafana-http-proxy.yaml"
+  else
+    kubectl -n "${GRAFANA_NAMESPACE}" apply -f "${MANIFEST_DIR}/grafana-ingress.yaml"
+  fi
+  exit 0
+fi
+
+echo "Patching deployment/grafana with patch-grafana.yaml"
+kubectl -n "${GRAFANA_NAMESPACE}" patch deployment v4m-grafana --patch-file "${MANIFEST_DIR}/patch-grafana.yaml"

@@ -1,0 +1,17 @@
+spec:
+  template:
+    spec:
+      volumes:
+        - name: grafana-config
+          configMap:
+            defaultMode: 420
+            name: grafana-ini
+      containers:
+      - name: grafana
+        env:
+          - name: TEMPLATE_ESP_PLUGIN_VAR
+            value: TEMPLATE_ESP_PLUGIN_SOURCE
+        volumeMounts:
+        - mountPath: /etc/grafana/grafana.ini
+          name: grafana-config
+          subPath: grafana-uaa.ini

@@ -1,6 +1,6 @@
 #! /bin/bash
 
-# Copyright © 2021, SAS Institute Inc., Cary, NC, USA.  All Rights Reserved.
+# Copyright © 2021-2026 SAS Institute Inc., Cary, NC, USA.  All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
 cd "$(dirname "$BASH_SOURCE")/.." || exit
@@ -15,6 +15,11 @@ log_debug "Script [$this_script] has started [$(date)]"
 TLS_ENABLE=${TLS_ENABLE:-true}
 
 set +e
+
+# confirm yq version (needed for path-based Contour ingress)
+if ! checkYqVersion; then
+    exit 1
+fi
 
 # call function to get HTTP/HTTPS ports from ingress controller
 get_ingress_ports
@@ -93,10 +98,50 @@ for service in $servicelist; do
         add_notice "  It was not possible to determine the URL needed to access $service"
         add_notice ""
     fi
+
+    if [ -n "$(get_k8s_info "$namespace" "httpproxy/$servicename" "$metadata_name")" ]; then
+
+        status="$(check_httpproxy_status "$namespace" "$servicename")"
+        if [ "$status" != "valid" ]; then
+            msg="$(get_httpproxy_error "$namespace" "$servicename")"
+
+            add_noticew "--------------------------------------------------------------------------------------------------------"
+            add_noticew "  WARNING: ***** Access to [$service] may not be available until the following issue is addressed. *****"
+            add_noticew ""
+            add_noticew "  NOTE: The HTTPProxy resource [$namespace/$servicename] reports an [$status] status"
+            add_noticew "        The issue reported is [$msg]"
+
+            root_httpproxy="$(get_root_httpproxy "$namespace" "$servicename")"
+            if [ "$root_httpproxy" = "$last_root_httpproxy" ]; then
+                log_debug "Have already reported on state of this 'root' HTTPProxy [$root_httpproxy]"
+            elif [ "$root_httpproxy" != " " ]; then
+
+                last_root_httpproxy="$root_httpproxy"
+
+                IFS=/ read -r rootnamespace rootservicename <<< "$root_httpproxy"
+
+                root_status="$(check_httpproxy_status "$rootnamespace" "$rootservicename")"
+
+                if [ "$root_status" != "valid" ]; then
+                    root_msg="$(get_httpproxy_error "$rootnamespace" "$rootservicename")"
+
+                    add_noticew " "
+                    add_noticew "  WARNING: In addition, the associated 'root' HTTPProxy resource [$rootnamespace/$rootservicename] reports an [$root_status] status"
+                    add_noticew "        The issue reported is [$root_msg]"
+                    add_noticew " "
+                fi
+            fi
+
+            add_noticew "--------------------------------------------------------------------------------------------------------"
+            add_notice ""
+        else
+            log_debug "HTTPProxy [$namespace/$servicename] is valid"
+        fi
+    fi
 done
 
-add_notice " Note: The URL might be incorrect if your Ingress configuration, another network"
-add_notice "       configuration, or both include options that this script does not process."
+add_notice " Note: The URL(s) shown might be incorrect if your ingress controller or other"
+add_notice "       network configuration include options that this script does not process."
 add_notice ""
 
 LOGGING_DRIVER=${LOGGING_DRIVER:-false}
