@@ -228,8 +228,6 @@ prometheus-node-exporter:
 # https://github.com/grafana/helm-charts/tree/main/charts/grafana
 grafana:
   #image: See NOTE at top of file
-  image:
-    tag: 12.2.0
   initChownData:
     enabled: false
   "grafana.ini":

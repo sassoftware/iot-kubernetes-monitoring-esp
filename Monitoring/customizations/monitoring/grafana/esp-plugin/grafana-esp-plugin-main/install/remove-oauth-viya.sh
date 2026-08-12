@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+
+set -e -o pipefail -o nounset
+
+ESP_NAMESPACE="${1}"
+GRAFANA_NAMESPACE="${2:-${ESP_NAMESPACE}}"
+OAUTH_CLIENT_ID="${OAUTH_CLIENT_ID:-sv_client}"; export OAUTH_CLIENT_ID
+OAUTH_CLIENT_SECRET="${OAUTH_CLIENT_SECRET:-secret}"; export OAUTH_CLIENT_SECRET
+
+function usage () {
+    echo "Usage: ${0} <viya-namespace> <grafana-namespace>" >&2
+    exit 1
+}
+
+[ -z "${KUBECONFIG-}" ] && {
+    echo "KUBECONFIG environment variable unset." >&2
+    exit 1
+}
+
+[ -z "${ESP_NAMESPACE-}" ] && {
+    echo "Usage: ${0} <esp-namespace> <grafana-namespace>" >&2
+    exit 1
+}
+
+#Work out the domain names
+echo "getting domain name"
+. $USER_DIR/monitoring/grafana/esp-plugin/grafana-esp-plugin-main/install/get-domain-name.sh $ESP_NAMESPACE $GRAFANA_NAMESPACE
+
+function fetch_consul_token () {
+    _token=$(kubectl -n "${ESP_NAMESPACE}" get secret sas-consul-client -o go-template='{{ .data.CONSUL_TOKEN | base64decode}}')
+
+    echo ${_token}
+}
+
+function fetch_saslogon_token () {
+    _token=$(fetch_consul_token)
+    _resp=$(curl -k -X POST "https://$ESP_DOMAIN/SASLogon/oauth/clients/consul?callback=false&serviceId=app" -H "X-Consul-Token: ${_token}")
+
+    echo "${_resp}" | jq -r '.access_token'
+}
+
+function remove_oauth_client () {
+  echo "removing oauth client $OAUTH_CLIENT_ID"
+    _token="$(fetch_saslogon_token)"
+
+    _resp=$(curl -k -X DELETE "https://$ESP_DOMAIN/SASLogon/oauth/clients/$OAUTH_CLIENT_ID" \
+        -H 'Content-Type: application/json' \
+        -H "Authorization: Bearer ${_token}")
+
+    regex_error="error"
+    if [[ "${_resp}" =~ $regex_error ]]; then
+       error=$(echo "${_resp}" | jq -r '.error')
+       error_description=$(echo "${_resp}" | jq -r '.error_description')
+       echo >&2 "Failed to register Grafana as OAuth client"
+       echo >&2 "${error}: ${error_description}"
+
+    else
+       echo "Grafana un-registered as OAuth client"
+    fi
+
+}
+
+cat <<EOF
+OAuth details:
+  ESP Domain:         ${ESP_DOMAIN}
+  Grafana Domain:      ${GRAFANA_DOMAIN}
+  OAuth client ID:     ${OAUTH_CLIENT_ID}
+  OAuth client secret: ****
+EOF
+
+remove_oauth_client

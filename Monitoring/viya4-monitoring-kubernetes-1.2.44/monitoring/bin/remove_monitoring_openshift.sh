@@ -37,6 +37,7 @@ log_verbose "Removing tempo"
 if helm3ReleaseExists v4m-tempo "$MON_NS"; then
     helm uninstall --namespace "$MON_NS" v4m-tempo
 fi
+oc delete scc v4m-tempo --ignore-not-found
 
 # Removing traces of v4m (old naming convention) and v4m-metrics in namespace
 removeV4MInfo "$MON_NS" "v4m"
@@ -57,7 +58,10 @@ fi
 log_info "Removing components from the [$MON_NS] namespace..."
 
 log_info "Removing CA bundle..."
-kubectl delete --ignore-not-found cm grafana-trusted-ca-bundle
+kubectl delete --ignore-not-found cm grafana-trusted-ca-bundle -n "$MON_NS"
+
+log_info "Removing Grafana Alert Rules ConfigMap..."
+kubectl delete --ignore-not-found cm grafana-alert-rules -n "$MON_NS"
 
 log_info "Removing dashboards..."
 monitoring/bin/remove_dashboards.sh

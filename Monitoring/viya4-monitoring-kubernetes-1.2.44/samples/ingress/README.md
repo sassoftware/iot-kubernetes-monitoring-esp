@@ -1,4 +1,20 @@
 # Ingress
+> [!WARNING]
+> **THIS SAMPLE IS DEPRECATED**
+
+> [!CAUTION]
+> All development work on the Ingress NGINX project, *including bug fixes and
+security updates*, will end in March 2026.   For information,
+see [Ingress NGINX Retirement: What You Need to Know](https://kubernetes.io/blog/2025/11/11/ingress-nginx-retirement/).
+While existing deployments will continue to function and new deployments are
+possible, continued use of the ingress-nginx ingress controller poses critical security risks.
+
+> [!IMPORTANT]
+> **SAS Viya Monitoring for
+Kubernetes recommends moving to Contour as the replacement ingress controller.**
+Refer to [the Contour sample](../contour/README.md) for information on configuring
+Contour as the ingress controller.  Information on migrating from using ingress-nginx
+to Contour is included in that sample.
 
 ## Overview
 
@@ -19,13 +35,13 @@ These scenarios differ because of the URL that is used to access the application
 definitions to permit access to the web applications was added with version
 1.2.36 (released 15APR25).  Depending on your requirements, this may
 eliminate the need to manually configure things as demonstrated in this
-sample.  See the [Configure Ingress Access to Web Applications](https://documentation.sas.com/?cdcId=obsrvcdc&cdcVersion=v_003&docsetId=obsrvdply&docsetTarget=n0auhd4hutsf7xn169hfvriysz4e.htm#n0jiph3lcb5rmsn1g71be3cesmo8)
+sample.  See the [Configure Access to Web Applications](https://documentation.sas.com/?softwareId=obsrv&softwareVersion=prod&docsetId=obsrvdply&docsetTarget=n0auhd4hutsf7xn169hfvriysz4e.htm#n0jiph3lcb5rmsn1g71be3cesmo8)
 topic within the Help Center documentation for further information.
 
 ## Using This Sample
 
 **Note:** For information about the customization process, see
-[Create the Deployment Directory](https://documentation.sas.com/?cdcId=obsrvcdc&cdcVersion=v_003&docsetId=obsrvdply&docsetTarget=p15fe8611w9njkn1fucwbvlz8tyg.htm) in the SAS Viya Monitoring for Kubernetes Help Center.
+[Create the Deployment Directory](https://documentation.sas.com/?softwareId=obsrv&softwareVersion=prod&docsetId=obsrvdply&docsetTarget=p15fe8611w9njkn1fucwbvlz8tyg.htm) in the SAS Viya Monitoring for Kubernetes Help Center.
 
 The customization files in this sample provide a starting point for the
 customization files required by a deployment that uses Kubernetes Ingress
@@ -44,7 +60,7 @@ or `path-based-ingress` subdirectories to your local customization directory
 
 After you finish modifying the customization files, you can deploy
 SAS Viya Monitoring for Kubernetes.  For more information, see
-[Deploy](https://documentation.sas.com/?cdcId=obsrvcdc&cdcVersion=v_003&docsetId=obsrvdply&docsetTarget=n1rhzwx0mcnnnun17q11v85bspyk.htm).
+[Deploy](https://documentation.sas.com/?softwareId=obsrv&softwareVersion=prod&docsetId=obsrvdply&docsetTarget=n1rhzwx0mcnnnun17q11v85bspyk.htm).
 
 ## Update the YAML Files
 
@@ -57,14 +73,14 @@ the Ingress controller's endpoint.
 
 As of release 1.2.15 (19JUL23), SAS Viya Monitoring for Kubernetes is deployed with TLS enabled by default for
 intra-cluster communications. The deployment scripts now automatically generate a set of
-self-signed TLS certificates for this purpose if you do not specify your own. For details, see [Transport Layer Security (TLS): Digital Certificates and Kubernetes Secrets](https://documentation.sas.com/?cdcId=obsrvcdc&cdcVersion=v_003&docsetId=obsrvdply&docsetTarget=p1tedn8lzgvhlyn1bzwgvqvv3p4j.htm#n1pnll5qjcigjvn15shfdhdhr0lz).
+self-signed TLS certificates for this purpose if you do not specify your own. For details, see [Transport Layer Security (TLS): Digital Certificates and Kubernetes Secrets](https://documentation.sas.com/?softwareId=obsrv&softwareVersion=prod&docsetId=obsrvdply&docsetTarget=p1tedn8lzgvhlyn1bzwgvqvv3p4j.htm#n1pnll5qjcigjvn15shfdhdhr0lz).
 
 This sample assumes that access to the web applications also should be secured using
 TLS (that is, the web applications should be accessed via HTTPS instead of HTTP). This requires a second set of TLS
 certificates that differ from those used for intra-cluster communication.  However, these certificates are **not**
 created automatically for you.  You must obtain these certificates, create Kubernetes secrets with specific
 names, and make them available to SAS Viya Monitoring for Kubernetes.
-For details, see [Enable TLS for Ingress](https://documentation.sas.com/?cdcId=obsrvcdc&cdcVersion=v_003&docsetId=obsrvdply&docsetTarget=n0auhd4hutsf7xn169hfvriysz4e.htm#n13g4ybmjfxr2an1tuy6a20zpvw7).
+For details, see [Manually Configure Ingress Definitions and Enable TLS](https://documentation.sas.com/?softwareId=obsrv&softwareVersion=prod&docsetId=obsrvdply&docsetTarget=n0auhd4hutsf7xn169hfvriysz4e.htm#n13g4ybmjfxr2an1tuy6a20zpvw7).
 
 ## Access the Applications
 

@@ -192,7 +192,7 @@ carry out the deployment process. Complete the following steps:
 	```
 3.  If the target Kubernetes environment uses Contour as an ingress controller, set an environment variable to reflect this:
     ```shell
-        export CONTOUR_PROXY=true
+        export INGRESS_TYPE="contour"
     ```
 4.  Navigate to the `<target-directory>/viya4-monitoring-kubernetes-x.x.xx/monitoring/bin` directory, and deploy
    SAS Event Stream Processing Monitoring for Kubernetes using the following command:  
@@ -204,10 +204,10 @@ This results in the deployment of the following components to the target Kuberne
 
 | Release Name              | Helm Chart Name                | Application Version |
 |---------------------------|--------------------------------|---------------------|
-| `loki`                    | `loki-6.24.0`                  | 3.3.2               |
-| `alloy`                   | `alloy-1.6.1`                  | 1.13.2              |
-| `v4m-metrics`             | `v4m-1.2.7-SNAPSHOT`           | 1.2.7-SNAPSHOT      |
-| `v4m-prometheus-operator` | `kube-prometheus-stack-41.7.3` | 0.60.1              |
+| `loki`                    | `loki-7.3.0`                   | 3.6.12              |
+| `alloy`                   | `alloy-1.11.1`                 | 1.18.1              |
+| `v4m-metrics`             | `v4m-1.2.52`                   | 1.2.52              |
+| `v4m-prometheus-operator` | `kube-prometheus-stack-85.1.3` | 0.90.1              |
 
 [&#11014;](#top) Top
 ### Deploy the SAS Viya Monitoring for Kubernetes Dashboards

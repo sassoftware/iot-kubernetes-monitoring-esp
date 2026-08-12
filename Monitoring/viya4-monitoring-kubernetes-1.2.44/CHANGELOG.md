@@ -1,4 +1,200 @@
 # SAS Viya Monitoring for Kubernetes
+## Version 1.2.52 (07JUL2026)
+* **Metrics**
+  * [SECURITY] Upgraded to Kube-State Metrics 2.19.1 to address several security
+vulnerabilities scored as high or critical.
+
+
+## Version 1.2.51 (02JUL2026)
+* **Logging**
+  * [FIX] (Re-)Initialized temporary response files between API calls
+  * [UPGRADE] OpenSearch and OpenSearch Dashboards upgraded from 3.4.0 to 3.6.0
+  * [UPGRADE] OpenSearch Helm chart upgraded from 3.4.0 to 3.6.0
+  * [UPGRADE] OpenSearch Dashboards Helm chart upgraded from 3.4.0 to 3.6.0
+  * [UPGRADE] Fluent Bit upgraded from 4.2.3 to 5.0.7
+  * [UPGRADE] Fluent Bit Helm chart upgraded from 0.56.0 to 0.57.7
+
+
+## Version 1.2.50 (05JUN2026)
+* **Overall**
+> [!IMPORTANT]
+>  * [BREAKING CHANGE] The minimum required version of `yq` has been updated to version
+4.45.1 (released 11JAN2026) or newer of the
+[Golang-based (Mike Farah) version of `yq`](https://github.com/mikefarah/yq).
+  * [CHANGE] Provide additional debugging information in `show_app_url.sh` output
+for Contour-related problems
+  * [FIX] Added `--server-side=true` to Helm 4 options to enable upgrades of Helm releases originally
+deployed using Helm 3.  As noted below, an upgrade-in-place will overwrite post-deployments changes
+implemented with `kubectl patch` commands.  Therefore, if you have made such changes, you should
+(re)implement these changes via the appropriate Helm user-values yaml file *prior* to the update (if
+possible) or re-apply the patches manually *after* the upgrade.
+* **Tracing**
+  * [FIX] Tempo now deploys correctly on OpenShift. A custom Security Context
+    Constraint (SCC) `v4m-tempo` is created and bound to the Tempo service account
+    during deployment, allowing Tempo to run as its image-defined user rather than
+    the random namespace UID assigned by OpenShift's default `restricted` SCC. The
+    random UID lacked write access to `/var/tempo`, preventing Tempo from
+    initializing its trace store and WAL.
+  * [FIX] The OpenShift-specific Tempo values file (`monitoring/openshift/tempo-values.yaml`)
+    is applied during deployment for OpenShift specific overrides. It is now included in the Helm install
+    and sets `securityContext: null` to prevent the chart from injecting a fixed
+    `runAsUser` that OpenShift's admission controller would reject.
+* **Metrics**
+  * [UPGRADE] Kube-Prometheus Stack Helm chart has been upgraded from 81.5.2 to 85.1.3
+  * [UPGRADE] Grafana Helm Chart (for OpenShift deployments) has been upgraded fom 11.0.1 to 12.3.3
+  * [UPGRADE] Alertmanager has been upgraded from 0.31.0 to 0.32.1
+  * [UPGRADE] The config-reloader has been upgraded from 0.88.1 to 0.90.1
+  * [UPGRADE] Grafana has been upgraded from 12.3.2 to 13.0.1 (security patch)
+  * [UPGRADE] The k8s-sidecar has been upgraded from 2.5.0 to 2.7.3
+  * [UPGRADE] Node-Exporter has been upgraded from 1.10.2 to 1.11.1 (now uses distroless image)
+  * [UPGRADE] Prometheus has been upgraded from 3.9.1 to 3.11.3 (now uses distroless image)
+  * [UPGRADE] Prometheus Operator has been upgraded from 0.88.1 to 0.90.1
+  * [UPGRADE] Admission Webhook upgraded from 1.7.4 to 1.8.2
+
+## Version 1.2.49 (08MAY2026)
+* **Overall**
+  * [CHANGE] Support for Helm 4.x has been added.  As part of this change, the `--force-conflicts` option
+will be used when deploying using Helm 4.x.  During an update-in-place, this can overwrite some
+post-deployment changes to Kubernetes resources implemented with `kubectl patch` commands.  If you have
+made such changes, you should implement these changes via the appropriate Helm user-values yaml file
+*prior* to the update (if possible) or re-apply the patches manually *after* the upgrade.
+  * [TASK] The various user-values yaml and user.env files included in the project repository, including
+those in the *samples* sub-directories, were reviewed and validated with obsolete values removed.
+  * [TASK] Documentation links in the various markdown files within the project reposistory were reviewed
+and revised to eliminate the use of version-specific pointers when not appropriate.
+* **Metrics**
+  * [FIX] The `CAS Memory Usage High` sample alert now uses `container_memory_working_set_bytes`
+    summed across all CAS server pods (controller, backup controller, and workers) instead of
+    `cas_node_mem_size_bytes - cas_node_mem_free_bytes`, which reported node/VM physical memory
+    rather than actual CAS memory consumption
+* **Tracing**
+  * [CHANGE] Fluent Bit tracing configuration updated to improve reliability and performance:
+    increased input buffer sizes, enabled gzip compression on output, set retry limit to 5,
+    added worker threads, and configured connection/IO timeouts
+  * [CHANGE] Tempo ingester configured with flush_all_on_shutdown to prevent trace data loss
+    on restart, reduced max_block_duration to 5m to lower memory pressure, and set
+    replication_factor to 1 for single-instance deployments; compactor block_retention
+    aligned to 24h to match retention setting
+  * [CHANGE] Tempo datasource for Grafana is now provisioned via the datasource sidecar mechanism
+    (ConfigMap with grafana_datasource=1 label) consistent with how other datasources are handled,
+    rather than being passed as a Helm values overlay
+  * [CHANGE] Removed Grafana feature toggles tempoSearch and tempoBackendSearch as they are no
+    longer needed in the current Grafana version
+  * [CHANGE] OpenShift deployments now use the standard values-tempo.yaml instead of a separate
+    OpenShift-specific file
+  * [CHANGE] Tempo metricsGenerator remoteWriteUrl now resolved dynamically from MON_NS at
+    deploy time rather than being hardcoded to the monitoring namespace
+
+## Version 1.2.48 (03APR2026)
+* **Overall**
+  * [CHANGE] The [Contributor Agreement](ContributorAgreement.txt) has been revised to clarify
+the need to sign-off on contributions and to disclose the use of generative AI in their creation.
+  * [CHANGE] Support for Kubernetes 1.26 has been dropped
+* **Logging**
+  * [UPGRADE] OpenSearch and OpenSearch Dashboards upgraded from 2.19.4 to 3.4.0
+  * [UPGRADE] OpenSearch Helm chart upgraded from 2.36.0 to 3.4.0
+  * [UPGRADE] OpenSearch Dashboards Helm chart upgraded from 2.32.0 to 3.4.0
+  * [UPGRADE] Fluent Bit upgraded from 4.2.0 to 4.2.3
+  * [UPGRADE] Fluent Bit Helm chart upgraded from 0.54.0 to 0.56.0
+  * [UPGRADE] Elasticsearch Exporer upgraded from 1.9.0 to 1.10.0
+  * [UPGRADE] Elasticsearch Exporer Helm chart upgraded from 7.0.0 to 7.2.1
+  * [UPGRADE] OpenSearch Data Source Plugin to Grafana upgraded from 2.32.4 to 2.32.6
+
+
+## Version 1.2.47 (06MAR2026)
+* **Overall**
+  * [ANNOUNCEMENT] All development work on the Ingress NGINX project, *including bug fixes and
+security updates*, is expected to end by the end of March 2026.  For information,
+see [Ingress NGINX Retirement: What You Need to Know](https://kubernetes.io/blog/2025/11/11/ingress-nginx-retirement/).
+While existing deployments will continue to function and new deployments are possible,
+continued use of the ingress-nginx ingress controller poses security risks.  **SAS Viya Monitoring for
+Kubernetes recommends moving to Contour as the replacement ingress controller.**
+  * [DEPRECATION] The existing [ingress sample](samples/ingress/README.md) focused on using
+ingress-nginx is now **deprecated**.  Users can refer to [the Contour sample](samples/contour/README.md)
+for information on manually configuring Contour as the ingress controller.
+  * [FEATURE] The auto-generation of ingress configurations now supports Contour (in addition to
+the existing support for ingress-nginx).  To enable ingress via Contour, set the environment
+variable `INGRESS_TYPE` to `contour`. To use ingress-nginx, set `INGRESS_TYPE` to `ingress-nginx`.
+Setting the environment variable `AUTOGENERATE_INGRESS` to 'true' and providing a value for
+the environment variable `BASE_DOMAIN` are also required.  As with ingress-nginx, support for
+both host-based and path-based routing are supported with Contour as well.  A new option for
+how the Kubernetes Secret resources, used to hold the ingress TLS certs, are handled is available.
+See the
+[Configure Ingress Access to Web Applications](https://documentation.sas.com/?softwareId=obsrv&softwareVersion=prod&docsetId=obsrvdply&docsetTarget=n0auhd4hutsf7xn169hfvriysz4e.htm#n0jiph3lcb5rmsn1g71be3cesmo8)
+topic within the Help Center documentation for further information.
+* **Metrics**
+  * [FEATURE] New PodMonitor resources are deployed to enable the collection
+of metrics from Contour if it is detected on the Kubernetes cluster during the
+deployment process.
+  * [FEATURE] Two Grafana dashboards focused on Contour and Envoy metrics are now deployed
+if Contour is detected on the Kubernetes cluster during the deployment process.
+  * [CHANGE] Following the migration of the Grafana and Tempo Helm charts to the
+[Grafana Community Kubernetes Helm Charts project](https://github.com/grafana-community/helm-charts),
+our project now deploys these charts from that project's repository.
+  * [CHANGE] Following the retirement of the ingress-nginx maintained variant of the
+`kube-webhook-certgen`, the Prometheus Community Helm charts
+[moved to a new actively maintained replacement](https://github.com/prometheus-community/helm-charts/pull/6407).
+Therefore, our project, in turn, now deploys the component from this new source as well.
+  * [UPGRADE] Kube-Prometheus Stack Helm chart has been upgraded from 78.4.0 to  81.5.2
+  * [UPGRADE] Grafana Helm Chart (for OpenShift deployments) has been upgraded fom 9.4.5 to 11.0.1
+  * [UPGRADE] Prometheus Pushgateway Helm chart has been upgraded from 3.4.1 to 3.6.0
+  * [UPGRADE] Alertmanager has been upgraded from 0.28.1 to 0.31.0
+  * [UPGRADE] The config-reloader has been upgraded from 0.86.1 to 0.88.1
+  * [UPGRADE] Grafana has been upgraded from 12.2.0 to 12.3.2
+  * [UPGRADE] The k8s-sidecar has been upgraded from 1.30.9 to 2.5.0
+  * [UPGRADE] Kube-State-Metrics has been upgraded from 2.17.0 to 2.18.0
+  * [UPGRADE] Node-Exporter has been upgraded from 1.9.1 to 1.10.2
+  * [UPGRADE] Prometheus has been upgraded from 3.7.1 to 3.9.1
+  * [UPGRADE] Prometheus Pushgateway has been upgraded from 1.11.1 to 1.11.2
+  * [UPGRADE] Prometheus Operator has been upgraded from 0.86.1 to 0.88.1
+  * [UPGRADE] OpenSearch Data Source Plugin to Grafana upgraded from 2.31.1 to 2.32.4
+* **Logging**
+  * [CHANGE] Improve handling of Envoy (Contour) log messages
+
+
+## Version 1.2.46 (06FEB2026)
+* **Overall**
+  * [FEATURE] A new sample demonstrates how to use Contour HTTPProxy resources to
+ provide access to the web applications, such as OpenSearch Dashboards and Grafana,
+ deployed as part of this project.  Refer to the [Contour Sample README](samples/contour)
+ for more information.
+* **Logging**
+  * [FEATURE] A new script, `setup-airgap` automates many of the setup preparations needed prior
+to deploying into an airgap environment. This setup includes populating the container registry
+(with both images and helm charts) and downloading the necessary files (e.g. CRDs and Grafana
+plugin files) into the appropriate sub-directories in the `$USER_DIR` directory. The location
+of the private container registry and the associated credentials need to be identified by
+setting the environment variables `AIRGAP_REGISTRY`, `AIRGAP_REGISTRY_USERNAME`, and
+`AIRGAP_REGISTRY_PASSWORD` prior to running the script, preferably in the `$USER_DIR/user.env`
+file. Refer to the [Prepare to Deploy SAS Viya Monitoring for Kubernetes in an Air Gap Environment](https://documentation.sas.com/?softwareId=obsrv&softwareVersion=prod&docsetId=obsrvdply&docsetTarget=n0auhd4hutsf7xn169hfvriysz4e.htm#n0grd8g2pkfglin12bzm3g1oik2p) documentation for more info.
+  * [FIX] The `logging/bin/onboard.sh` script no longer fails when the `-p` parameter is set
+* **Metrics**
+  * [FEATURE] Support for automatically defining SMTP server configuration (permitting Grafana
+to send e-mails) has been extended to OpenShift clusters
+  * [FEATURE] Support for deploying Grafana alerts defined in files from the $USER_DIR/monitoring/alerting
+sub-directory has been extended to OpenShift clusters
+  * [FIX] Corrected behavior on non-OpenShift clusters which had inappropriately required a Kubernetes
+Secret resource be created when automatically defining the SMTP server configuration
+  * [FEATURE] The getlogs.py script now supports returning more than 10000 logs from a single query
+  * [FEATURE] Log results from getlogs.py can now be sorted by any text-based field value
+
+## Version 1.2.45 (16DEC2025)
+* **Overall**
+  * [CHANGE] Use with Kubernetes versions prior to 1.26 produces a WARNING message
+  * [CHANGE] Drop support for OpenShift 4.12; the minimum supported version of OpenShift is now 4.14
+* **Logging**
+  * [UPGRADE] OpenSearch and OpenSearch Dashboards upgraded from 2.19.3 to 2.19.4
+  * [UPGRADE] OpenSearch Helm chart upgraded from 2.35.0 to 2.36.0
+  * [UPGRADE] OpenSearch Dashboards Helm chart upgraded from 2.31.0 to 2.32.0
+  * [UPGRADE] Fluent Bit upgraded from 4.0.8 to 4.2.0
+  * [UPGRADE] Fluent Bit Helm chart upgraded from 0.52.0 to 0.54.0
+  * [UPGRADE] Elasticsearch Exporer Helm chart upgraded from 6.7.2 to 7.0.0
+  * [UPGRADE] OpenSearch Data Source Plugin to Grafana upgraded from 2.31.1 to 2.32.1
+* **Tracing**
+  * [UPGRADE] Upgraded Tempo from 2.7.0 to 2.9.0
+  * [UPGRADE] Upgraded Tempo Helm chart from 1.18.1 to 1.24.1
+
+
 ## Version 1.2.44 (18NOV2025)
 * **Metrics**
   * [UPGRADE] Kube-Prometheus Stack Helm chart has been upgraded from 75.15.0 to 78.4.0
@@ -20,8 +216,8 @@
 * **Metrics**
   * [FEATURE] A new sample demonstrates how to extend SAS Viya Monitoring
 for Kubernetes to monitor the SingleStore instance that is embedded within
-SAS SpeedyStore.  This allows administrators to monitor their SingleStore 
-cluster using the same Grafana instance that they use to monitor the rest 
+SAS SpeedyStore.  This allows administrators to monitor their SingleStore
+cluster using the same Grafana instance that they use to monitor the rest
 of their SAS Viya deployment.  Refer to the [SAS SpeedyStore Sample README](samples/speedystore)
 for more information.
 * **Logging**
@@ -29,7 +225,7 @@ for more information.
 This change should be transparent to virtually all users.  However, if you define additional volumes for
 these pods, you will need to update your configuration to eliminate references to certain default volumes.
 Refer to the updated [samples/generic-base/logging/user-values-fluent-bit-opensearch.yaml](samples/generic-base/logging/user-values-fluent-bit-opensearch.yaml)
-file for details and adjust the contents of your `$USER_DIR/logging/user-values-fluent-bit-opensearch.yaml` 
+file for details and adjust the contents of your `$USER_DIR/logging/user-values-fluent-bit-opensearch.yaml`
 file accordingly.
 
 
@@ -48,7 +244,7 @@ file accordingly.
 * **Metrics**
   * [FEATURE] Automatically define the SMTP server configuration to permit Grafana to send e-mails.
 If enabled (by setting `AUTOGENERATE_SMTP` to 'true'), this optional feature allows admins to define
-email-based contact points for alerts. Users need to provide connection information via the environment 
+email-based contact points for alerts. Users need to provide connection information via the environment
 variables: `SMTP_SERVER, SMTP_PORT`, `SMTP_FROM_ADDRESS` and `SMTP_FROM_NAME`.  See [Configure Email Settings for Grafana Alerts](https://documentation.sas.com/doc/en/obsrvcdc/v_003/obsrvdply/n0auhd4hutsf7xn169hfvriysz4e.htm#p1fql9ekyxckamn1jtlujeauhy72)
 for more information.
   * [CHANGE] The Grafana alerts targeting SAS Viya that previously were provided by default have been moved
@@ -417,7 +613,7 @@ is no longer actively developed and was replaced with a Fluent Bit deployment fo
 * **Logging**
   * [FEATURE] The getlogs.py utility for exporting logs via the command line has been moved to "production"
 from "experimental" status.  Documentation for this optional Python-based tool is available in the
-[SAS Viya Monitoring for Kubernetes Help Center](https://documentation.sas.com/?docsetId=obsrvdply&docsetVersion=latest&docsetTarget=p1wdkgnu7dp791n1h9xfyh68ltnt.htm).
+[SAS Viya Monitoring for Kubernetes Help Center](https://documentation.sas.com/?softwareId=obsrv&softwareVersion=prod&docsetId=obsrvdply&docsetTarget=n0bzfdp3bn6p4vn1lj9pm2hy8t0q.htm).
 
 ## Version 1.2.20 (12DEC2023)
 

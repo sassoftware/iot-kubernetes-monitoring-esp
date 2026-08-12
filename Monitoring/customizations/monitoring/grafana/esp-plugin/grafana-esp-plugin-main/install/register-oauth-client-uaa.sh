@@ -2,35 +2,28 @@
 
 set -e -o pipefail -o nounset
 
-# Environment variables
-ESP_NAMESPACE="${ESP_NAMESPACE:-$(kubectl get deploy -A | grep sas-esp-operator | head -1 2>/dev/null | awk '{print $1}')}"
+ESP_NAMESPACE="${1}"
+GRAFANA_NAMESPACE="${2:-${ESP_NAMESPACE}}"
+OAUTH_CLIENT_ID="${OAUTH_CLIENT_ID:-sv_client}"; export OAUTH_CLIENT_ID
+OAUTH_CLIENT_SECRET="${OAUTH_CLIENT_SECRET:-secret}"; export OAUTH_CLIENT_SECRET
 
-if [ -z "${GRAFANA_NAMESPACE}" ]; then
-    GRAFANA_NAMESPACE="${MON_NS:-$(kubectl get deploy -A -l app.kubernetes.io/name=grafana | tail -1 | awk '{print $1}')}"
-fi
-
-if [ -z "${ESP_NAMESPACE}" ] || [ -z "${GRAFANA_NAMESPACE}" ];then
-   echo -ne "- Either Viya or Grafana do not seem to be running on the cluster...\n"
-   exit 1
-fi
-
-if [ -z "${OAUTH_CLIENT_ID}" ]; then
-    OAUTH_CLIENT_ID="$(kubectl -n "${GRAFANA_NAMESPACE}" get configmap v4m-grafana -o yaml | grep client_id | head -1 2>/dev/null | awk '{print $3}')"
-fi
-export OAUTH_CLIENT_ID
-
-if [ -z "${OAUTH_CLIENT_SECRET}" ]; then
-    OAUTH_CLIENT_SECRET="$(kubectl -n "${GRAFANA_NAMESPACE}" get configmap v4m-grafana -o yaml | grep client_secret | head -1 2>/dev/null | awk '{print $3}')"
-fi
-export OAUTH_CLIENT_SECRET
-
-[ -z "${ESP_NAMESPACE}" ] && {
-    echo "ESP_NAMESPACE environment variable unset and auto-detect failed." >&2
+function usage () {
+    echo "Usage: ${0} <esp-namespace> " >&2
     exit 1
 }
 
-ESP_DOMAIN=$(kubectl -n "${ESP_NAMESPACE}" get ingress --output json | jq -r '.items[0].spec.rules[0].host')
-GRAFANA_DOMAIN=$(kubectl -n "${GRAFANA_NAMESPACE}" get ingress --output json | jq -r '.items[0].spec.rules[0].host')
+[ -z "${KUBECONFIG-}" ] && {
+    echo "KUBECONFIG environment variable unset." >&2
+    exit 1
+}
+
+[ -z "${ESP_NAMESPACE-}" ] && {
+    echo "Usage: ${0} <esp-namespace> <grafana-namespace>" >&2
+    exit 1
+}
+
+#Work out the domain names
+. get-domain-name.sh $ESP_NAMESPACE $GRAFANA_NAMESPACE
 
 # Fetch access token to perform admin tasks:
 function fetch_uaa_admin_token() {
@@ -75,12 +68,12 @@ export UAA_SECRET
 
 cat <<EOF
 OAuth details:
-  ESP Domain:          ${ESP_DOMAIN}
+  ESP Domain:         ${ESP_DOMAIN}
   Grafana Domain:      ${GRAFANA_DOMAIN}
   OAuth client ID:     ${OAUTH_CLIENT_ID}
   OAuth client secret: ****
-  UAA Admin:           ${UAA_ADMIN}
-  UAA secret:          ****
+  UAA Admin:     ${UAA_ADMIN}
+  UAA secret: ****
 EOF
 
 add_grafana_auth_redirect_uaa
