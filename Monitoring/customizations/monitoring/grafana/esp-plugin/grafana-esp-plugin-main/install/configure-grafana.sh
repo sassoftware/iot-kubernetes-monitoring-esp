@@ -22,6 +22,8 @@ DRY_RUN="${DRY_RUN:-false}"
 INSTALL_GRAFANA="${INSTALL_GRAFANA:-false}"
 INGRESS_TYPE="${INGRESS_TYPE:-ingress-nginx}"
 GRAFANA_VERSION="${GRAFANA_VERSION:-12.1.0}"
+ENABLE_DATASOURCES="${ENABLE_DATASOURCES:-false}"
+ENABLE_NODE_SELECTOR="${ENABLE_NODE_SELECTOR:-false}"
 PLUGIN_SCRIPT_DIR="$USER_DIR/monitoring/grafana/esp-plugin/grafana-esp-plugin-main/install"
 MANIFEST_DIR="$PLUGIN_SCRIPT_DIR/manifests"
 
@@ -105,6 +107,28 @@ function generate_manifests() {
   done
 }
 
+function patch_datasources() {
+
+   if [[ "${ENABLE_DATASOURCES}" == true ]]; then
+     echo "Adding datasources..."
+     tmp_file="${MANIFEST_DIR}/grafana.yaml.tmp"
+     kubectl patch -f "${MANIFEST_DIR}/grafana.yaml" --local --patch-file "${MANIFEST_DIR}/patch-grafana-data-sources.yaml" -o yaml > "$tmp_file"
+     mv "$tmp_file" "${MANIFEST_DIR}/grafana.yaml"
+   fi
+
+ }
+
+ function patch_nodeselector() {
+
+   if [[ "${ENABLE_NODE_SELECTOR}" == true ]]; then
+     echo "Adding node selector..."
+     tmp_file="${MANIFEST_DIR}/grafana.yaml.tmp"
+     kubectl patch -f "${MANIFEST_DIR}/grafana.yaml" --local --patch-file "${MANIFEST_DIR}/patch-grafana-node-selector.yaml" -o yaml > "$tmp_file"
+     mv "$tmp_file" "${MANIFEST_DIR}/grafana.yaml"
+   fi
+
+ }
+
 check_requirements
 
 echo "Fetching required deployment information..."
@@ -158,10 +182,17 @@ EOF
 
 echo "Generating manifests..."
 generate_manifests
+patch_datasources
+patch_nodeselector
 
 if [[ "${DRY_RUN}" == true ]]; then
   echo "Manifests generated"
   exit 0
+fi
+
+if [[ "${ENABLE_DATASOURCES}" == true ]]; then
+  echo "Create datasources.yaml"
+  kubectl -n "${GRAFANA_NAMESPACE}" apply -f "${MANIFEST_DIR}/grafana-datasources.yaml"
 fi
 
 echo "Create config-map.yaml"
@@ -170,6 +201,8 @@ kubectl -n "${GRAFANA_NAMESPACE}" apply -f "${MANIFEST_DIR}/config-map.yaml"
 if [[ "${INSTALL_GRAFANA}" == true ]]; then
   echo "Installing grafana"
   kubectl -n "${GRAFANA_NAMESPACE}" apply -f "${MANIFEST_DIR}/grafana.yaml"
+  kubectl -n "${GRAFANA_NAMESPACE}" apply -f "${MANIFEST_DIR}/grafana-pvc.yaml"
+  kubectl -n "${GRAFANA_NAMESPACE}" apply -f "${MANIFEST_DIR}/grafana-service.yaml"
   #No need to patch grafana as it will already be installed with the plugin and config
   if [[ "${INGRESS_TYPE}" == "contour" ]]; then
     if ! kubectl get HTTPProxy -n "${ESP_NAMESPACE}" sas-httpproxy-root -o json | jq -e '.spec.includes[]? | select(.name=="grafana")' >/dev/null; then
