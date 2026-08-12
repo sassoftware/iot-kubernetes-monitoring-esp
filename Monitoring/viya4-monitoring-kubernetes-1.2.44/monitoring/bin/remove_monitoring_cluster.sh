@@ -46,7 +46,7 @@ if helm3ReleaseExists v4m-tempo "$MON_NS"; then
     helm uninstall --namespace "$MON_NS" v4m-tempo
 fi
 
-if [[ "${CONTOUR_PROXY}" == true ]]; then
+if [[ "${INGRESS_TYPE}" == "contour" ]]; then
     log_verbose "Removing contour patches"
     INDEX=$(kubectl get HTTPProxy sas-httpproxy-root -n "$ESP_NAMESPACE" -o json | jq '.spec.includes | to_entries[] | select(.value.name=="grafana") | .key')
     kubectl patch HTTPProxy sas-httpproxy-root -n "$ESP_NAMESPACE" --type='json' -p="[{'op': 'remove', 'path': '/spec/includes/$INDEX'}]"

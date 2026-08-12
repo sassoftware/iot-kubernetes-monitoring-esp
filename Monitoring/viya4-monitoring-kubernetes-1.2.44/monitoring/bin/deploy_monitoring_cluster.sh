@@ -752,7 +752,7 @@ else
 fi
 
 INSTALL_DIR="$(realpath "${USER_DIR}")/monitoring/grafana/esp-plugin/grafana-esp-plugin-main/install"
-if [[ "${CONTOUR_PROXY}" == true ]]; then
+if [[ "${INGRESS_TYPE}" == "contour" ]]; then
    log_verbose "Patching Grafana for contour"
 
    if ! kubectl get HTTPProxy -n "${ESP_NAMESPACE}" sas-httpproxy-root -o json | jq -e '.spec.includes[]? | select(.name=="grafana")' >/dev/null; then

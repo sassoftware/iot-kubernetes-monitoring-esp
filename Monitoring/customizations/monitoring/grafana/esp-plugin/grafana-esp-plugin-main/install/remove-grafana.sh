@@ -29,7 +29,7 @@ kubectl -n "${NAMESPACE}" delete -f ./manifests/config-map.yaml >&2 || {
   echo ""
 }
 
-if [[ "${CONTOUR_PROXY}" == true ]]; then
+if [[ "${INGRESS_TYPE}" == "contour" ]]; then
   kubectl -n "${NAMESPACE}" delete -f ./manifests/grafana-http-proxy.yaml >&2 || {
     echo ""
   }

@@ -20,7 +20,7 @@ export KEYCLOAK_SUBPATH
 OAUTH_TYPE="${OAUTH_TYPE:-viya}"
 DRY_RUN="${DRY_RUN:-false}"
 INSTALL_GRAFANA="${INSTALL_GRAFANA:-false}"
-CONTOUR_PROXY="${CONTOUR_PROXY:-false}"
+INGRESS_TYPE="${INGRESS_TYPE:-ingress-nginx}"
 GRAFANA_VERSION="${GRAFANA_VERSION:-12.1.0}"
 PLUGIN_SCRIPT_DIR="$USER_DIR/monitoring/grafana/esp-plugin/grafana-esp-plugin-main/install"
 MANIFEST_DIR="$PLUGIN_SCRIPT_DIR/manifests"
@@ -171,7 +171,7 @@ if [[ "${INSTALL_GRAFANA}" == true ]]; then
   echo "Installing grafana"
   kubectl -n "${GRAFANA_NAMESPACE}" apply -f "${MANIFEST_DIR}/grafana.yaml"
   #No need to patch grafana as it will already be installed with the plugin and config
-  if [[ "${CONTOUR_PROXY}" == true ]]; then
+  if [[ "${INGRESS_TYPE}" == "contour" ]]; then
     if ! kubectl get HTTPProxy -n "${ESP_NAMESPACE}" sas-httpproxy-root -o json | jq -e '.spec.includes[]? | select(.name=="grafana")' >/dev/null; then
       kubectl patch HTTPProxy -n "${ESP_NAMESPACE}" sas-httpproxy-root --type='json' -p='[{"op": "add", "path": "/spec/includes/-", "value": {"name": "grafana", "namespace": "'${GRAFANA_NAMESPACE}'"}}]'
     fi
