@@ -90,7 +90,7 @@ alloy:
 
         rule {
           source_labels = ["__meta_kubernetes_pod_annotation_prometheus_io_path"]
-          regex         = "/SASESP/metrics"
+          regex         = "/eventStreamProcessing/v2/metrics"
           action        = "keep"
         }
 
