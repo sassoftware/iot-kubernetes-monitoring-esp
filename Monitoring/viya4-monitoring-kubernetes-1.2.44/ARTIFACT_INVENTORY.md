@@ -14,25 +14,25 @@ This table provides the fully qualified container-image names for the components
 These names use the following format:
 registry/repository/image_name:version
 
-| Subsystem| Component | Fully Qualified Container-Image Name (registry/repository/image_name:version)|
-|----|----|----|
-| Logging | [Fluent Bit](https://github.com/fluent/fluent-bit) | cr.fluentbit.io/fluent/fluent-bit:5.0.7 |
-| Logging | [Elasticsearch Exporter](https://github.com/prometheus-community/elasticsearch_exporter) | quay.io/prometheuscommunity/elasticsearch-exporter:v1.10.0 |
-| Logging | initContainer (Fluent Bit, OpenSearch) | docker.io/library/busybox:latest |
-| Logging | [OpenSearch](https://github.com/opensearch-project/OpenSearch) | docker.io/opensearchproject/opensearch:3.6.0 |
-| Logging | [OpenSearch Dashboards](https://github.com/opensearch-project/OpenSearch-Dashboards) | docker.io/opensearchproject/opensearch-dashboards:3.6.0 |
-| Metrics | [Alertmanager](https://github.com/prometheus/alertmanager) | quay.io/prometheus/alertmanager:v0.32.1 |
-| Metrics | [Grafana](https://github.com/grafana/grafana) | docker.io/grafana/grafana:13.0.1-security-01 |
-| Metrics | [Admission Webhook](https://github.com/kubernetes/ingress-nginx) | ghcr.io/jkroepke/kube-webhook-certgen:1.8.2 |
-| Metrics | [Kube State Metrics](https://github.com/kubernetes/kube-state-metrics) | registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.19.1 |
-| Metrics | [Node Exporter](https://github.com/prometheus/node_exporter) | quay.io/prometheus/node-exporter:v1.11.1-distroless |
-| Metrics | [Prometheus](https://github.com/prometheus/prometheus) | quay.io/prometheus/prometheus:v3.11.3-distroless |
-| Metrics | [Prometheus Operator](https://github.com/prometheus-operator/prometheus-operator) | quay.io/prometheus-operator/prometheus-operator:v0.90.1 |
-| Metrics | [Configuration Reloader](https://github.com/prometheus-operator/prometheus-operator/tree/main/cmd/prometheus-config-reloader) | quay.io/prometheus-operator/prometheus-config-reloader:v0.90.1 |
-| Metrics | [Prometheus Pushgateway](https://github.com/prometheus/pushgateway) | quay.io/prometheus/pushgateway:v1.11.2 |
-| Metrics | [Auto-load Sidecars](https://github.com/kiwigrid/k8s-sidecar) | quay.io/kiwigrid/k8s-sidecar:2.7.3 |
-| Metrics | OpenShift OAUTH Proxy (Grafana, OpenShift only) | registry.redhat.io/openshift4/ose-oauth-proxy:latest |
-| Metrics | [Tempo](https://github.com/grafana/tempo) | docker.io/grafana/tempo:2.9.0 |
+| Subsystem| Component | Fully Qualified Container-Image Name (registry/repository/image_name:version) |
+|----|----|-------------------------------------------------------------------------------|
+| Logging | [Fluent Bit](https://github.com/fluent/fluent-bit) | cr.fluentbit.io/fluent/fluent-bit:5.0.7                                       |
+| Logging | [Elasticsearch Exporter](https://github.com/prometheus-community/elasticsearch_exporter) | quay.io/prometheuscommunity/elasticsearch-exporter:v1.10.0                    |
+| Logging | initContainer (Fluent Bit, OpenSearch) | docker.io/library/busybox:latest                                              |
+| Logging | [OpenSearch](https://github.com/opensearch-project/OpenSearch) | docker.io/opensearchproject/opensearch:3.6.0                                  |
+| Logging | [OpenSearch Dashboards](https://github.com/opensearch-project/OpenSearch-Dashboards) | docker.io/opensearchproject/opensearch-dashboards:3.6.0                       |
+| Metrics | [Alertmanager](https://github.com/prometheus/alertmanager) | quay.io/prometheus/alertmanager:v0.32.1                                       |
+| Metrics | [Grafana](https://github.com/grafana/grafana) | docker.io/grafana/grafana:13.2.0                                              |
+| Metrics | [Admission Webhook](https://github.com/kubernetes/ingress-nginx) | ghcr.io/jkroepke/kube-webhook-certgen:1.8.2                                   |
+| Metrics | [Kube State Metrics](https://github.com/kubernetes/kube-state-metrics) | registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.19.1                 |
+| Metrics | [Node Exporter](https://github.com/prometheus/node_exporter) | quay.io/prometheus/node-exporter:v1.11.1-distroless                           |
+| Metrics | [Prometheus](https://github.com/prometheus/prometheus) | quay.io/prometheus/prometheus:v3.11.3-distroless                              |
+| Metrics | [Prometheus Operator](https://github.com/prometheus-operator/prometheus-operator) | quay.io/prometheus-operator/prometheus-operator:v0.90.1                       |
+| Metrics | [Configuration Reloader](https://github.com/prometheus-operator/prometheus-operator/tree/main/cmd/prometheus-config-reloader) | quay.io/prometheus-operator/prometheus-config-reloader:v0.90.1                |
+| Metrics | [Prometheus Pushgateway](https://github.com/prometheus/pushgateway) | quay.io/prometheus/pushgateway:v1.11.2                                        |
+| Metrics | [Auto-load Sidecars](https://github.com/kiwigrid/k8s-sidecar) | quay.io/kiwigrid/k8s-sidecar:2.7.3                                            |
+| Metrics | OpenShift OAUTH Proxy (Grafana, OpenShift only) | registry.redhat.io/openshift4/ose-oauth-proxy:latest                          |
+| Metrics | [Tempo](https://github.com/grafana/tempo) | docker.io/grafana/tempo:2.9.0                                                 |
 
 ## Table 2. Helm Chart Repositories
 This table identifies the Helm repositories that contain the Helm charts used by SAS Viya Monitoring for Kubernetes.
