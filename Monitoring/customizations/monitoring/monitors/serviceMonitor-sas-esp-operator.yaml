@@ -9,11 +9,8 @@ metadata:
   namespace: monitoring
 spec:
   endpoints:
-  - interval: 15s
-    metricRelabelings:
-    - action: labeldrop
-      regex: timestamp
-    path: /eventStreamProcessing/v2/metrics
+  - interval: 10s
+    path: /SASESP/metrics
     port: http
     relabelings:
     - sourceLabels: [__meta_kubernetes_service_label_project]
