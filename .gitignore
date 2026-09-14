@@ -1,6 +1,16 @@
 /**/*.swp
 /**/*.bak
 /**/*.log
+/monitoring/user-values-prom-operator.yaml
+/monitoring/dashboards/cpu-memory-and-logs-usage.json
+/monitoring/dashboards/esp-node-overview.json
+/monitoring/dashboards/esp-overview.json
+/monitoring/dashboards/esp-project-logs.json
+/monitoring/dashboards/esp-project-overview.json
+/monitoring/dashboards/log-analysis-by-project.json
+/monitoring/loki/alloy-chart-values.yaml
+/monitoring/monitors/serviceMonitor-sas-esp-operator.yaml
+/monitoring/dashboards/dashboard-pod-level.json
 
 # Allow .github
 !/.github
