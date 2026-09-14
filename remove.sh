@@ -2,7 +2,8 @@
 
 # Set USER_DIR to the root folder
 export USER_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PATCHES_DIR="${USER_DIR}/monitoring/patches"
+MONITORING_DIR="${USER_DIR}/monitoring"
+PATCHES_DIR="${MONITORING_DIR}/patches"
 REMOVE_SCRIPT="${USER_DIR}/upstream/viya4-monitoring-kubernetes/monitoring/bin/remove_monitoring_cluster.sh"
 REMOVE_SCRIPT_PATCH_FILE="${PATCHES_DIR}/remove_monitoring_cluster.patch"
 
