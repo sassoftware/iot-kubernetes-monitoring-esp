@@ -1,0 +1,18 @@
+diff --git a/install/configure-grafana.sh b/install/configure-grafana.sh
+index a7dbb8c..ba1d997 100644
+--- a/install/configure-grafana.sh
++++ b/install/configure-grafana.sh
+@@ -63,6 +63,7 @@ function generate_manifests() {
+   cp -r *.yaml manifests/
+ 
+   for file in $(find ./manifests/ -name "*.y*ml"); do
++    sed -i 's|TEMPLATE_ESP_NAMESPACE|'"${ESP_NAMESPACE}"'|g' $file
+ 
+     sed -i 's|TEMPLATE_AUTH_URL|'$TEMPLATE_AUTH_URL'|g' $file
+     sed -i 's|TEMPLATE_TOKEN_URL|'$TEMPLATE_TOKEN_URL'|g' $file
+@@ -212,4 +213,4 @@ if [[ "${INSTALL_GRAFANA}" == true ]]; then
+ fi
+ 
+ echo "Patching deployment/grafana with patch-grafana.yaml"
+-kubectl -n "${GRAFANA_NAMESPACE}" patch --patch-file ./manifests/patch-grafana.yaml deployment/grafana
++kubectl -n "${GRAFANA_NAMESPACE}" patch --patch-file ./manifests/patch-grafana.yaml deployment/v4m-grafana

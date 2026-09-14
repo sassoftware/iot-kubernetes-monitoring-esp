@@ -1,0 +1,22 @@
+diff --git a/install/grafana-http-proxy.yaml b/install/grafana-http-proxy.yaml
+index 7828555..7d19e8a 100644
+--- a/install/grafana-http-proxy.yaml
++++ b/install/grafana-http-proxy.yaml
+@@ -18,7 +18,7 @@ spec:
+         replacePrefix:
+           - replacement: /grafana/
+       services:
+-        - name: grafana
++        - name: v4m-grafana
+           port: 80
+       timeoutPolicy:
+         response: 300s
+@@ -28,7 +28,7 @@ spec:
+       loadBalancerPolicy:
+         strategy: Cookie
+       services:
+-        - name: grafana
++        - name: v4m-grafana
+           port: 80
+       timeoutPolicy:
+         response: 300s

@@ -1,0 +1,12 @@
+apiVersion: 1
+
+datasources:
+- name: "SAS Event Stream Processing Studio"
+  type: sasesp-plugin
+  access: proxy
+  url: https://sas-event-stream-processing-studio-app/SASEventStreamProcessingStudio
+  jsonData:
+    isViya: true
+    oauthPassThru: true
+    tlsSkipVerify: true
+  editable: true

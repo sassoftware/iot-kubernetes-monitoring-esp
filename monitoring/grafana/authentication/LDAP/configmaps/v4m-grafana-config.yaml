@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: v4m-grafana
+data:
+  grafana.ini: |
+    [analytics]
+    check_for_updates = false
+    [auth.ldap]
+    # Set to `true` to enable LDAP integration (default: `false`)
+    enabled = true
+    # Allow sign-up should be `true` (default) to allow Grafana to create users on successful LDAP authentication.
+    # If set to `false` only already existing Grafana users will be able to login.
+    allow_sign_up = true
+    # Prevent synchronizing ldap users organization roles
+    skip_org_role_sync = false
+    [dashboards]
+    default_home_dashboard_path = /tmp/dashboards/viya-welcome-dashboard.json
+    [grafana_net]
+    url = https://grafana.net
+    [log]
+    mode = console
+    # filters = ldap:debug
+    [log.console]
+    format = json
+    [paths]
+    data = /var/lib/grafana/
+    logs = /var/log/grafana
+    # plugins = /var/lib/grafana/plugins
+    provisioning = /etc/grafana/provisioning
+    # [plugins]
+    # allow_loading_unsigned_plugins = sasesp-plugin
+    [server]
+    domain = host.mycluster.example.com
+    protocol = http
+    root_url = http://host.mycluster.example.com/grafana
+    serve_from_sub_path = true
