@@ -1,3 +1,0 @@
-# Export Logs
-
-See [Exporting Logs with getlogs.py](https://documentation.sas.com/?softwareId=obsrv&softwareVersion=prod&docsetId=obsrvug&docsetTarget=p1wdkgnu7dp791n1h9xfyh68ltnt.htm) in the SAS Viya Monitoring for Kubernetes Help Center.

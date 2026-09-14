@@ -1,2 +1,0 @@
-podSecurityContext:
-  runAsUser: null

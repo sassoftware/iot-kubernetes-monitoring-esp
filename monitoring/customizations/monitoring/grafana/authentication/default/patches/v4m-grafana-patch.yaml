@@ -1,8 +1,0 @@
-spec:
-  template:
-    spec:
-      containers:
-        - name: grafana
-          env:
-            - name: GF_INSTALL_PLUGINS
-              value: volkovlabs-variable-panel

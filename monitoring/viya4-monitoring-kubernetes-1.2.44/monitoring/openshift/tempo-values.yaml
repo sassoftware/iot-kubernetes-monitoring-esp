@@ -1,4 +1,0 @@
-# OpenShift-specific Tempo overrides.
-# Allow OpenShift to assign the container UID via its default SCC
-# instead of the chart imposing a fixed securityContext.
-securityContext: null
