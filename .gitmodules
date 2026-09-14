@@ -1,0 +1,6 @@
+[submodule "upstream/viya4-monitoring-kubernetes"]
+	path = upstream/viya4-monitoring-kubernetes
+	url = https://github.com/sassoftware/viya4-monitoring-kubernetes.git
+[submodule "upstream/grafana-esp-plugin"]
+	path = upstream/grafana-esp-plugin
+	url = https://github.com/sassoftware/grafana-esp-plugin

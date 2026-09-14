@@ -1,0 +1,189 @@
+diff --git "a/C:\\Repos\\viya4-monitoring-kubernetes\\monitoring\\bin\\deploy_monitoring_cluster.sh" "b/C:\\Repos\\iot-kubernetes-monitoring-esp\\Monitoring\\viya4-monitoring-kubernetes-1.2.44\\monitoring\\bin\\deploy_monitoring_cluster.sh"
+index 42676eb..404b36d 100644
+--- "a/C:\\Repos\\viya4-monitoring-kubernetes\\monitoring\\bin\\deploy_monitoring_cluster.sh"
++++ "b/C:\\Repos\\iot-kubernetes-monitoring-esp\\Monitoring\\viya4-monitoring-kubernetes-1.2.44\\monitoring\\bin\\deploy_monitoring_cluster.sh"
+@@ -145,7 +145,10 @@ log_notice "Deploying monitoring to the [$MON_NS] namespace..."
+ 
+ # Add the prometheus-community Helm repo
+ helmRepoAdd prometheus-community https://prometheus-community.github.io/helm-charts
+-
++# ESP Monitoring
++log_debug "Updating Helm repositories..."
++helm repo update
++# ESP Monitoring
+ istioValuesFile=$TMP_DIR/empty.yaml
+ # Istio - Federate data from Istio's Prometheus instance
+ if [ "$ISTIO_ENABLED" == "true" ]; then
+@@ -552,6 +555,45 @@ helm $helmDebug upgrade --install "$promRelease" \
+ 
+ sleep 2
+ 
++# ESP Monitoring
++if [ "$ENABLE_LOKI" == "true" ]; then
++   log_debug "Updating Helm repository for Loki"
++   helmRepoAdd grafana https://grafana.github.io/helm-charts
++   helm repo update
++
++   if [ -d "$USER_DIR/monitoring/loki" ]; then
++      LokiCfgDir="$USER_DIR/monitoring/loki"
++   else
++      LokiCfgDir="monitoring"
++   fi
++
++   log_debug "Installing Loki"
++   LOKI_RETENTION_PERIOD="${LOKI_RETENTION_PERIOD:-24h}"
++   helm $helmDebug upgrade --install loki grafana/loki \
++        --namespace "${MON_NS}" \
++        --timeout 5m \
++        --values "${LokiCfgDir}/values.yaml" \
++        --set loki.limits_config.retention_period=$LOKI_RETENTION_PERIOD
++
++   sleep 5
++
++   if [ ! -f "${LokiCfgDir}/alloy-chart-values.yaml" ] || [ ! -s "${LokiCfgDir}/alloy-chart-values.yaml" ]; then
++     log_warn "No Alloy values detected, deploying with default values"
++     # Ensure file exists for Helm upgrade execution.
++     touch "${LokiCfgDir}/alloy-chart-values.yaml"
++   fi
++
++   LOKI_LOGFMT=${LOKI_LOGFMT:-docker}
++
++   log_debug "Installing Alloy"
++   helm $helmDebug upgrade --install alloy grafana/alloy \
++     --values "${LokiCfgDir}/alloy-chart-values.yaml" \
++     --namespace "${MON_NS}" \
++     --timeout 5m
++
++fi
++# ESP Monitoring
++
+ #Container Security: Disable serviceAccount Token Automounting
+ disable_sa_token_automount "$MON_NS" v4m-grafana
+ disable_sa_token_automount "$MON_NS" sas-ops-acct #Used w/Prometheus
+@@ -647,6 +689,26 @@ kubectl apply -n "$MON_NS" -f monitoring/monitors/logging/serviceMonitor-elastic
+ kubectl apply -n "$MON_NS" -f monitoring/monitors/logging/serviceMonitor-fluent-bit.yaml
+ kubectl apply -n "$MON_NS" -f monitoring/monitors/logging/serviceMonitor-fluent-bit-v2.yaml
+ 
++# ESP Monitoring
++USER_SERVICE_MONITORS="${USER_SERVICE_MONITORS:-false}"
++if [ "$USER_SERVICE_MONITORS" == "true" ]; then
++   log_verbose "Deploying user ServiceMonitors"
++
++   userMonDir="$USER_DIR/monitoring/monitors"
++   if [ -d "$userMonDir" ]; then
++      log_info "Deploying user ServiceMonitors from [$userMonDir] ..."
++      for f in $userMonDir/*.yaml; do
++          # Need to check existence because if there are no matching files,
++          # f will include the wildcard character (*)
++          if [ -f "$f" ]; then
++             log_debug "Deploying ServiceMonitor from file [$f]"
++             kubectl apply -n $MON_NS -f $f
++          fi
++      done
++   fi
++fi
++# ESP Monitoring
++
+ # Rules
+ log_verbose "Adding Prometheus recording rules"
+ for f in monitoring/rules/viya/rules-*.yaml; do
+@@ -671,6 +733,99 @@ else
+     log_debug "Skipping creation of logging data source for Grafana"
+ fi
+ 
++# ESP Monitoring
++ENABLE_LOKI="${ENABLE_LOKI:-false}"
++if [ "$ENABLE_LOKI" == "true" ]; then
++   if [ -d "$USER_DIR/monitoring/loki" ]; then
++      LokiCfgDir="$USER_DIR/monitoring/loki"
++   else
++      LokiCfgDir="monitoring"
++   fi
++
++   log_verbose "Provisioning Loki datasource for Grafana"
++   kubectl delete secret -n $MON_NS --ignore-not-found grafana-datasource-loki
++   kubectl create secret generic -n $MON_NS grafana-datasource-loki --from-file $LokiCfgDir/grafana-datasource-loki.yaml
++   kubectl label secret -n $MON_NS grafana-datasource-loki grafana_datasource=1 sas.com/monitoring-base=kube-viya-monitoring
++else
++   log_debug "LOKI_DATASOURCE not set"
++   log_debug "Skipping creation of Loki datasource for Grafana"
++fi
++
++INSTALL_DIR="$(realpath "${USER_DIR}")/upstream/grafana-esp-plugin/install"
++if [[ "${INGRESS_TYPE}" == "contour" ]]; then
++   log_verbose "Patching Grafana for contour"
++
++   if ! kubectl get HTTPProxy -n "${ESP_NAMESPACE}" sas-httpproxy-root -o json | jq -e '.spec.includes[]? | select(.name=="grafana")' >/dev/null; then
++      kubectl patch HTTPProxy -n "${ESP_NAMESPACE}" sas-httpproxy-root --type='json' -p='[{"op": "add", "path": "/spec/includes/-", "value": {"name": "grafana", "namespace": "'"${MON_NS}"'"}}]'
++   fi
++
++   kubectl -n "${MON_NS}" apply -f $INSTALL_DIR/grafana-http-proxy.yaml
++fi
++
++GRAFANA_AUTHENTICATION="${GRAFANA_AUTHENTICATION:-default}"
++if [ "${GRAFANA_AUTHENTICATION^^}" == "LDAP" ] || [ "${GRAFANA_AUTHENTICATION^^}" == "OAUTH" ]; then
++   log_verbose "Configuring Grafana authentication to [${GRAFANA_AUTHENTICATION^^}]"
++
++   ESP_GRAFANA_PLUGIN_VERSION="${ESP_GRAFANA_PLUGIN_VERSION:-null}"
++   if [ "$ESP_GRAFANA_PLUGIN_VERSION" != "null" ]; then
++      if [ "${GRAFANA_AUTHENTICATION^^}" == "OAUTH" ]; then
++        (cd "${USER_DIR}/upstream/grafana-esp-plugin/install" && bash configure-grafana.sh "${ESP_NAMESPACE}" "${MON_NS}" "${ESP_GRAFANA_PLUGIN_VERSION}")
++      else
++         log_verbose "Authentication set to [${GRAFANA_AUTHENTICATION^^}]. Disabling ESP Grafana plugin installation."
++      fi
++   fi
++
++   # Apply configmaps and patch Grafana
++   if [ "${GRAFANA_AUTHENTICATION^^}" == "LDAP" ]; then
++     AUTH_DIR="$(realpath "${USER_DIR}")/monitoring/grafana/authentication/${GRAFANA_AUTHENTICATION^^}"
++      for f in $AUTH_DIR/configmaps/*.yaml; do
++         kubectl apply -n $MON_NS -f $f
++      done
++
++      for f in $AUTH_DIR/patches/*.yaml; do
++         kubectl patch deployment v4m-grafana -n $MON_NS --patch-file $f
++      done
++   fi
++
++   if [ "${GRAFANA_AUTHENTICATION^^}" == "OAUTH" ]; then
++      AUTH_DIR="$(realpath "${USER_DIR}")/upstream/grafana-esp-plugin/install/manifests"
++      kubectl apply -n $MON_NS -f $AUTH_DIR/v4m-grafana-config.yaml
++      kubectl patch deployment v4m-grafana -n $MON_NS --patch-file $AUTH_DIR/v4m-grafana-patch.yaml
++
++      if [ -d "$USER_DIR/monitoring/grafana" ]; then
++         SASESPCfgDir="$USER_DIR/monitoring/grafana"
++      else
++         SASESPCfgDir="monitoring"
++      fi
++
++      log_verbose "Provisioning SAS Event Stream Manager datasource for Grafana"
++      kubectl delete secret -n $MON_NS --ignore-not-found grafana-datasource-sas-event-stream-manager
++      kubectl create secret generic -n $MON_NS grafana-datasource-sas-event-stream-manager --from-file $SASESPCfgDir/grafana-datasource-SAS-Event-Stream-Manager.yaml
++      kubectl label secret -n $MON_NS grafana-datasource-sas-event-stream-manager grafana_datasource=1 sas.com/monitoring-base=kube-viya-monitoring
++
++      log_verbose "Provisioning SAS Event Stream Processing Studio datasource for Grafana"
++      kubectl delete secret -n $MON_NS --ignore-not-found grafana-datasource-sas-event-stream-processing-studio
++      kubectl create secret generic -n $MON_NS grafana-datasource-sas-event-stream-processing-studio --from-file $SASESPCfgDir/grafana-datasource-SAS-Event-Stream-Processing-Studio.yaml
++      kubectl label secret -n $MON_NS grafana-datasource-sas-event-stream-processing-studio grafana_datasource=1 sas.com/monitoring-base=kube-viya-monitoring
++
++      log_verbose "Registering Grafana as an OAUTH client"
++      log_verbose "USER_DIR = $USER_DIR"
++      log_verbose "GRAFANA_AUTH_PROVIDER = $GRAFANA_AUTH_PROVIDER"
++      (cd "${USER_DIR}/upstream/grafana-esp-plugin/install" && bash register-oauth-client-"${GRAFANA_AUTH_PROVIDER}".sh "${ESP_NAMESPACE}")
++   fi
++
++   sleep 5
++else
++   log_verbose "Configuring Grafana with default authentication"
++   AUTH_DIR="$(realpath "${USER_DIR}")/monitoring/grafana/authentication/default"
++
++   # Apply configmaps and patch Grafana
++   for f in $AUTH_DIR/patches/*.yaml; do
++     kubectl patch deployment v4m-grafana -n $MON_NS --patch-file $f
++   done
++fi
++# ESP Monitoring
++
+ echo ""
+ monitoring/bin/deploy_dashboards.sh
+ 

@@ -1,0 +1,24 @@
+diff --git a/monitoring/bin/remove_monitoring_cluster.sh b/monitoring/bin/remove_monitoring_cluster.sh
+index 70eb88a..74c4345 100755
+--- a/monitoring/bin/remove_monitoring_cluster.sh
++++ b/monitoring/bin/remove_monitoring_cluster.sh
+@@ -46,6 +46,19 @@ if helm3ReleaseExists v4m-tempo "$MON_NS"; then
+     helm uninstall --namespace "$MON_NS" v4m-tempo
+ fi
+ 
++if [[ "${INGRESS_TYPE}" == "contour" ]]; then
++    log_verbose "Removing contour patches"
++    INDEX=$(kubectl get HTTPProxy sas-httpproxy-root -n "$ESP_NAMESPACE" -o json | jq '.spec.includes | to_entries[] | select(.value.name=="grafana") | .key')
++    kubectl patch HTTPProxy sas-httpproxy-root -n "$ESP_NAMESPACE" --type='json' -p="[{'op': 'remove', 'path': '/spec/includes/$INDEX'}]"
++    kubectl delete HTTPProxy grafana --ignore-not-found -n "$MON_NS"
++fi
++
++# Remove Grafana client from auth provider
++if [ "$GRAFANA_AUTH_PROVIDER" == "viya" ] || [ "$GRAFANA_AUTH_PROVIDER" == "keycloak" ]; then
++    log_verbose "Removing Grafana client from auth provider"
++    . $USER_DIR/monitoring/grafana/esp-plugin/grafana-esp-plugin-main/install/remove-oauth-"${GRAFANA_AUTH_PROVIDER}".sh "${ESP_NAMESPACE}"
++fi
++
+ if [ "$MON_DELETE_NAMESPACE_ON_REMOVE" == "true" ]; then
+     log_info "Deleting the [$MON_NS] namespace..."
+     if kubectl delete namespace "$MON_NS" --timeout "$KUBE_NAMESPACE_DELETE_TIMEOUT"; then

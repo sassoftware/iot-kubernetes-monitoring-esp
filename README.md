@@ -66,7 +66,7 @@ overall performance of the environment.
 [&#11014;](#top) Top
 ## What's New
 
-SAS Event Stream Processing Monitoring for Kubernetes now supports configuration of the Loki retention period, allowing logs to be deleted after a specified period of time.
+SAS Event Stream Processing Monitoring for Kubernetes now supports ESP server metrics by default. If you wish to use the older `/SASESP/metrics` endpoint, set the `METRICS_TYPE` environment variable to `v1`. The default value is `v2`.
 
 [&#11014;](#top) Top
 ## Preparing to Deploy the Monitoring Components
@@ -85,91 +85,91 @@ components in the Kubernetes cluster will be initiated:
 
 ### Prepare Your Working Directory
 
-Monitoring folder contains the scripts and files required to deploy SAS Event Stream Processing Monitoring for Kubernetes. 
+The deployment script used to deploy SAS Event Stream Processing Monitoring for Kubernetes to a kubernetes cluster is located in the root of the project. The `/monitoring` folder contains the files required to deploy SAS Event Stream Processing Monitoring for Kubernetes. The `upstream` folder contains the SAS Viya Monitoring for Kubernetes and SAS Event Stream Processing Data Source Plug-in for Grafana repositories.
 
-The following is the directory structure of the folder:
+The following is the directory structure of the project:
 
 ```text
-Monitoring
-├── customizations
-│   └── monitoring
-│       ├── dashboards
-│       │   └── ...
-│       ├── grafana
-│       │   └── ...
-│       ├── loki
-│       │   └── ...
-│       ├── monitors
-│       │   └── ...
-│       ├── user.env
-│       ├── user-values-prom-operator.yaml
-│       ├── user-values-prom-operator-host-based.yaml.sample
-│       └── user-values-prom-operator-path-based.yaml.sample
-├── viya4-monitoring-kubernetes-x.x.xx
+monitoring
+├── dashboards
+│   └── templates
+|       └── ...
+├── grafana
 │   └── ...
+├── loki
+│   └── ...
+├── monitors
+│   └── ...
+├── patches
+│   ├── configure-grafana.patch
+│   ├── deploy_monitoring_cluster.patch
+│   ├── grafana-http-proxy.patch
+│   └── remove_monitoring_cluster.patch
+├── user.env
+└── user-values-prom-operator.yaml.template
+
+upstream
+├── grafana-esp-plugin
+└── viya4-monitoring-kubernetes
+
+deploy.sh
+deploy_dashboards.sh
+deploy_monitoring_viya.sh
+process_templates.sh
+remove.sh
 ```
 
 Where:
 
-* The `customizations/monitoring` directory contains Loki and Alloy artifacts, sample Grafana dashboards for SAS
-  Event Stream Processing, Kubernetes ingress definitions for the monitoring components, and the `user.env`  file with
+* The `/monitoring` directory contains Loki and Alloy artifacts, sample Grafana dashboards for SAS
+  Event Stream Processing, Kubernetes ingress definitions for the monitoring components, and the `user.env` file with
   custom deployment settings:
-	* `dashboards` contains the sample Grafana dashboards.
+	* `dashboards/templates` contains the sample Grafana dashboard templates; these templates are processed into JSON files and placed into the `dashboards` folder when SAS Event Stream Processing Monitoring for Kubernetes is deployed.
     * `grafana` contains artifacts used to configure Grafana authentication and, optionally, deploy and configure the
       SAS Event Stream Processing Data Source Plug-in for Grafana. 
 	* `loki` stores the artifacts used to deploy Loki and Alloy.
 	* `monitors` contains the service monitor definition for Loki.
-	* `user.env` provides the configuration for the deployment of the monitoring components. If necessary, review
-      and modify the settings before deploying.
-	* The `user-values-prom-operator-*-based.yaml.sample` files contain sample settings for host-based or path-based
-      access to the monitoring components. Path-based access is used for cloud-based deployments.
-      * When deploying, copy the appropriate sample file to the `user-values-prom-operator.yaml` file in the same
-        directory and customize it according to your needs.
-* `viya4-monitoring-kubernetes-x.x.xx` is the directory created by extracting the binaries for SAS Event Stream 
-  Processing Monitoring for Kubernetes. This directory contains configuration files and scripts for both the monitoring
-  and logging components of the SAS Viya platform.
-  * **NOTE:** The content of this directory should never be modified, and is intended to be used as-is.
+	* `user.env` provides the configuration for the deployment of the monitoring components. If necessary, review and modify the settings before deploying.
+    * The `user-values-prom-operator.yaml.template` file contains the configuration for the Prometheus Operator helm chart, and is processed into a .yaml file when SAS Event Stream Processing Monitoring for Kubernetes is deployed.
+* The `upstream` directory contains the SAS Viya Monitoring for Kubernetes and SAS Event Stream Processing Data Source Plug-in for Grafana repositories.
+  * Each repository exists as a git submodule, and is freshly cloned and patched when SAS Event Stream Processing Monitoring for Kubernetes repository is deployed.
+  * **NOTE:** Both repositories contain the scripts and files required to deploy critical components of the monitoring solution, and should never be modified.
+  * **NOTE:** The SAS Event Stream Processing Data Source Plug-in for Grafana repository does not provide the compiled plug-in used to deploy SAS Event Stream Processing Monitoring for Kubernetes; if a specific version of the plug-in is required, the `ESP_GRAFANA_PLUGIN_VERSION` environment variable can be set to the desired version.
+* The `deploy.sh` script is used to deploy SAS Event Stream Processing Monitoring for Kubernetes.
+* The `deploy_dashboards.sh` script is used to deploy Grafana dashboards located in `/monitoring/dashboards` into an existing environment.
+* The `deploy_monitoring_viya.sh` script is used to deploy the SAS Viya Monitoring for Kubernetes dashboards into an existing environment.
+* The `process_templates.sh` script is used internally by `deploy.sh` to process the Grafana dashboard, Alloy chart and ServiceMonitor templates.
+* The `remove.sh` script is used to remove SAS Event Stream Processing Monitoring for Kubernetes from the Kubernetes cluster.
 
 ### Review the Deployment Configuration
 
 Before proceeding to the deployment step, the deployment configuration must be set to reflect your target environment.
 
-1. Navigate to the `customization/monitoring` directory created by the unpacking of the binaries.
-2. Replace or update the content of the `user-values-prom-operator.yaml` file depending on whether you need host-based
-   or path-based ingresses for the monitoring components. The latter are normally used for cloud deployments.
-3. Review the content of the `user.env` file and customize it as needed. For an in-depth description of the options,
+Review the content of the `user.env` file and customize it as needed. For an in-depth description of the options,
    see [SAS Viya Monitoring for Kubernetes](https://github.com/sassoftware/viya4-monitoring-kubernetes) and comments
    provided in the file itself.
    * It is strongly recommended that you choose a strong password for the default Grafana `admin` user at this stage,
-     which can be set using the `GRAFANA_ADMIN_PASSWORD` property. However, the default password can be changed later
-     as described in the [Access the Dashboards](#access-the-dashboards) section.
+   which can be set using the `GRAFANA_ADMIN_PASSWORD` property. However, the default password can be changed later
+   as described in the [Access the Dashboards](#access-the-dashboards) section.
    * The `GRAFANA_AUTHENTICATION` property allows you to choose `LDAP` or `OAUTH` as the authentication method.
    * For `GRAFANA_AUTHENTICATION=OAUTH`, the `GRAFANA_AUTH_PROVIDER` property allows you to choose `viya` (default),
-     `uaa`, or - for SAS Event Stream Processing Standalone Installer deployments - `keycloak` as the identity
-     provider to be configured for use by Grafana.
+   `uaa`, or - for SAS Event Stream Processing Standalone Installer deployments - `keycloak` as the identity
+   provider to be configured for use by Grafana.
    * The `KEYCLOAK_SUBPATH` property allows you to set the path used to access Keycloak (default: `/auth/`).
    * The `ESP_GRAFANA_PLUGIN_VERSION` property allows for a specific version of the SAS Event Stream Processing Data Source Plug-in for
-     Grafana to be automatically deployed. For example:
-	    ```text
-	    # Version of the ESP Grafana plug-in (with OAUTH authentication only).
-	    # Check https://github.com/sassoftware/grafana-esp-plugin for updates
-	    ESP_GRAFANA_PLUGIN_VERSION=7.44.0
-	    ```
-     The plug-in works only with `OAUTH` authentication, with
-     the property being ignored for any other authentication method. For more information, see
-     [SAS Event Stream Processing Data Source Plug-in for Grafana](https://github.com/sassoftware/grafana-esp-plugin).
+   Grafana to be automatically deployed.
+   The plug-in works only with `OAUTH` authentication, with
+   the property being ignored for any other authentication method. For more information, see
+   [SAS Event Stream Processing Data Source Plug-in for Grafana](https://github.com/sassoftware/grafana-esp-plugin).
    * The `LOKI_ENABLED` property must be set to `True` for SAS Event Stream Processing project logs to be monitored.
    * The `LOKI_RETENTION_PERIOD` property enables you to set the period of time logs are persisted in Loki until deletion. By default, the property is set to `24h` (24 hours); setting the property to `0` disables retention.
    * The `LOKI_LOGFMT` property must be set according to the format used by Kubernetes to write logs. As of the writing
-     of this document, the format is `cri` for Microsoft Azure, and `docker` for other providers like Amazon Web
-     Services (AWS).
+   of this document, the format is `cri` for Microsoft Azure, and `docker` for other providers like Amazon Web
+   Services (AWS).
    * The `MON_NODE_PLACEMENT_ENABLE` property must be set to `false` for SAS Event Stream Processing Standalone
-     Installer deployments.
-4. Depending on the method selected in the `GRAFANA_AUTHENTICATION` property there might be additional configuration
-   required:
-    * For `GRAFANA_AUTHENTICATION=LDAP`, review and customize the content of the files found in the `configmaps` and
-      `patches` directories under `customizations/grafana/authentication/LDAP`.
-    * For `GRAFANA_AUTHENTICATION=OAUTH`, no work is needed as the configuration files are created automatically.
+   Installer deployments.
+   * The `HOST_NAME` property should be set to the fully qualified domain name (FQDN) of the host where the monitoring components will be deployed.
+   * The `INGRESS_TYPE` property should be set to the type of ingress controller used in the Kubernetes cluster. The assumption is that the nginx ingress controller is used; if the Contour ingress controller is used, `INGRESS_TYPE` should be set to `contour`.
 
 
 [&#11014;](#top) Top
@@ -177,27 +177,16 @@ Before proceeding to the deployment step, the deployment configuration must be s
 
 ### Deploy SAS Event Stream Processing Monitoring for Kubernetes
 
-With the contents of the `user-values-prom-operator.yaml` and `user.env` files set, the working directory is ready to
+With the contents of the `user.env` file set, the working directory is ready to
 carry out the deployment process. Complete the following steps:
 
-1. Set and export the USER_DIR environment variable to the path of the `customization` directory as shown in
-   the following example, where `<target-directory>` should be replaced by the path to the directory that you used in
-   the [Prepare Your Working Directory](#prepare-your-working-directory) section:  
+1. Ensure that kubectl is configured to point to the target Kubernetes cluster. You may need to set the `KUBECONFIG` environment variable to point to the kubeconfig file for the target cluster:
 	```shell
-	export USER_DIR=<target-directory>/Monitoring/customizations
+	export KUBECONFIG=<target-kubeconfig-file>
 	```
-2.  Set an environment variable to the value the ESP namespace:
+2. Deploy SAS Event Stream Processing Monitoring for Kubernetes using the following command:  
 	```shell
-        export ESP_NAMESPACE=<esp-namespace>
-	```
-3.  If the target Kubernetes environment uses Contour as an ingress controller, set an environment variable to reflect this:
-    ```shell
-        export INGRESS_TYPE="contour"
-    ```
-4.  Navigate to the `<target-directory>/viya4-monitoring-kubernetes-x.x.xx/monitoring/bin` directory, and deploy
-   SAS Event Stream Processing Monitoring for Kubernetes using the following command:  
-	```shell
-	./deploy_monitoring_cluster.sh
+	./deploy.sh
 	```
  
 This results in the deployment of the following components to the target Kubernetes cluster:
@@ -205,22 +194,18 @@ This results in the deployment of the following components to the target Kuberne
 | Release Name              | Helm Chart Name                | Application Version |
 |---------------------------|--------------------------------|---------------------|
 | `loki`                    | `loki-7.3.0`                   | 3.6.12              |
-| `alloy`                   | `alloy-1.11.1`                 | 1.18.1              |
-| `v4m-metrics`             | `v4m-1.2.52`                   | 1.2.52              |
+| `alloy`                   | `alloy-1.12.1`                 | 1.19.2              |
+| `v4m-metrics`             | `v4m-1.2.53`                   | 1.2.53              |
 | `v4m-prometheus-operator` | `kube-prometheus-stack-85.1.3` | 0.90.1              |
 
 [&#11014;](#top) Top
 ### Deploy the SAS Viya Monitoring for Kubernetes Dashboards
 
 With SAS Event Stream Processing Monitoring for Kubernetes in place, you can optionally perform the following steps to
-deploy the SAS Viya Monitoring for Kubernetes dashboards.
+deploy the SAS Viya Monitoring for Kubernetes dashboards:
 
-1. Set and export the VIYA_NS environment variable with the namespace of your deployment of the SAS Viya platform:
-    ```shell
-    export VIYA_NS=<viya-namespace>
-    ```
-2. Navigate to the `<target-directory>/viya4-monitoring-kubernetes-x.x.xx/monitoring/bin` directory and deploy
-   the dashboards using the following command:
+1. In the `user.env` file, set the VIYA_NS environment variable to the namespace of your deployment of the SAS Viya platform.
+2. Deploy the dashboards using the following command:
     ```shell
     ./deploy_monitoring_viya.sh
     ```
@@ -236,49 +221,40 @@ The dashboards that are deployed with SAS Event Stream Processing Monitoring for
 of the kind of monitoring that can be achieved through Grafana. Since the dashboards are provisioned as part of the
 deployment, they cannot be modified directly in Grafana. It is therefore recommended to either change their source
 code, or to create copies to work on. They can be cloned and modified to create even more sophisticated dashboards to,
-for example, target different metrics or trigger alerts. The source code for the sample dashboards can be found in the
-`$USER_DIR/monitoring/dashboards` directory.
+for example, target different metrics or trigger alerts. The source code for the sample dashboards and dashboard templates can be found in the
+`/monitoring/dashboards` and `/monitoring/dashboards/templates` directories respectively.
 
-Whether you decide to modify the existing dashboard or create new ones in the same directory, they can be deployed into
-an existing environment using the following steps:
+**NOTE:** dashboard templates include placeholders for specific metric names, which during the deployment process are replaced with the actual metric names depending on the metric endpoint. Only certain metric placeholders are supported; for this reason, it is recommended to create a template only if you are familiar with the metric names and if both metric endpoints must be supported.
 
-1. Set and export the USER_DIR environment variable if not already set, where `<target-directory>` should again
-   be replaced by the path to the directory used when in the
-   [Prepare Your Working Directory](#prepare-your-working-directory) section:
-    ```shell
-    export USER_DIR=<target-directory>/Monitoring/customizations
-    ```
-2. Navigate to the `<target-directory>/viya4-monitoring-kubernetes-x.x.xx/monitoring/bin` directory and deploy
-   your custom dashboards using the following command:
-    ```shell
-    ./deploy_dashboards.sh
-    ```
+Whether you decide to modify an existing dashboard or create new ones, they can be deployed into
+an existing environment by using the following command:
+```shell
+./deploy_dashboards.sh
+```
 
 Alternatively, dashboards can be created or cloned in Grafana, with no deployment needed once the dashboards are ready.
 Either way, it is recommended to consult the Grafana documentation for best practices on how to develop dashboards.
 
 [&#11014;](#top) Top
 ## Using the Monitoring Components
-
-[&#11014;](#top) Top
 ### Access the Dashboards
  
 You can access Grafana by using the link displayed at the bottom of the deployment log. The password for the `admin`
-user can either be provided in the `user.env` file in the `$USER_DIR` directory (recommended), or set after deployment
+user can either be provided in the `user.env` file (recommended), or set after deployment
 by running the `change_grafana_admin_password.sh` script, located in the
-`<target-directory>/viya4-monitoring-kubernetes-x.x.xx/monitoring/bin` directory.
+`upstream/viya4-monitoring-kubernetes/monitoring/bin` directory.
 
 When you log in to Grafana, the dashboards are displayed:
 
 <table align="center"><tr><td align="center" width="9999">
-<img src="Images/Viya_Welcome_Dashboard.png" align="center" width="9999">
+<img src="readme_images/Viya_Welcome_Dashboard.png" align="center" width="9999">
 </td></tr></table>
 
 Selecting the **SAS ESP CPU, Memory, and Logs Usage** dashboard shows something similar to this:
 
 <table align="center"><tr><td align="center" width="9999">
-<img src="Images/ESP_CPU_Memory_Logs_Dashboard_1.png" align="center" width="9999">
-<img src="Images/ESP_CPU_Memory_Logs_Dashboard_2.png" align="center" width="9999">
+<img src="readme_images/ESP_CPU_Memory_Logs_Dashboard_1.png" align="center" width="9999">
+<img src="readme_images/ESP_CPU_Memory_Logs_Dashboard_2.png" align="center" width="9999">
 </td></tr></table>
 
 In addition to CPU and memory metrics, the dashboard shows log aggregation information, both summarily and at the
@@ -287,14 +263,14 @@ active within the chosen time interval, whereas the **Current Projects** panel g
 currently active projects. Selecting log information displays a screen similar to the following:
 
 <table align="center"><tr><td align="center" width="9999">
-<img src="Images/Log_Analysis_By_Project.png" align="center" width="9999">
+<img src="readme_images/Log_Analysis_By_Project.png" align="center" width="9999">
 </td></tr></table>
 
 On the **SAS ESP CPU, Memory, and Logs Usage** dashboard, the **Current CPU Usage By Project** panel on the left side of
 the screen offers the ability to drill down to the individual pod level to access additional metrics. For example:
 
 <table align="center"><tr><td align="center" width="9999">
-<img src="Images/Compute_Resources_Pod.png" align="center" width="9999">
+<img src="readme_images/Compute_Resources_Pod.png" align="center" width="9999">
 </td></tr></table>
 
 [&#11014;](#top) Top
@@ -306,7 +282,7 @@ A list of existing ESP project alert rules can be found in the [esp-project-aler
 To add alert rules from the provided ESP project alert rules:
 1. Navigate to the **Alert rules** section in Grafana:
 <table><tr><td>
-<img src="Images/Alert_Rules_Main_Menu.png">
+<img src="readme_images/Alert_Rules_Main_Menu.png">
 </td></tr></table>
 
 2. Click **New Alert Rule**.
@@ -315,19 +291,19 @@ To add alert rules from the provided ESP project alert rules:
 Here is an example for implementing the first alert rule, `ESP Project CPU >80% Threshold`. This alert rule will fire when an ESP project is using more than 80% of the requested CPU limit.
 
 <table align="center"><tr><td align="center" width="9999">
-<img src="Images/80_CPU_Threshold_1.png" align="center" width="9999">
+<img src="readme_images/80_CPU_Threshold_1.png" align="center" width="9999">
 </td></tr></table>
 
 <table align="center"><tr><td align="center" width="9999">
-<img src="Images/80_CPU_Threshold_2.png" align="center" width="9999">
+<img src="readme_images/80_CPU_Threshold_2.png" align="center" width="9999">
 </td></tr></table>
 
 <table align="center"><tr><td align="center" width="9999">
-<img src="Images/80_CPU_Threshold_3.png" align="center" width="9999">
+<img src="readme_images/80_CPU_Threshold_3.png" align="center" width="9999">
 </td></tr></table>
 
 <table align="center"><tr><td align="center" width="9999">
-<img src="Images/80_CPU_Threshold_4.png" align="center" width="9999">
+<img src="readme_images/80_CPU_Threshold_4.png" align="center" width="9999">
 </td></tr></table>
 
 **Note**: It is important to set the **Folder** and **Evaluation group** field to `esp-project-alert-rules` and to set the **Labels** to `type=esp-project` so these rule alerts are displayed on the **ESP Overview** dashboard when the rule alerts are in a firing state. The alert rule template has been left blank for customizing. For more information, see [Notification templating](https://grafana.com/docs/grafana/latest/alerting/fundamentals/alert-rules/message-templating/) and [Labels and annotations](https://grafana.com/docs/grafana/latest/alerting/fundamentals/annotation-label/).
@@ -335,7 +311,7 @@ Here is an example for implementing the first alert rule, `ESP Project CPU >80% 
 Contact points can be defined to specify where firing alert rules are routed to:
 
 <table><tr><td>
-<img src="Images/Alert_Rules_Contact_Point.png">
+<img src="readme_images/Alert_Rules_Contact_Point.png">
 </td></tr></table>
 
 Notification policies can be added so that alert rules with a specific label are always routed to a specific contact point.
@@ -343,18 +319,10 @@ Notification policies can be added so that alert rules with a specific label are
 [&#11014;](#top) Top
 ## Uninstalling
 
-Uninstalling SAS Event Stream Processing Monitoring for Kubernetes is performed in the same way as for SAS Viya
-Monitoring for Kubernetes:
-
-1. Set and export the USER_DIR environment variable if not already set:
-    ```shell
-    export USER_DIR=<monitoring-root-directory>/Monitoring/customizations
-    ```
-2. Navigate to the `<target-directory>/viya4-monitoring-kubernetes-x.x.xx/monitoring/bin` directory and use the following
-   command to remove the previously-deployed monitoring components:
-    ```shell
-    ./remove_monitoring_cluster.sh
-    ```
+Uninstalling SAS Event Stream Processing Monitoring for Kubernetes can be performed using the following command::
+```shell
+./remove.sh
+ ```
    
 This removes all Kubernetes resources created during the deployment process from the target cluster.
 

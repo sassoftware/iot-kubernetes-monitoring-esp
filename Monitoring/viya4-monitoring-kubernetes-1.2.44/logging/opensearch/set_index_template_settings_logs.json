@@ -1,9 +1,0 @@
-{
-  "index_patterns": ["viya_logs-*"],
-  "settings": {
-    "number_of_shards": 1,
-    "number_of_replicas": 1,
-    "index.default_pipeline":"viyaburstns"
-  },
-  "mappings": {"numeric_detection": false}
-}
