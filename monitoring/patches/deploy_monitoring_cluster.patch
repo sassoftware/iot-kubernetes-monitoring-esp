@@ -1,7 +1,7 @@
-diff --git "a/C:\\Repos\\viya4-monitoring-kubernetes\\monitoring\\bin\\deploy_monitoring_cluster.sh" "b/C:\\Repos\\iot-kubernetes-monitoring-esp\\Monitoring\\viya4-monitoring-kubernetes-1.2.44\\monitoring\\bin\\deploy_monitoring_cluster.sh"
-index 42676eb..404b36d 100644
---- "a/C:\\Repos\\viya4-monitoring-kubernetes\\monitoring\\bin\\deploy_monitoring_cluster.sh"
-+++ "b/C:\\Repos\\iot-kubernetes-monitoring-esp\\Monitoring\\viya4-monitoring-kubernetes-1.2.44\\monitoring\\bin\\deploy_monitoring_cluster.sh"
+diff --git a/monitoring/bin/deploy_monitoring_cluster.sh b/monitoring/bin/deploy_monitoring_cluster.sh
+index 51006a4..691ebb9 100755
+--- a/monitoring/bin/deploy_monitoring_cluster.sh
++++ b/monitoring/bin/deploy_monitoring_cluster.sh
 @@ -145,7 +145,10 @@ log_notice "Deploying monitoring to the [$MON_NS] namespace..."
  
  # Add the prometheus-community Helm repo
@@ -14,7 +14,7 @@ index 42676eb..404b36d 100644
  istioValuesFile=$TMP_DIR/empty.yaml
  # Istio - Federate data from Istio's Prometheus instance
  if [ "$ISTIO_ENABLED" == "true" ]; then
-@@ -552,6 +555,45 @@ helm $helmDebug upgrade --install "$promRelease" \
+@@ -551,6 +554,45 @@ helm $helmDebug upgrade --install "$promRelease" \
  
  sleep 2
  
@@ -60,7 +60,7 @@ index 42676eb..404b36d 100644
  #Container Security: Disable serviceAccount Token Automounting
  disable_sa_token_automount "$MON_NS" v4m-grafana
  disable_sa_token_automount "$MON_NS" sas-ops-acct #Used w/Prometheus
-@@ -647,6 +689,26 @@ kubectl apply -n "$MON_NS" -f monitoring/monitors/logging/serviceMonitor-elastic
+@@ -646,6 +688,26 @@ kubectl apply -n "$MON_NS" -f monitoring/monitors/logging/serviceMonitor-elastic
  kubectl apply -n "$MON_NS" -f monitoring/monitors/logging/serviceMonitor-fluent-bit.yaml
  kubectl apply -n "$MON_NS" -f monitoring/monitors/logging/serviceMonitor-fluent-bit-v2.yaml
  
@@ -87,7 +87,7 @@ index 42676eb..404b36d 100644
  # Rules
  log_verbose "Adding Prometheus recording rules"
  for f in monitoring/rules/viya/rules-*.yaml; do
-@@ -671,6 +733,99 @@ else
+@@ -670,6 +732,99 @@ else
      log_debug "Skipping creation of logging data source for Grafana"
  fi
  
