@@ -15,6 +15,8 @@ _A guide for monitoring SAS Event Stream Processing resources._
   * [Deploy SAS Event Stream Processing Monitoring for Kubernetes](#deploy-sas-event-stream-processing-monitoring-for-kubernetes)
   * [Deploy the SAS Viya Monitoring for Kubernetes Dashboards](#deploy-the-sas-viya-monitoring-for-kubernetes-dashboards)
   * [Deploy Custom Dashboards](#deploy-custom-dashboards)
+* [Updating the Monitoring Components](#updating-the-monitoring-components)
+  * [Perform an Upgrade in Place](#perform-an-upgrade-in-place)
 * [Using the Monitoring Components](#using-the-monitoring-components)
   * [Access the Dashboards](#access-the-dashboards)
   * [Adding Grafana Alert Rules](#adding-grafana-alert-rules)
@@ -92,8 +94,9 @@ The following is the directory structure of the project:
 ```text
 monitoring
 ├── dashboards
-│   └── templates
-|       └── ...
+│   ├── templates
+|   │   └── ...
+|   └── ...
 ├── grafana
 │   └── ...
 ├── loki
@@ -193,10 +196,10 @@ This results in the deployment of the following components to the target Kuberne
 
 | Release Name              | Helm Chart Name                | Application Version |
 |---------------------------|--------------------------------|---------------------|
-| `loki`                    | `loki-7.3.0`                   | 3.6.12              |
+| `loki`                    | `loki-7.3.0`                   | 3.6.11              |
 | `alloy`                   | `alloy-1.12.1`                 | 1.19.2              |
-| `v4m-metrics`             | `v4m-1.2.53`                   | 1.2.53              |
-| `v4m-prometheus-operator` | `kube-prometheus-stack-85.1.3` | 0.90.1              |
+| `v4m-metrics`             | `v4m-1.2.54`                   | 1.2.54              |
+| `v4m-prometheus-operator` | `kube-prometheus-stack-88.2.0` | 0.93.0              |
 
 [&#11014;](#top) Top
 ### Deploy the SAS Viya Monitoring for Kubernetes Dashboards
