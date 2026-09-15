@@ -236,6 +236,24 @@ Alternatively, dashboards can be created or cloned in Grafana, with no deploymen
 Either way, it is recommended to consult the Grafana documentation for best practices on how to develop dashboards.
 
 [&#11014;](#top) Top
+## Updating the Monitoring Components
+### Perform an Upgrade in Place
+You can perform an upgrade in place for the monitoring components, to apply modifications made to configuration settings, as well as to upgrade an existing deployment to a new release of SAS Event Stream Processing Monitoring for Kubernetes. Note that you do not need to remove your existing deployment to perform an upgrade-in-place.
+
+The `deploy.sh` script is used to perform an upgrade in place. With the contents of the `user.env` file set, complete the following steps:
+
+1. Ensure that kubectl is configured to point to the target Kubernetes cluster. You may need to set the `KUBECONFIG` environment variable to point to the kubeconfig file for the target cluster:
+   ```shell
+   export KUBECONFIG=<target-kubeconfig-file>
+   ```
+2. Perform an upgrade of SAS Event Stream Processing Monitoring for Kubernetes in place using the following command:
+   ```shell
+   ./deploy.sh
+   ```
+   
+This results in the latest versions of all components, indexes, and dashboards being installed.
+
+[&#11014;](#top) Top
 ## Using the Monitoring Components
 ### Access the Dashboards
  
