@@ -84,6 +84,7 @@ components in the Kubernetes cluster will be initiated:
 
 * The [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl) command-line interface (CLI);
 * The [Helm](https://helm.sh/) CLI.
+* The [yq](https://github.com/mikefarah/yq) command-line tool.
 
 ### Prepare Your Working Directory
 
@@ -158,6 +159,7 @@ Review the content of the `user.env` file and customize it as needed. For an in-
    * For `GRAFANA_AUTHENTICATION=OAUTH`, the `GRAFANA_AUTH_PROVIDER` property allows you to choose `viya` (default),
    `uaa`, or - for SAS Event Stream Processing Standalone Installer deployments - `keycloak` as the identity
    provider to be configured for use by Grafana.
+     * When the `GRAFANA_AUTH_PROVIDER` property is set to `viya`, the `VIYA_USERNAME` and `VIYA_PASSWORD` properties should be set to the credentials of a user with sufficient privileges to register/remove Grafana as an OAuth client with SASLogon.
    * The `KEYCLOAK_SUBPATH` property allows you to set the path used to access Keycloak (default: `/auth/`).
    * The `ESP_GRAFANA_PLUGIN_VERSION` property allows for a specific version of the SAS Event Stream Processing Data Source Plug-in for
    Grafana to be automatically deployed.

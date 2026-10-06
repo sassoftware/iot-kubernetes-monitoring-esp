@@ -16,7 +16,7 @@ index 70eb88a..74c4345 100755
 +# Remove Grafana client from auth provider
 +if [ "$GRAFANA_AUTH_PROVIDER" == "viya" ] || [ "$GRAFANA_AUTH_PROVIDER" == "keycloak" ]; then
 +    log_verbose "Removing Grafana client from auth provider"
-+    . $USER_DIR/monitoring/grafana/esp-plugin/grafana-esp-plugin-main/install/remove-oauth-"${GRAFANA_AUTH_PROVIDER}".sh "${ESP_NAMESPACE}"
++    (cd "${USER_DIR}/upstream/grafana-esp-plugin/install" && bash remove-oauth-"${GRAFANA_AUTH_PROVIDER}".sh "${ESP_NAMESPACE}")
 +fi
 +
  if [ "$MON_DELETE_NAMESPACE_ON_REMOVE" == "true" ]; then
