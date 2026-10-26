@@ -169,7 +169,7 @@ index 51006a4..691ebb9 100755
 +      log_verbose "Registering Grafana as an OAUTH client"
 +      log_verbose "USER_DIR = $USER_DIR"
 +      log_verbose "GRAFANA_AUTH_PROVIDER = $GRAFANA_AUTH_PROVIDER"
-+      (cd "${USER_DIR}/upstream/grafana-esp-plugin/install" && bash register-oauth-client-"${GRAFANA_AUTH_PROVIDER}".sh "${ESP_NAMESPACE}")
++      (cd "${USER_DIR}/upstream/grafana-esp-plugin/install" && bash register-oauth-client-"${GRAFANA_AUTH_PROVIDER}".sh "${ESP_NAMESPACE}" "${MON_NS}")
 +   fi
 +
 +   sleep 5
