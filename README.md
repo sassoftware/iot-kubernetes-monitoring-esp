@@ -85,6 +85,7 @@ components in the Kubernetes cluster will be initiated:
 * The [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl) command-line interface (CLI);
 * The [Helm](https://helm.sh/) CLI.
 * The [yq](https://github.com/mikefarah/yq) command-line tool.
+* The [jq](https://jqlang.org/) command-line tool.
 
 ### Prepare Your Working Directory
 

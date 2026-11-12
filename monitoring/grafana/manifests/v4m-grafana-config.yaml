@@ -44,6 +44,7 @@ data:
     [users]
     auto_assign_org = true
     auto_assign_org_role = Admin
+    default_theme = TEMPLATE_GRAFANA_THEME
 
     [auth]
     disable_login_form = true
